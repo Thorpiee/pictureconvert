@@ -1,10 +1,11 @@
+
 import { Metadata } from "next"
 import { ToolLayout } from "@/components/tool-layout"
-import { BulkCompressorTool } from "@/components/tools/bulk-compressor-tool"
+import { AspectRatioConverterTool } from "@/components/tools/aspect-ratio-converter-tool"
 import { getToolBySlug } from "@/lib/tools-config"
 import { notFound } from "next/navigation"
 
-const tool = getToolBySlug("bulk-compressor")
+const tool = getToolBySlug("aspect-ratio-converter")
 
 if (!tool) {
   notFound()
@@ -23,12 +24,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default function BulkCompressorPage() {
-  if (!tool) return null
-
+export default function Page() {
   return (
     <ToolLayout tool={tool}>
-      <BulkCompressorTool />
+      <AspectRatioConverterTool />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

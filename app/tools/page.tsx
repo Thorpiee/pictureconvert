@@ -19,6 +19,13 @@ import {
   Share2,
   Layout,
   Layers,
+  Instagram,
+  Youtube,
+  Twitter,
+  Linkedin,
+  Ratio,
+  Maximize,
+  Music2,
 } from "lucide-react"
 
 const iconMap = {
@@ -34,6 +41,14 @@ const iconMap = {
   Share2,
   Layout,
   Layers,
+  Instagram,
+  Youtube,
+  Twitter,
+  Linkedin,
+  Ratio,
+  Maximize,
+  Music2,
+  TikTok: Music2,
 }
 
 export default function ToolsPage() {
@@ -77,7 +92,7 @@ export default function ToolsPage() {
             All Image Tools
           </h1>
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-            12 free tools to convert, compress, and edit your images. All processing happens in your browser - files never leave your device.
+            {allTools.length} free tools to convert, compress, and edit your images. All processing happens in your browser - files never leave your device.
           </p>
         </motion.div>
 

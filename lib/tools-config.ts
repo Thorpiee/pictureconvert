@@ -1,6 +1,8 @@
 
 
 
+export type ToolCategory = "convert" | "compress" | "edit" | "privacy" | "social"
+
 export interface ToolConfig {
   slug: string
   name: string
@@ -511,33 +513,189 @@ export const toolsConfig: Record<string, ToolConfig> = {
       { question: "Does it resize the image?", answer: "No, this tool only adjusts compression quality. Use the Resize tool if you need to change dimensions." },
       { question: "Is it secure?", answer: "Yes, all processing happens in your browser. Your images are never uploaded." }
     ],
-    relatedTools: ["compress-jpg", "compress-png", "resize-image", "social-media-compressor", "bulk-compressor"]
+    relatedTools: ["compress-jpg", "compress-png", "resize-image", "bulk-compressor"]
   },
-  "social-media-compressor": {
-    slug: "social-media-compressor",
-    name: "Social Media Image Compressor",
-    shortName: "Social Media",
-    description: "Optimize images for Instagram, Twitter/X, and LinkedIn",
-    longDescription: "Automatically resize and compress images for perfect display on social media platforms. Preserves faces, text, and sharp edges while meeting platform requirements.",
-    category: "compress",
-    icon: "Share2",
+  "instagram-image-resizer": {
+    slug: "instagram-image-resizer",
+    name: "Instagram Image Resizer",
+    shortName: "Instagram",
+    description: "Resize and crop images for Instagram Posts, Stories, and Reels",
+    longDescription: "The best tool to resize, crop, and optimize images for Instagram. Supports all formats: Square (1:1), Portrait (4:5), Landscape (1.91:1), and Story (9:16). Ensures your photos look sharp and professional.",
+    category: "social",
+    icon: "Instagram",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
     outputType: "image/jpeg",
-    whatItDoes: "This tool applies platform-specific presets (dimensions, aspect ratios, and compression) to your images to ensure they look their best on Instagram, Twitter, and LinkedIn.",
-    whenToUse: "Use this before posting to social media to avoid platform-side compression artifacts and ensure your images fit the recommended dimensions.",
+    whatItDoes: "Resizes your photos to the exact dimensions recommended by Instagram to avoid automatic compression and quality loss. It helps you crop images to fit perfectly in the feed or stories.",
+    whenToUse: "Use this before posting to Instagram to ensure your photos look sharp and aren't cropped unexpectedly. Essential for professional photographers and social media managers.",
     tips: [
-      "Select the specific platform and post type (e.g., Instagram Story)",
-      "Images are auto-resized to fit platform guidelines",
-      "High-quality compression prevents 'crunchy' social media images",
-      "Preview the result before downloading"
+      "Use 4:5 aspect ratio (1080x1350) for maximum screen real estate in the feed",
+      "Stories and Reels should be 1080x1920 pixels (9:16)",
+      "Square posts (1080x1080) are classic but take up less space than portrait",
+      "We apply high-quality sharpening automatically to prevent blurriness"
     ],
     faq: [
-      { question: "Which platforms are supported?", answer: "Currently supports Instagram, Twitter/X, and LinkedIn, with various post types for each." },
-      { question: "Does it crop my image?", answer: "It may resize your image to fit standard widths, but it maintains aspect ratio where possible or fits within safe zones." },
-      { question: "Why compress before uploading?", answer: "Platforms compress images aggressively. optimizing them beforehand often yields better results than letting the platform do it." },
-      { question: "What format will I get?", answer: "You'll get a high-quality JPG, which is the standard preferred format for most social platforms." }
+      { question: "What is the best size for Instagram posts?", answer: "For posts, 1080x1350 (4:5) is best as it takes up the most vertical space. 1080x1080 (1:1) is also standard." },
+      { question: "What size should Instagram Stories be?", answer: "Instagram Stories and Reels should be 1080x1920 pixels (9:16 aspect ratio)." },
+      { question: "Does this tool reduce quality?", answer: "No, it optimizes the image to prevent Instagram's servers from aggressively compressing it, often resulting in BETTER quality." },
+      { question: "Can I resize for profile pictures?", answer: "Yes, use the Square (1:1) preset. Instagram profile pictures are circular, so keep important details in the center." }
     ],
-    relatedTools: ["smart-optimizer", "resize-image", "crop-image", "bulk-compressor", "compress-jpg"]
+    relatedTools: ["tiktok-image-resizer", "crop-image", "smart-optimizer"]
+  },
+  "tiktok-image-resizer": {
+    slug: "tiktok-image-resizer",
+    name: "TikTok Image Resizer",
+    shortName: "TikTok",
+    description: "Create perfect TikTok video covers and photo mode slides",
+    longDescription: "Resize images for TikTok Video Covers, Profile Pictures, and Photo Mode. Ensures your content looks professional and isn't cut off by the UI overlay.",
+    category: "social",
+    icon: "Music2",
+    acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
+    outputType: "image/jpeg",
+    whatItDoes: "Crops and resizes images to TikTok's 9:16 vertical format or 1:1 profile format. It helps you prepare custom covers and photo slides that fit perfectly.",
+    whenToUse: "Use this when creating custom thumbnails/covers for your TikToks, updating your profile picture, or creating a photo mode carousel.",
+    tips: [
+      "TikTok covers should be 1080x1920 pixels (9:16)",
+      "Keep important text in the center to avoid being covered by buttons/captions",
+      "Photo Mode images also work best in 9:16 vertical format",
+      "Profile pictures should be 1:1 square (min 200x200)"
+    ],
+    faq: [
+      { question: "What size is a TikTok video cover?", answer: "1080x1920 pixels (9:16 aspect ratio) is the standard size for TikTok covers." },
+      { question: "Can I resize for Photo Mode?", answer: "Yes! Use the 9:16 Vertical preset. This ensures your photos take up the full screen in TikTok's photo carousel." },
+      { question: "Why is my profile picture blurry?", answer: "Make sure your source image is at least 200x200 pixels. Our tool helps you crop it to a perfect square first." },
+      { question: "Where is the 'safe zone'?", answer: "The center of the screen. The bottom and right sides are often covered by the caption and like/share buttons." }
+    ],
+    relatedTools: ["instagram-image-resizer", "youtube-thumbnail-resizer"]
+  },
+  "youtube-thumbnail-resizer": {
+    slug: "youtube-thumbnail-resizer",
+    name: "YouTube Thumbnail Resizer",
+    shortName: "YouTube",
+    description: "Make your YouTube thumbnails pop in HD",
+    longDescription: "Resize and format images for YouTube Thumbnails (1280x720). Ensures your thumbnail meets the 2MB limit and looks crisp on all devices.",
+    category: "social",
+    icon: "Youtube",
+    acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
+    outputType: "image/jpeg",
+    whatItDoes: "Resizes images to 1280x720 (16:9) and optimizes file size for YouTube. It ensures your thumbnail isn't rejected for being too large or too small.",
+    whenToUse: "Always use this before uploading a video thumbnail to ensure it meets YouTube's requirements (under 2MB) and looks high-quality.",
+    tips: [
+      "Standard YouTube thumbnail size is 1280x720 pixels (16:9)",
+      "Use high-contrast images and large text for better CTR",
+      "Keep main subjects away from the bottom-right corner (timestamp overlay)",
+      "We automatically optimize file size to stay under the 2MB limit"
+    ],
+    faq: [
+      { question: "What is the best size for YouTube thumbnails?", answer: "1280x720 pixels is the standard HD size recommended by YouTube." },
+      { question: "Why is my thumbnail rejected?", answer: "It might be larger than 2MB. Our tool automatically compresses it to fit within this limit." },
+      { question: "Should I use JPG or PNG?", answer: "JPG is usually better for keeping file size down, but PNG is good for graphics. We support both." },
+      { question: "Can I resize for channel art?", answer: "Yes, use the 'Channel Art' preset (2560x1440) to ensure your banner looks good on TV, desktop, and mobile." }
+    ],
+    relatedTools: ["exact-pixel-resizer", "smart-optimizer"]
+  },
+  "twitter-image-resizer": {
+    slug: "twitter-image-resizer",
+    name: "X (Twitter) Image Resizer",
+    shortName: "X / Twitter",
+    description: "Optimize images for X/Twitter posts and headers",
+    longDescription: "Format images for X (Twitter) posts, headers, and profile pictures. Avoids awkward cropping in the timeline and ensures your profile looks professional.",
+    category: "social",
+    icon: "Twitter",
+    acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
+    outputType: "image/jpeg",
+    whatItDoes: "Resizes images to X/Twitter's recommended dimensions for in-stream previews, headers, and profile pictures.",
+    whenToUse: "Use this before tweeting images to ensure they display fully in the timeline, or when updating your profile branding.",
+    tips: [
+      "Standard in-stream posts look best at 16:9 (1600x900)",
+      "Header images are 1500x500 pixels - keep key info in the center",
+      "Profile pictures are circular, but upload a 400x400 square",
+      "Tall images (3:4) now work better on mobile, but 16:9 is safest for desktop"
+    ],
+    faq: [
+      { question: "Does Twitter crop images?", answer: "It used to strictly crop to 16:9, but now supports taller images on mobile. However, 16:9 is still the safest bet for consistent display across all devices." },
+      { question: "What is the best size for a header?", answer: "1500x500 pixels. Note that parts of the top and bottom may be cropped on different screen sizes." },
+      { question: "Can I upload PNGs?", answer: "Yes, PNGs are supported and great for graphics. For photos, JPG is recommended for smaller file sizes." },
+      { question: "What is the max file size?", answer: "Twitter supports up to 5MB for photos on mobile and 15MB on web. We optimize your image to stay well within these limits." }
+    ],
+    relatedTools: ["linkedin-image-resizer", "aspect-ratio-converter"]
+  },
+  "linkedin-image-resizer": {
+    slug: "linkedin-image-resizer",
+    name: "LinkedIn Image Resizer",
+    shortName: "LinkedIn",
+    description: "Professional image sizing for LinkedIn posts and banners",
+    longDescription: "Resize images for LinkedIn posts, articles, and personal/company banners. Maintain a professional look with correct dimensions and avoid blurry or cropped images.",
+    category: "social",
+    icon: "Linkedin",
+    acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
+    outputType: "image/jpeg",
+    whatItDoes: "Adapts your images to LinkedIn's professional layout requirements. It ensures your posts, articles, and profile images look sharp and credible.",
+    whenToUse: "Use this for company updates, profile background banners, shared articles, and professional headshots.",
+    tips: [
+      "Standard link posts look best at 1200x627 pixels",
+      "Personal profile banners should be 1584x396 pixels",
+      "Company page banners are slightly different: 1128x191 pixels",
+      "Square images (1200x1200) are becoming popular for engagement"
+    ],
+    faq: [
+      { question: "What is the best size for a LinkedIn post?", answer: "1200x627 pixels is standard for link shares. For image-only posts, 1200x1200 (Square) or 1080x1350 (Portrait) works well." },
+      { question: "Why is my banner blurry?", answer: "Banners are often stretched. Ensure you upload at least 1584x396 for personal profiles to maintain quality." },
+      { question: "Can I use this for my profile picture?", answer: "Yes, use the Profile Picture preset (400x400) to get a perfect square ready for upload." },
+      { question: "Does LinkedIn compress images?", answer: "Yes, heavily. Our tool optimizes the image before upload to minimize the quality loss from LinkedIn's compression." }
+    ],
+    relatedTools: ["twitter-image-resizer", "exact-pixel-resizer"]
+  },
+  "aspect-ratio-converter": {
+    slug: "aspect-ratio-converter",
+    name: "Aspect Ratio Converter",
+    shortName: "Ratio Convert",
+    description: "Change image aspect ratio (16:9, 1:1, 4:5) without distortion",
+    longDescription: "Easily convert images to any standard aspect ratio like 16:9, 4:3, or 1:1. Choose between 'Cover' mode to crop and fill the frame, or 'Contain' mode to add background bars (letterboxing) and preserve the entire image.",
+    category: "edit",
+    icon: "Ratio",
+    acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
+    outputType: "image/jpeg",
+    whatItDoes: "This tool changes the proportional relationship between your image's width and height. It can either crop your image to fit a new shape (like turning a landscape photo into a square) or add background bars to fit the shape without losing any part of the image.",
+    whenToUse: "Use this when you need your image to fit a specific shape container—like a TV screen (16:9), a standard print (4:6), or a social media feed—but don't have a strict requirement for the exact pixel count.",
+    tips: [
+      "Use 'Cover' mode if you want the image to fill the entire space (some parts will be cropped)",
+      "Use 'Contain' mode if you need to show the whole image (bars will be added)",
+      "Common ratios: 16:9 (Video), 1:1 (Square), 4:5 (Portrait), 9:16 (Stories)",
+      "We automatically center the image for the best composition"
+    ],
+    faq: [
+      { question: "What is aspect ratio?", answer: "Aspect ratio is the ratio of the width to the height of an image. For example, 16:9 means for every 16 units of width, there are 9 units of height." },
+      { question: "Will my image be stretched?", answer: "No. We never stretch your images. We either crop them ('Cover') or add background bars ('Contain') to fit the new ratio." },
+      { question: "What color are the background bars?", answer: "In 'Contain' mode, you can choose between white, black, or transparent (for PNG/WebP) backgrounds." },
+      { question: "Can I use custom ratios?", answer: "This tool focuses on standard presets. For custom dimensions, use the Exact Pixel Resizer." }
+    ],
+    relatedTools: ["exact-pixel-resizer", "crop-image", "resize-image"]
+  },
+  "resize-image-to-exact-pixels": {
+    slug: "resize-image-to-exact-pixels",
+    name: "Exact Pixel Resizer",
+    shortName: "Pixel Resize",
+    description: "Resize image to specific width and height (e.g. 1920x1080)",
+    longDescription: "Force an image to an exact pixel size (e.g., 1200x628). Perfect for strict submission requirements like ad banners, government forms, or specific website headers. Includes options to crop, letterbox, or stretch.",
+    category: "edit",
+    icon: "Maximize",
+    acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
+    outputType: "image/jpeg",
+    whatItDoes: "This tool resizes your image to the exact width and height numbers you enter. Unlike standard resizing, it gives you control over how the image fits into those new dimensions: crop to fill, fit inside with bars, or stretch.",
+    whenToUse: "Use this when a platform or form explicitly states 'Image must be exactly X by Y pixels'. Common for display ads, app store screenshots, and passport photo uploads.",
+    tips: [
+      "Check if the requirement allows for 'Letterboxing' (adding bars) before using Contain mode",
+      "'Cover' mode is usually best for banners to avoid empty space",
+      "Avoid 'Stretch' unless specifically required, as it distorts the image",
+      "Use high quality settings to prevent pixelation when resizing up"
+    ],
+    faq: [
+      { question: "Will my image look distorted?", answer: "Only if you choose 'Stretch' mode. 'Cover' mode crops the image to fit, and 'Contain' mode adds background bars to preserve proportions." },
+      { question: "What if I don't know the exact pixels?", answer: "If you just need a standard shape (like square), try the Aspect Ratio Converter instead." },
+      { question: "Does this change the file size (MB)?", answer: "Yes, changing dimensions affects file size. Smaller dimensions usually mean a smaller file size." },
+      { question: "Can I change the DPI?", answer: "This tool changes pixel dimensions (screen resolution). DPI is a print setting and doesn't affect how the image looks on screens." }
+    ],
+    relatedTools: ["aspect-ratio-converter", "compress-jpg", "crop-image"]
   },
   "website-optimizer": {
     slug: "website-optimizer",
@@ -589,11 +747,12 @@ export const toolsConfig: Record<string, ToolConfig> = {
       { question: "Do you keep my photos?", answer: "No. Your photos never leave your computer. All processing is client-side." },
       { question: "Can I mix different formats?", answer: "Yes, you can upload JPGs, PNGs, and WebPs together in the same batch." }
     ],
-    relatedTools: ["smart-optimizer", "compress-jpg", "compress-png", "social-media-compressor", "website-optimizer"]
+    relatedTools: ["smart-optimizer", "compress-jpg", "compress-png", "website-optimizer"]
   }
 }
 
 export const toolCategories: { id: ToolCategory; name: string; description: string }[] = [
+  { id: "social", name: "Social Media", description: "Optimize for platforms" },
   { id: "convert", name: "Convert", description: "Change image formats" },
   { id: "compress", name: "Compress", description: "Reduce file sizes" },
   { id: "edit", name: "Edit", description: "Modify images" },

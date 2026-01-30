@@ -1,15 +1,17 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import { ImageDropzone } from "@/components/image-dropzone"
-import { ImagePreview } from "@/components/image-preview"
+import { useState, useCallback, useEffect } from "react"
+import { ToolContentLayout } from "@/components/tools/shared/tool-content-layout"
+import { CanvasPreview } from "@/components/tools/canvas-preview"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { Loader2, Download, RefreshCw, CheckCircle, TrendingDown } from "lucide-react"
+import { Loader2, Download, CheckCircle, TrendingDown, ArrowRight, Pencil } from "lucide-react"
 import { compressImage, downloadBlob, getOutputFilename, ProcessingResult } from "@/lib/image-processor"
+import { useImagePipeline } from "@/hooks/use-image-pipeline"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface CompressorToolProps {
   acceptedTypes: string[]
@@ -22,25 +24,26 @@ function formatFileSize(bytes: number): string {
 }
 
 export function CompressorTool({ acceptedTypes }: CompressorToolProps) {
-  const [file, setFile] = useState<File | null>(null)
-  // Default to 90% quality for better results (was 80%)
+  // Use pipeline for file handling and dimensions
+  const {
+    file,
+    imageSrc,
+    imageDimensions,
+    handleImageSelect,
+    handleRemove,
+  } = useImagePipeline()
+
   const [quality, setQuality] = useState(90)
   const [targetSize, setTargetSize] = useState<string>("")
   const [isProcessing, setIsProcessing] = useState(false)
   const [result, setResult] = useState<ProcessingResult | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const handleImageSelect = useCallback((selectedFile: File) => {
-    setFile(selectedFile)
+  // Reset result when file changes
+  useEffect(() => {
     setResult(null)
     setError(null)
-  }, [])
-
-  const handleRemove = useCallback(() => {
-    setFile(null)
-    setResult(null)
-    setError(null)
-  }, [])
+  }, [file])
 
   const handleCompress = useCallback(async () => {
     if (!file) return
@@ -77,159 +80,164 @@ export function CompressorTool({ acceptedTypes }: CompressorToolProps) {
     }
   }, [file, quality, targetSize])
 
-  const handleDownload = useCallback(() => {
-    if (!result || !file) return
-    const filename = getOutputFilename(file.name, file.type)
-    downloadBlob(result.blob, filename)
-  }, [result, file])
-
-  const handleCompressAnother = useCallback(() => {
-    setFile(null)
-    setResult(null)
-    setError(null)
-  }, [])
-
   const savedPercentage = file && result
     ? Math.round((1 - result.size / file.size) * 100)
     : 0
 
+  if (result && file) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-300">
+        <Card className="border-border/50 shadow-lg overflow-hidden">
+          <CardContent className="pt-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2 text-primary">
+                <CheckCircle className="h-5 w-5" />
+                <span className="font-medium">Compression Complete!</span>
+              </div>
+
+              {savedPercentage > 0 && (
+                <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 text-primary">
+                  <TrendingDown className="h-5 w-5" />
+                  <span className="font-medium">
+                    Reduced by {savedPercentage}% ({formatFileSize(file.size)} → {formatFileSize(result.size)})
+                  </span>
+                </div>
+              )}
+
+              <div className="relative aspect-video bg-muted rounded-lg overflow-hidden flex items-center justify-center">
+                <img
+                  src={result.url || "/placeholder.svg"}
+                  alt="Compressed"
+                  className="max-w-full max-h-[300px] object-contain"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-4">
+                <Button variant="outline" onClick={() => setResult(null)}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Adjust Settings
+                </Button>
+                <Button onClick={() => downloadBlob(result.blob, getOutputFilename(file.name, file.type))} className="w-full">
+                  <Download className="mr-2 h-4 w-4" />
+                  Download
+                </Button>
+              </div>
+              <Button variant="ghost" onClick={handleRemove} className="w-full mt-2">Start Over</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-6">
-      {!file ? (
-        <ImageDropzone
-          onImageSelect={handleImageSelect}
-          acceptedTypes={acceptedTypes}
-        />
-      ) : (
-        <>
-          <ImagePreview file={file} onRemove={handleRemove} />
-
-          {!result && (
-            <Card>
-              <CardContent className="pt-6">
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="quality">Compression Quality</Label>
-                      <span className="text-sm text-muted-foreground">{quality}%</span>
-                    </div>
-                    <Slider
-                      id="quality"
-                      min={90}
-                      max={100}
-                      step={1}
-                      value={[quality]}
-                      onValueChange={([value]) => setQuality(value)}
-                      className="w-full"
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Quality floor set to 90% to prevent artifacts. Recommended: 92-95%.
-                    </p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <Label htmlFor="targetSize">Target Size (optional)</Label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        id="targetSize"
-                        type="number"
-                        placeholder="e.g., 500"
-                        value={targetSize}
-                        onChange={(e) => setTargetSize(e.target.value)}
-                        className="w-32"
-                      />
-                      <span className="text-sm text-muted-foreground">KB</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      Leave empty to use quality setting only, or set a target file size.
-                    </p>
-                  </div>
-
-                  {error && (
-                    <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-                      {error}
-                    </div>
-                  )}
-
-                  <Button
-                    onClick={handleCompress}
-                    disabled={isProcessing}
-                    className="w-full"
-                    size="lg"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Compressing...
-                      </>
-                    ) : (
-                      "Compress Image"
-                    )}
-                  </Button>
+    <ToolContentLayout
+      file={file}
+      onImageSelect={handleImageSelect}
+      onRemove={handleRemove}
+      acceptedTypes={acceptedTypes}
+      preview={
+        imageSrc && imageDimensions && (
+          <CanvasPreview
+            imageSrc={imageSrc}
+            width={imageDimensions.width}
+            height={imageDimensions.height}
+            fit="contain" // Preview original full image
+            maintainAspectRatio={true}
+            className="max-w-full max-h-[500px]"
+          />
+        )
+      }
+      controls={
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="quality">Compression Quality</Label>
+                  <span className="text-sm text-muted-foreground">{quality}%</span>
                 </div>
-              </CardContent>
-            </Card>
-          )}
+                <Slider
+                  id="quality"
+                  min={1}
+                  max={100}
+                  step={1}
+                  value={[quality]}
+                  onValueChange={([value]) => setQuality(value)}
+                  className="w-full"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Higher quality means larger file size. Recommended: 80-90%.
+                </p>
+              </div>
 
-          {result && (
-            <Card className="border-primary/50">
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-primary">
-                    <CheckCircle className="h-5 w-5" />
-                    <span className="font-medium">Compression Complete!</span>
+              <div className="space-y-3">
+                <Label htmlFor="targetSize">Target Size (optional)</Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    id="targetSize"
+                    type="number"
+                    placeholder="e.g., 500"
+                    value={targetSize}
+                    onChange={(e) => setTargetSize(e.target.value)}
+                    className="w-32"
+                  />
+                  <span className="text-sm text-muted-foreground">KB</span>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  We'll try to compress under this size.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      }
+      actions={
+        <div className="space-y-6">
+          <Card>
+            <CardContent className="pt-6 space-y-4">
+              <div className="space-y-2">
+                <Label>Summary</Label>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <div className="flex justify-between">
+                    <span>Original Size:</span>
+                    <span className="font-medium text-foreground">{file ? formatFileSize(file.size) : "-"}</span>
                   </div>
-
-                  {savedPercentage > 0 && (
-                    <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/10 text-primary">
-                      <TrendingDown className="h-5 w-5" />
-                      <span className="font-medium">
-                        Reduced by {savedPercentage}% ({formatFileSize(file!.size)} → {formatFileSize(result.size)})
-                      </span>
-                    </div>
-                  )}
-
-                  <div className="relative aspect-video bg-muted rounded-lg overflow-hidden">
-                    <img
-                      src={result.url || "/placeholder.svg"}
-                      alt="Compressed"
-                      className="w-full h-full object-contain"
-                      style={{ imageRendering: 'high-quality' }}
-                      loading="eager"
-                    />
-                  </div>
-
-                  <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Original:</span>{" "}
-                      <span className="font-medium text-foreground">{formatFileSize(file!.size)}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Compressed:</span>{" "}
-                      <span className="font-medium text-foreground">{formatFileSize(result.size)}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Dimensions:</span>{" "}
-                      <span className="font-medium text-foreground">{result.width} x {result.height}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button onClick={handleDownload} className="flex-1" size="lg">
-                      <Download className="mr-2 h-4 w-4" />
-                      Download
-                    </Button>
-                    <Button onClick={handleCompressAnother} variant="outline" className="flex-1 bg-transparent" size="lg">
-                      <RefreshCw className="mr-2 h-4 w-4" />
-                      Compress Another
-                    </Button>
+                  <div className="flex justify-between">
+                    <span>Target Quality:</span>
+                    <span className="font-medium text-foreground">{quality}%</span>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+
+              <Button
+                onClick={handleCompress}
+                disabled={isProcessing}
+                className="w-full"
+                size="lg"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Compressing...
+                  </>
+                ) : (
+                  <>
+                    Compress Image
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
-        </>
-      )}
-    </div>
+        </div>
+      }
+    />
   )
 }

@@ -23,7 +23,9 @@ export const metadata: Metadata = {
   },
 }
 
-export default function TiffConverterPage() {
+export default function TiffPage() {
+  if (!tool) return null
+
   return (
     <ToolLayout tool={tool}>
       <TiffConverterTool />

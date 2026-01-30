@@ -24,6 +24,8 @@ export const metadata: Metadata = {
 }
 
 export default function SmartOptimizerPage() {
+  if (!tool) return null
+
   return (
     <ToolLayout tool={tool}>
       <SmartOptimizerTool />

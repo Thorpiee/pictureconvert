@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Loader2, Download, RefreshCw, Info, ArrowRight, Layers, Trash2 } from "lucide-react"
+import { Loader2, Download, RefreshCw, Info, ArrowRight, Layers, Trash2, Check } from "lucide-react"
 import { compressImage } from "@/lib/image-processor"
 import { ImageDropzone } from "@/components/image-dropzone"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -26,6 +26,8 @@ interface ProcessedFile {
   error?: string
 }
 
+import { ToolContentLayout } from "./shared/tool-content-layout"
+
 export function BulkCompressorTool() {
   const [files, setFiles] = useState<ProcessedFile[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
@@ -38,7 +40,10 @@ export function BulkCompressorTool() {
   }, [])
 
   const handleFilesSelect = useCallback((selectedFiles: File[]) => {
-    const newFiles = selectedFiles.map(f => ({
+    // Handle both single File and File[] inputs
+    const fileArray = Array.isArray(selectedFiles) ? selectedFiles : [selectedFiles]
+
+    const newFiles = fileArray.map(f => ({
       originalFile: f,
       blob: new Blob(),
       status: "pending" as const,
@@ -64,13 +69,13 @@ export function BulkCompressorTool() {
   const handleCompressAll = useCallback(async () => {
     setIsProcessing(true)
     setProgress(0)
-    
+
     const results = [...files]
     let completed = 0
 
     // Process in batches of 3 to avoid freezing UI
     const batchSize = 3
-    
+
     for (let i = 0; i < results.length; i += batchSize) {
       const batch = results.slice(i, i + batchSize).map((item, batchIndex) => {
         const globalIndex = i + batchIndex
@@ -79,7 +84,10 @@ export function BulkCompressorTool() {
           setFiles([...results]) // Update UI
 
           try {
-            const compressed = await compressImage(item.originalFile, { quality: 0.8 })
+            const compressed = await compressImage(item.originalFile, {
+              quality: 0.8,
+              skipQualityCheck: true
+            })
             results[globalIndex].blob = compressed.blob
             results[globalIndex].newSize = compressed.size
             results[globalIndex].status = "done"
@@ -94,7 +102,7 @@ export function BulkCompressorTool() {
           }
         })()
       })
-      
+
       await Promise.all(batch)
     }
 
@@ -106,7 +114,7 @@ export function BulkCompressorTool() {
           zip.file(`optimized-${r.originalFile.name}`, r.blob)
         }
       })
-      
+
       const content = await zip.generateAsync({ type: "blob" })
       setZipBlob(content)
     }
@@ -140,104 +148,146 @@ export function BulkCompressorTool() {
   const isDone = files.length > 0 && files.every(f => f.status === "done" || f.status === "error")
 
   return (
-    <div className="space-y-6">
-      {files.length === 0 ? (
+    <ToolContentLayout
+      file={files.length > 0 ? new File([], "dummy") : null}
+      onImageSelect={(f) => handleFilesSelect(Array.isArray(f) ? f : [f])}
+      onRemove={handleReset}
+      dropzone={
         <ImageDropzone
           onImageSelect={(f) => handleFilesSelect(Array.isArray(f) ? f : [f])}
           acceptedTypes={["image/jpeg", "image/png", "image/webp"]}
           multiple={true}
         />
-      ) : (
-        <Card className="border-border/50 shadow-lg">
-          <CardContent className="pt-6">
-            <div className="space-y-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <h3 className="font-medium flex items-center gap-2">
-                    <Layers className="h-4 w-4" />
-                    Batch Queue ({files.length})
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Total Size: {formatFileSize(totalOriginalSize)}
+      }
+      preview={
+        <div className="w-full h-full overflow-y-auto custom-scrollbar p-4 space-y-2 max-h-[500px]">
+          {files.map((file, idx) => (
+            <div key={idx} className="flex items-center justify-between p-3 bg-background/80 backdrop-blur-sm rounded-lg text-sm border border-border/50 shadow-sm">
+              <div className="flex items-center gap-3 overflow-hidden">
+                <div className="w-8 h-8 rounded bg-muted flex items-center justify-center shrink-0">
+                  {file.status === "processing" ? (
+                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  ) : file.status === "done" ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <span className="text-xs text-muted-foreground">IMG</span>
+                  )}
+                </div>
+                <div className="truncate">
+                  <p className="truncate font-medium">{file.originalFile.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatFileSize(file.originalSize)}
+                    {file.newSize > 0 && (
+                      <>
+                        {" -> "}
+                        <span className="text-green-600 font-medium">{formatFileSize(file.newSize)}</span>
+                      </>
+                    )}
                   </p>
                 </div>
-                {isDone && (
-                  <div className="text-right">
-                    <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50 dark:bg-green-900/20 dark:border-green-800">
-                      Saved {formatFileSize(totalSaved)}
-                    </Badge>
-                  </div>
-                )}
               </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => handleRemove(idx)}
+                disabled={isProcessing}
+                className="h-8 w-8 text-muted-foreground hover:text-destructive"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+        </div>
+      }
+      controls={
+        <Card className="h-full">
+          <CardContent className="pt-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-medium flex items-center gap-2">
+                <Layers className="h-4 w-4" />
+                Batch Summary
+              </h3>
+              <Badge variant="secondary">{files.length} files</Badge>
+            </div>
 
-              {/* File List */}
-              <div className="max-h-[300px] overflow-y-auto space-y-2 pr-2 custom-scrollbar">
-                {files.map((file, idx) => (
-                  <div key={idx} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg text-sm border border-border/50">
-                    <div className="flex items-center gap-3 overflow-hidden">
-                      <div className="w-8 h-8 rounded bg-muted flex items-center justify-center shrink-0">
-                        {file.status === "processing" ? (
-                          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                        ) : file.status === "done" ? (
-                          <Check className="h-4 w-4 text-green-500" />
-                        ) : (
-                          <span className="text-xs text-muted-foreground">IMG</span>
-                        )}
-                      </div>
-                      <div className="truncate">
-                        <p className="truncate font-medium">{file.originalFile.name}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {formatFileSize(file.originalSize)}
-                          {file.newSize > 0 && ` → ${formatFileSize(file.newSize)}`}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {!isProcessing && file.status === "pending" && (
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleRemove(idx)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    )}
-                  </div>
-                ))}
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Total Size:</span>
+                <span>{formatFileSize(totalOriginalSize)}</span>
               </div>
-
-              {isProcessing && (
-                <div className="space-y-2">
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Processing...</span>
-                    <span>{Math.round(progress)}%</span>
-                  </div>
-                  <Progress value={progress} className="h-2" />
+              {totalSaved > 0 && (
+                <div className="flex justify-between text-green-600 font-medium">
+                  <span>Saved:</span>
+                  <span>{formatFileSize(totalSaved)} ({(totalSaved / totalOriginalSize * 100).toFixed(0)}%)</span>
                 </div>
               )}
-
-              <div className="flex gap-3 pt-2">
-                {!isDone && !isProcessing && (
-                  <Button onClick={handleCompressAll} className="flex-1" size="lg">
-                    Compress All Images
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                )}
-
-                {zipBlob && (
-                  <Button onClick={handleDownloadZip} className="flex-1" size="lg" variant="default">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download ZIP
-                  </Button>
-                )}
-
-                {(!isProcessing || isDone) && (
-                  <Button onClick={handleReset} variant="outline" className={isDone ? "flex-1" : ""} size="lg">
-                    <RefreshCw className={isDone ? "mr-2 h-4 w-4" : "h-4 w-4"} />
-                    {isDone ? "Start New Batch" : ""}
-                  </Button>
-                )}
-              </div>
             </div>
+
+            {isProcessing && (
+              <div className="space-y-2">
+                <div className="flex justify-between text-xs">
+                  <span>Processing...</span>
+                  <span>{progress.toFixed(0)}%</span>
+                </div>
+                <Progress value={progress} className="h-2" />
+              </div>
+            )}
           </CardContent>
         </Card>
-      )}
-    </div>
+      }
+      actions={
+        <div className="space-y-4">
+          {!isDone ? (
+            <Button
+              onClick={handleCompressAll}
+              disabled={isProcessing || files.length === 0}
+              className="w-full"
+              size="lg"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Compressing...
+                </>
+              ) : (
+                <>
+                  Compress All
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+          ) : (
+            <Button
+              onClick={handleDownloadZip}
+              disabled={!zipBlob}
+              className="w-full"
+              size="lg"
+              variant="default"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Download ZIP
+            </Button>
+          )}
+
+          <Button
+            variant="outline"
+            onClick={handleReset}
+            disabled={isProcessing}
+            className="w-full"
+          >
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Start Over
+          </Button>
+
+          {files.some(f => f.status === "error") && (
+            <Alert variant="destructive">
+              <AlertDescription>
+                Some files failed to process.
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+      }
+    />
   )
 }

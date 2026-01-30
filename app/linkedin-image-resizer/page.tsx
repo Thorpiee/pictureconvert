@@ -1,10 +1,11 @@
+
 import { Metadata } from "next"
 import { ToolLayout } from "@/components/tool-layout"
-import { BulkCompressorTool } from "@/components/tools/bulk-compressor-tool"
+import { LinkedinResizerTool } from "@/components/tools/linkedin-resizer-tool"
 import { getToolBySlug } from "@/lib/tools-config"
 import { notFound } from "next/navigation"
 
-const tool = getToolBySlug("bulk-compressor")
+const tool = getToolBySlug("linkedin-image-resizer")
 
 if (!tool) {
   notFound()
@@ -23,12 +24,10 @@ export const metadata: Metadata = {
   },
 }
 
-export default function BulkCompressorPage() {
-  if (!tool) return null
-
+export default function Page() {
   return (
     <ToolLayout tool={tool}>
-      <BulkCompressorTool />
+      <LinkedinResizerTool />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

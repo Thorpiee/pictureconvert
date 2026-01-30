@@ -7,8 +7,6 @@ import { motion, useReducedMotion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
-import { PrivacyBadge } from "@/components/privacy-badge"
-import { AdPlaceholder } from "@/components/ad-placeholder"
 import { type ToolConfig, getToolBySlug } from "@/lib/tools-config"
 import {
   ArrowRightLeft,
@@ -19,7 +17,23 @@ import {
   ShieldOff,
   Image,
   Code,
-  ArrowRight, Home, ChevronRight, Shield, Zap, CheckCircle2
+  Gauge,
+  Share2,
+  Layout,
+  Layers,
+  Instagram,
+  Youtube,
+  Twitter,
+  Linkedin,
+  Ratio,
+  Maximize,
+  Music2,
+  ArrowRight,
+  Home,
+  ChevronRight,
+  Shield,
+  Zap,
+  CheckCircle2,
 } from "lucide-react"
 
 const iconMap = {
@@ -31,6 +45,18 @@ const iconMap = {
   ShieldOff,
   Image,
   Code,
+  Gauge,
+  Share2,
+  Layout,
+  Layers,
+  Instagram,
+  Youtube,
+  Twitter,
+  Linkedin,
+  Ratio,
+  Maximize,
+  Music2,
+  TikTok: Music2,
 }
 
 interface ToolLayoutProps {
@@ -110,7 +136,7 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
             {breadcrumbContent}
           </nav>
         ) : (
-          <motion.nav 
+          <motion.nav
             className="max-w-4xl mx-auto mb-6"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -127,7 +153,7 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
             {headerContent}
           </div>
         ) : (
-          <motion.div 
+          <motion.div
             className="max-w-3xl mx-auto text-center mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -141,9 +167,6 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
         <div className="max-w-4xl mx-auto">
           {children}
         </div>
-
-        {/* Ad Placeholder */}
-        <AdPlaceholder className="my-12" />
 
         {/* SEO Content */}
         <div className="max-w-3xl mx-auto mt-12 space-y-12">
@@ -227,7 +250,7 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
             </div>
           </section>
         ) : (
-          <motion.section 
+          <motion.section
             className="max-w-5xl mx-auto mt-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -278,9 +301,6 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
             </div>
           </motion.section>
         )}
-
-        {/* Bottom Ad */}
-        <AdPlaceholder className="mt-12" />
       </div>
     </div>
   )

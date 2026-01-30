@@ -21,6 +21,13 @@ import {
   Share2,
   Layout,
   Layers,
+  Instagram,
+  Youtube,
+  Twitter,
+  Linkedin,
+  Ratio,
+  Maximize,
+  Music2,
 } from "lucide-react"
 
 const iconMap = {
@@ -36,6 +43,14 @@ const iconMap = {
   Share2,
   Layout,
   Layers,
+  Instagram,
+  Youtube,
+  Twitter,
+  Linkedin,
+  Ratio,
+  Maximize,
+  Music2,
+  TikTok: Music2,
 }
 
 interface ToolCardProps {

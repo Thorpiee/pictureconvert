@@ -1,17 +1,17 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Loader2, Download, RefreshCw, Info, ArrowRight, Settings2 } from "lucide-react"
-import { convertImage, type ProcessingResult, downloadBlob } from "@/lib/image-processor"
-import { ImageDropzone } from "@/components/image-dropzone"
-import { ImagePreview } from "@/components/image-preview"
+import { Loader2, Download, RefreshCw, Info, ArrowRight } from "lucide-react"
+import { downloadBlob } from "@/lib/image-processor"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Slider } from "@/components/ui/slider"
+import { ToolContentLayout } from "@/components/tools/shared/tool-content-layout"
+import { CanvasPreview } from "@/components/tools/canvas-preview"
+import { useImagePipeline } from "@/hooks/use-image-pipeline"
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -26,194 +26,177 @@ function getOutputFilename(originalName: string, format: string): string {
 }
 
 export function BmpConverterTool() {
-  const [file, setFile] = useState<File | null>(null)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [result, setResult] = useState<ProcessingResult | null>(null)
-  const [error, setError] = useState<string | null>(null)
   const [outputFormat, setOutputFormat] = useState<"image/jpeg" | "image/png">("image/png")
   const [quality, setQuality] = useState(95)
 
-  const handleImageSelect = useCallback((selectedFile: File) => {
-    setFile(selectedFile)
-    setResult(null)
-    setError(null)
-  }, [])
+  const {
+    file,
+    imageSrc,
+    imageDimensions,
+    result,
+    isProcessing,
+    error,
+    handleImageSelect,
+    handleRemove,
+    processImage,
+    resetResult
+  } = useImagePipeline()
 
-  const handleRemove = useCallback(() => {
-    setFile(null)
-    setResult(null)
-    setError(null)
-  }, [])
+  const handleConvert = () => {
+    processImage({
+      format: outputFormat,
+      quality: outputFormat === "image/jpeg" ? quality / 100 : 1.0,
+      width: imageDimensions?.width || 0,
+      height: imageDimensions?.height || 0
+    })
+  }
 
-  const handleConvert = useCallback(async () => {
-    if (!file) return
-
-    setIsProcessing(true)
-    setError(null)
-
-    try {
-      // Options: quality is ignored for PNG (lossless)
-      const options = {
-        quality: outputFormat === "image/jpeg" ? quality / 100 : 1.0
-      }
-      
-      const conversionResult = await convertImage(file, outputFormat, options)
-      setResult(conversionResult)
-    } catch (err) {
-      console.error("Conversion error:", err)
-      setError(err instanceof Error ? err.message : "Failed to convert image")
-    } finally {
-      setIsProcessing(false)
-    }
-  }, [file, outputFormat, quality])
-
-  const handleDownload = useCallback(() => {
+  const handleDownload = () => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name, outputFormat)
     downloadBlob(result.blob, filename)
-  }, [result, file, outputFormat])
+  }
 
-  const handleConvertAnother = useCallback(() => {
-    setFile(null)
-    setResult(null)
-    setError(null)
-  }, [])
+  if (result) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-300">
+        <Card className="border-border/50 shadow-lg overflow-hidden">
+          <div className="relative aspect-video bg-muted/30 flex items-center justify-center p-6 border-b">
+            <img
+              src={result.url}
+              alt="Processed"
+              className="max-w-full max-h-[400px] object-contain shadow-sm rounded-md"
+            />
+          </div>
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50 mb-6">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Original</p>
+                <p className="text-lg font-semibold">{formatFileSize(file!.size)}</p>
+              </div>
+              <ArrowRight className="h-5 w-5 text-muted-foreground/50" />
+              <div className="space-y-1 text-right">
+                <p className="text-sm font-medium text-muted-foreground">
+                  {outputFormat === "image/png" ? "PNG" : "JPG"}
+                </p>
+                <p className="text-lg font-bold text-green-600 dark:text-green-400">
+                  {formatFileSize(result.size)}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Button variant="outline" onClick={resetResult}>
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Convert Another
+              </Button>
+              <Button onClick={handleDownload} className="w-full">
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </Button>
+            </div>
+            <Button variant="ghost" onClick={handleRemove} className="w-full mt-2">Start Over</Button>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
-    <div className="space-y-6">
-      {!file ? (
-        <ImageDropzone
-          onImageSelect={handleImageSelect}
-          acceptedTypes={["image/bmp", "image/x-bmp"]}
-        />
-      ) : (
-        <>
-          <ImagePreview file={file} onRemove={handleRemove} />
+    <ToolContentLayout
+      file={file}
+      onImageSelect={handleImageSelect}
+      onRemove={handleRemove}
+      acceptedTypes={["image/bmp", "image/x-bmp"]}
+      preview={
+        imageSrc && imageDimensions && (
+          <CanvasPreview
+            imageSrc={imageSrc}
+            width={imageDimensions.width}
+            height={imageDimensions.height}
+            fit="contain"
+            maintainAspectRatio={true}
+            className="max-w-full max-h-[500px]"
+          />
+        )
+      }
+      controls={
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Output Format</Label>
+              <Select
+                value={outputFormat}
+                onValueChange={(v: any) => setOutputFormat(v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select format" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="image/png">PNG (Lossless)</SelectItem>
+                  <SelectItem value="image/jpeg">JPG (Small Size)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Controls Card */}
-          <Card className="border-border/50 shadow-lg">
-            <CardContent className="pt-6">
-              <div className="space-y-6">
-                {!result ? (
-                  <>
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label>Output Format</Label>
-                        <Select 
-                          value={outputFormat} 
-                          onValueChange={(v: any) => setOutputFormat(v)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select format" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="image/png">PNG (Lossless)</SelectItem>
-                            <SelectItem value="image/jpeg">JPG (Small Size)</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {outputFormat === "image/jpeg" && (
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <Label>Quality: {quality}%</Label>
-                          </div>
-                          <Slider
-                            min={80}
-                            max={100}
-                            step={1}
-                            value={[quality]}
-                            onValueChange={([v]) => setQuality(v)}
-                          />
-                          <p className="text-xs text-muted-foreground">
-                            Recommended: 92-95% for high quality
-                          </p>
-                        </div>
-                      )}
-
-                      <div className="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
-                        <p className="flex items-start gap-2">
-                          <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                          <span>
-                            {outputFormat === "image/png" 
-                              ? "PNG preserves full color depth and is lossless." 
-                              : "JPG offers smaller file sizes but is lossy."}
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-
-                    {error && (
-                      <Alert variant="destructive">
-                        <AlertDescription>{error}</AlertDescription>
-                      </Alert>
-                    )}
-
-                    <Button
-                      onClick={handleConvert}
-                      disabled={isProcessing}
-                      className="w-full"
-                      size="lg"
-                    >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Converting...
-                        </>
-                      ) : (
-                        <>
-                          Convert BMP
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50">
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Original</p>
-                          <p className="text-lg font-semibold">{formatFileSize(file.size)}</p>
-                        </div>
-                        <ArrowRight className="h-5 w-5 text-muted-foreground/50" />
-                        <div className="space-y-1 text-right">
-                          <p className="text-sm font-medium text-muted-foreground">
-                            {outputFormat === "image/png" ? "PNG" : "JPG"}
-                          </p>
-                          <p className="text-lg font-semibold text-primary">{formatFileSize(result.size)}</p>
-                        </div>
-                      </div>
-
-                      {/* Preview Image */}
-                      {result && (
-                        <div className="mt-4 relative aspect-video bg-muted rounded-lg overflow-hidden border">
-                          <img 
-                            src={result.url} 
-                            alt={`Converted ${file.name}`}
-                            className="object-contain w-full h-full"
-                          />
-                        </div>
-                      )}
-
-                      <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                        <Button onClick={handleDownload} className="flex-1" size="lg">
-                          <Download className="mr-2 h-4 w-4" />
-                          Download
-                        </Button>
-                        <Button onClick={handleConvertAnother} variant="outline" className="flex-1" size="lg">
-                          <RefreshCw className="mr-2 h-4 w-4" />
-                          Convert Another
-                        </Button>
-                      </div>
-                    </div>
-                  </>
-                )}
+            {outputFormat === "image/jpeg" && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label>Quality: {quality}%</Label>
+                </div>
+                <Slider
+                  min={80}
+                  max={100}
+                  step={1}
+                  value={[quality]}
+                  onValueChange={([v]) => setQuality(v)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Recommended: 92-95% for high quality
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        </>
-      )}
-    </div>
+            )}
+
+            <div className="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
+              <p className="flex items-start gap-2">
+                <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                <span>
+                  {outputFormat === "image/png"
+                    ? "PNG preserves full color depth and is lossless."
+                    : "JPG offers smaller file sizes but is lossy."}
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      }
+      actions={
+        <div className="space-y-4">
+          <Button
+            onClick={handleConvert}
+            disabled={isProcessing}
+            className="w-full"
+            size="lg"
+          >
+            {isProcessing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Converting...
+              </>
+            ) : (
+              <>
+                Convert BMP
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </>
+            )}
+          </Button>
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+        </div>
+      }
+    />
   )
 }

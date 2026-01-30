@@ -97,9 +97,9 @@ export async function generateIco(file: File): Promise<Blob> {
   }
 
   const parts = [
-    header,
-    ...directories,
-    ...resizedImages.map(img => img.buffer)
+    header.buffer as ArrayBuffer,
+    ...directories.map(dir => dir.buffer as ArrayBuffer),
+    ...resizedImages.map(img => img.buffer as ArrayBuffer)
   ]
 
   return new Blob(parts, { type: "image/x-icon" })

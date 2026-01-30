@@ -23,7 +23,9 @@ export const metadata: Metadata = {
   },
 }
 
-export default function SvgConverterPage() {
+export default function SvgPage() {
+  if (!tool) return null
+
   return (
     <ToolLayout tool={tool}>
       <SvgConverterTool />

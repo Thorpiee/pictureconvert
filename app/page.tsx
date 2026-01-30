@@ -3,9 +3,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
-import { getAllTools, type ToolConfig } from "@/lib/tools-config"
+import { getAllTools, toolCategories, type ToolConfig } from "@/lib/tools-config"
 import { Shield, Zap, Lock, Upload, Settings, Download, ArrowRight, Smartphone, Globe, Sparkles, CheckCircle2 } from "lucide-react"
-import { AdPlaceholder } from "@/components/ad-placeholder"
 import { HeroSection } from "@/components/hero-section"
 import { ToolCard } from "@/components/tool-card"
 import { AnimatedSection } from "@/components/animated-section"
@@ -93,7 +92,18 @@ const faqs = [
 function getToolBadges(tool: ToolConfig): { label: string; variant: "default" | "secondary" | "outline" }[] {
   const badges: { label: string; variant: "default" | "secondary" | "outline" }[] = []
   const popularTools = ["jpg-to-png", "png-to-jpg", "compress-jpg", "heic-to-jpg", "resize-image", "png-to-ico", "smart-optimizer"]
-  const newTools = ["avif-to-jpg", "base64-image-encoder", "webp-to-jpg", "smart-optimizer", "social-media-compressor", "website-optimizer", "bulk-compressor"]
+  const newTools = [
+    "avif-to-jpg",
+    "base64-image-encoder",
+    "webp-to-jpg",
+    "instagram-image-resizer",
+    "tiktok-image-resizer",
+    "youtube-thumbnail-resizer",
+    "twitter-image-resizer",
+    "linkedin-image-resizer",
+    "aspect-ratio-converter",
+    "resize-image-to-exact-pixels"
+  ]
   const fastTools = ["compress-jpg", "compress-png", "resize-image"]
 
   if (popularTools.includes(tool.slug)) badges.push({ label: "Popular", variant: "default" })
@@ -111,29 +121,78 @@ export default function HomePage() {
       {/* Hero Section */}
       <HeroSection />
 
-      {/* Popular Tools Grid */}
+      {/* Tools Grid */}
       <AnimatedSection id="tools" className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <Badge variant="outline" className="mb-4">12 Free Tools</Badge>
+          <div className="text-center mb-16">
+            <Badge variant="outline" className="mb-4">{tools.length} Free Tools</Badge>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground text-balance">
-              Popular Tools
+              Our Tools
             </h2>
             <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-balance">
               Convert, compress, resize, and edit your images with our collection of powerful browser-based tools.
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {tools.map((tool, index) => (
-              <ToolCard
-                key={tool.slug}
-                tool={tool}
-                badges={getToolBadges(tool)}
-                index={index}
-              />
-            ))}
+
+          <div className="space-y-16">
+            {/* Social Media Tools - Highlighted Section */}
+            {(() => {
+              const socialTools = tools.filter(tool => tool.category === "social")
+              if (socialTools.length === 0) return null
+              return (
+                <div key="social" className="scroll-mt-24" id="social">
+                  <div className="flex items-center gap-3 mb-6">
+                    <h3 className="text-2xl font-bold text-foreground">Social Media Tools</h3>
+                    <Badge variant="secondary" className="font-normal">
+                      {socialTools.length}
+                    </Badge>
+                    <Badge className="ml-2 bg-gradient-to-r from-pink-500 to-violet-500 text-white border-0">
+                      Popular
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {socialTools.map((tool, index) => (
+                      <ToolCard
+                        key={tool.slug}
+                        tool={tool}
+                        badges={getToolBadges(tool)}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )
+            })()}
+
+            {/* Other Categories */}
+            {toolCategories.filter(c => c.id !== "social").map((category) => {
+              const categoryTools = tools.filter(tool => tool.category === category.id)
+              if (categoryTools.length === 0) return null
+
+              return (
+                <div key={category.id} className="scroll-mt-24" id={category.id}>
+                  <div className="flex items-center gap-3 mb-6">
+                    <h3 className="text-2xl font-bold text-foreground">{category.name}</h3>
+                    <Badge variant="secondary" className="font-normal">
+                      {categoryTools.length}
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {categoryTools.map((tool, index) => (
+                      <ToolCard
+                        key={tool.slug}
+                        tool={tool}
+                        badges={getToolBadges(tool)}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )
+            })}
           </div>
-          <div className="mt-10 text-center">
+
+          <div className="mt-16 text-center">
             <Button asChild variant="outline" size="lg" className="bg-transparent group">
               <Link href="/tools">
                 View All Tools
@@ -216,8 +275,8 @@ export default function HomePage() {
         </div>
       </AnimatedSection>
 
-      {/* Privacy Callout */}
-      <AnimatedSection className="py-16 md:py-20">
+      {/* FAQ Section */}
+      <AnimatedSection id="faq" className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent overflow-hidden relative">
@@ -256,9 +315,6 @@ export default function HomePage() {
           </div>
         </div>
       </AnimatedSection>
-
-      {/* Ad Placeholder */}
-      <AdPlaceholder className="my-4" />
 
       {/* FAQ Section */}
       <AnimatedSection id="faq" className="py-16 md:py-24 bg-muted/30">

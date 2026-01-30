@@ -1,15 +1,17 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
+import { ToolContentLayout } from "@/components/tools/shared/tool-content-layout"
+import { CanvasPreview } from "@/components/tools/canvas-preview"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Loader2, Download, RefreshCw, Info, ArrowRight, Layers, Package } from "lucide-react"
+import { Loader2, Download, Package, CheckCircle, RefreshCw, Info, ArrowRight } from "lucide-react"
 import { downloadBlob } from "@/lib/image-processor"
 import { generateIco, generateFaviconPackage } from "@/lib/ico-utils"
-import { ImageDropzone } from "@/components/image-dropzone"
-import { ImagePreview } from "@/components/image-preview"
+import { useImagePipeline } from "@/hooks/use-image-pipeline"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
+import { Label } from "@/components/ui/label"
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -18,32 +20,32 @@ function formatFileSize(bytes: number): string {
 }
 
 function getOutputFilename(originalName: string): string {
-  const baseName = originalName.replace(/\.png$/i, "")
+  const baseName = originalName.replace(/\.[^/.]+$/, "")
   return `${baseName}.ico`
 }
 
 function getPackageFilename(originalName: string): string {
-  const baseName = originalName.replace(/\.png$/i, "")
+  const baseName = originalName.replace(/\.[^/.]+$/, "")
   return `${baseName}-favicon-package.zip`
 }
 
 export function FaviconGeneratorTool() {
-  const [file, setFile] = useState<File | null>(null)
+  const {
+    file,
+    imageSrc,
+    imageDimensions,
+    handleImageSelect,
+    handleRemove,
+  } = useImagePipeline()
+
   const [isProcessing, setIsProcessing] = useState(false)
   const [result, setResult] = useState<{ ico: Blob; pkg: Blob; icoUrl: string; icoSize: number; pkgSize: number } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
-  const handleImageSelect = useCallback((selectedFile: File) => {
-    setFile(selectedFile)
+  useEffect(() => {
     setResult(null)
     setError(null)
-  }, [])
-
-  const handleRemove = useCallback(() => {
-    setFile(null)
-    setResult(null)
-    setError(null)
-  }, [])
+  }, [file])
 
   const handleConvert = useCallback(async () => {
     if (!file) return
@@ -84,117 +86,135 @@ export function FaviconGeneratorTool() {
     downloadBlob(result.pkg, filename)
   }, [result, file])
 
-  const handleConvertAnother = useCallback(() => {
-    setFile(null)
-    setResult(null)
-    setError(null)
-  }, [])
-
   return (
-    <div className="space-y-6">
-      {!file ? (
-        <ImageDropzone
-          onImageSelect={handleImageSelect}
-          acceptedTypes={["image/png"]}
-        />
-      ) : (
-        <>
-          <ImagePreview file={file} onRemove={handleRemove} />
+    <ToolContentLayout
+      file={file}
+      onImageSelect={handleImageSelect}
+      onRemove={handleRemove}
+      acceptedTypes={["image/png", "image/jpeg", "image/webp", "image/svg+xml"]}
+      preview={
+        imageSrc && imageDimensions && (
+          <CanvasPreview
+            imageSrc={imageSrc}
+            width={imageDimensions.width}
+            height={imageDimensions.height}
+            fit="contain"
+            maintainAspectRatio={true}
+            className="max-w-full max-h-[500px]"
+          />
+        )
+      }
+      controls={
+        <div className="space-y-6">
+          <Card>
+            <CardContent className="pt-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-semibold">Output Configuration</Label>
+                <Badge variant="secondary">Multi-size .ico + Package</Badge>
+              </div>
 
-          {/* Controls Card */}
-          <Card className="border-border/50 shadow-lg">
-            <CardContent className="pt-6">
-              <div className="space-y-6">
-                {!result ? (
-                  <>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Output</span>
-                        <Badge variant="secondary">Multi-size .ico + Package</Badge>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 text-xs text-center text-muted-foreground">
-                        <div className="bg-muted/50 p-2 rounded">16×16</div>
-                        <div className="bg-muted/50 p-2 rounded">32×32</div>
-                        <div className="bg-muted/50 p-2 rounded">48×48</div>
-                        <div className="bg-muted/50 p-2 rounded">64×64</div>
-                        <div className="bg-muted/50 p-2 rounded">128×128</div>
-                        <div className="bg-muted/50 p-2 rounded">256×256</div>
-                      </div>
-                      <div className="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
-                        <p className="flex items-start gap-2">
-                          <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                          <span>
-                            Generates a single .ico file containing all standard sizes,
-                            plus a full favicon package (ZIP) with PNGs and manifest.
-                          </span>
-                        </p>
-                      </div>
-                    </div>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 text-xs text-center text-muted-foreground">
+                <div className="bg-muted/50 p-2 rounded">16×16</div>
+                <div className="bg-muted/50 p-2 rounded">32×32</div>
+                <div className="bg-muted/50 p-2 rounded">48×48</div>
+                <div className="bg-muted/50 p-2 rounded">64×64</div>
+                <div className="bg-muted/50 p-2 rounded">128×128</div>
+                <div className="bg-muted/50 p-2 rounded">256×256</div>
+              </div>
 
-                    {error && (
-                      <Alert variant="destructive">
-                        <AlertDescription>{error}</AlertDescription>
-                      </Alert>
-                    )}
-
-                    <Button
-                      onClick={handleConvert}
-                      disabled={isProcessing}
-                      className="w-full"
-                      size="lg"
-                    >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Generating...
-                        </>
-                      ) : (
-                        <>
-                          Generate Favicon Package
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50">
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Original</p>
-                          <p className="text-lg font-semibold">{formatFileSize(file.size)}</p>
-                        </div>
-                        <ArrowRight className="h-5 w-5 text-muted-foreground/50" />
-                        <div className="space-y-1 text-right">
-                          <p className="text-sm font-medium text-muted-foreground">Package Size</p>
-                          <p className="text-lg font-semibold text-primary">{formatFileSize(result.pkgSize)}</p>
-                        </div>
-                      </div>
-
-                      <div className="grid gap-3">
-                        <Button onClick={handleDownloadPackage} className="w-full" size="lg">
-                          <Package className="mr-2 h-4 w-4" />
-                          Download Full Package (.zip)
-                        </Button>
-                        <div className="flex gap-3">
-                          <Button onClick={handleDownloadIco} variant="outline" className="flex-1">
-                            <Download className="mr-2 h-4 w-4" />
-                            Download .ico
-                          </Button>
-                          <Button onClick={handleConvertAnother} variant="outline" className="flex-1">
-                            <RefreshCw className="mr-2 h-4 w-4" />
-                            New
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </>
-                )}
+              <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground space-y-1">
+                <p className="flex items-start gap-2">
+                  <Info className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
+                  <span>
+                    Generates a single .ico file containing all standard sizes,
+                    plus a full favicon package (ZIP) with PNGs and manifest.
+                  </span>
+                </p>
               </div>
             </CardContent>
           </Card>
-        </>
-      )}
-    </div>
+        </div>
+      }
+      actions={
+        <div className="space-y-6">
+          <Card>
+            <CardContent className="pt-6 space-y-4">
+              {result ? (
+                <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                  <div className="flex items-center gap-2 text-primary font-medium">
+                    <CheckCircle className="h-5 w-5" />
+                    <span>Generation Complete!</span>
+                  </div>
+
+                  <div className="space-y-2 text-sm">
+                    <div className="flex justify-between p-2 bg-muted/30 rounded border border-border/50">
+                      <span className="text-muted-foreground">ICO Size:</span>
+                      <span className="font-medium">{formatFileSize(result.icoSize)}</span>
+                    </div>
+                    <div className="flex justify-between p-2 bg-muted/30 rounded border border-border/50">
+                      <span className="text-muted-foreground">Package Size:</span>
+                      <span className="font-medium">{formatFileSize(result.pkgSize)}</span>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-2">
+                    <Button onClick={handleDownloadPackage} className="w-full" size="lg">
+                      <Package className="mr-2 h-4 w-4" />
+                      Download Package (.zip)
+                    </Button>
+                    <Button onClick={handleDownloadIco} variant="outline" className="w-full">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download .ico Only
+                    </Button>
+                  </div>
+
+                  <Button onClick={() => setResult(null)} variant="ghost" className="w-full">
+                    <RefreshCw className="mr-2 h-4 w-4" />
+                    Generate Another
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-2">
+                    <Label>Summary</Label>
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      <div className="flex justify-between">
+                        <span>Input Size:</span>
+                        <span className="font-medium text-foreground">{file ? formatFileSize(file.size) : "-"}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Button
+                    onClick={handleConvert}
+                    disabled={isProcessing || !file}
+                    className="w-full"
+                    size="lg"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Generating...
+                      </>
+                    ) : (
+                      <>
+                        Generate Favicon
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </>
+                    )}
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
+
+          {error && (
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
+        </div>
+      }
+    />
   )
 }

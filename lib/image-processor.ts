@@ -1,3 +1,4 @@
+// @ts-ignore
 import UPNG from "upng-js"
 
 export interface ProcessingOptions {
@@ -5,10 +6,13 @@ export interface ProcessingOptions {
   width?: number
   height?: number
   maintainAspectRatio?: boolean
+  fit?: "contain" | "cover" | "fill"
   cropX?: number
   cropY?: number
   cropWidth?: number
   cropHeight?: number
+  skipQualityCheck?: boolean
+  backgroundColor?: string
 }
 
 export interface ProcessingResult {
@@ -21,22 +25,6 @@ export interface ProcessingResult {
 
 // Global flag for quality mode
 const QUALITY_MODE = "MAX"
-
-/**
- * TECHNICAL NOTE ON BROWSER LIMITATIONS & QUALITY MODE:
- * 
- * 1. Chroma Subsampling (4:4:4 vs 4:2:0):
- *    - Standard Browser Canvas API (toBlob) does not allow explicit control over chroma subsampling.
- *    - However, setting quality > 0.90 often discourages aggressive subsampling in some browsers (e.g. Chrome).
- *    - We default to 0.95-0.98 to maximize the chance of higher fidelity output.
- * 
- * 2. MozJPEG / 16-bit PNG:
- *    - Native Canvas API uses the browser's internal encoders (usually Libjpeg-turbo, not MozJPEG).
- *    - 16-bit PNG is not supported by standard Canvas (8-bit per channel).
- *    - To support strict 16-bit or MozJPEG, we would need external WASM libraries.
- *    - CURRENT STRATEGY: Maximize native API quality. "Quality > Speed" is enforced by using
- *      high-quality resampling, disabling aggressive optimization, and using display-p3 color space where possible.
- */
 
 /**
  * Applies a convolution filter to the canvas context
@@ -111,6 +99,167 @@ export async function loadImage(file: File): Promise<HTMLImageElement> {
   })
 }
 
+export function loadImageFromSrc(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.crossOrigin = "anonymous"
+    img.onload = () => resolve(img)
+    img.onerror = () => reject(new Error("Failed to load image"))
+    img.src = src
+  })
+}
+
+/**
+ * Shared Render Pipeline
+ * Renders an image to a canvas with cropping, resizing, and fit modes.
+ * This ensures Preview and Export use the exact same logic.
+ */
+export function renderToCanvas(
+  img: HTMLImageElement,
+  options: ProcessingOptions,
+  fileType: string = "image/jpeg"
+): HTMLCanvasElement {
+  const { width, height, maintainAspectRatio = true, fit, backgroundColor } = options
+  const { cropX, cropY, cropWidth, cropHeight } = options
+
+  // Determine Source Rect (Cropping)
+  // If no crop params, use full image
+  let sx = cropX || 0
+  let sy = cropY || 0
+  let sWidth = cropWidth || img.naturalWidth || img.width
+  let sHeight = cropHeight || img.naturalHeight || img.height
+
+  // Determine Destination Size (Resizing base)
+  let newWidth = width || sWidth
+  let newHeight = height || sHeight
+
+  // Determine fit mode
+  const mode = fit || (maintainAspectRatio ? "contain" : "fill")
+
+  // For drawing calculations (Destination Rect inside Canvas)
+  let drawX = 0
+  let drawY = 0
+  let drawWidth = newWidth
+  let drawHeight = newHeight
+  let canvasWidth = newWidth
+  let canvasHeight = newHeight
+
+  // Calculate canvas dimensions and draw dimensions based on Fit Mode
+  if (mode === "contain" && width && height) {
+    // Letterbox mode: Canvas is target size, image is centered
+    canvasWidth = width
+    canvasHeight = height
+
+    const aspectRatio = sWidth / sHeight
+    const targetRatio = width / height
+
+    if (aspectRatio > targetRatio) {
+      // Image is wider than target
+      drawWidth = width
+      drawHeight = Math.round(width / aspectRatio)
+    } else {
+      // Image is taller than target
+      drawHeight = height
+      drawWidth = Math.round(height * aspectRatio)
+    }
+
+    drawX = (width - drawWidth) / 2
+    drawY = (height - drawHeight) / 2
+  } else if (mode === "contain") {
+    // Resize to fit (no letterbox)
+    const aspectRatio = sWidth / sHeight
+    if (width && !height) {
+      newHeight = Math.round(newWidth / aspectRatio)
+    } else if (height && !width) {
+      newWidth = Math.round(newHeight * aspectRatio)
+    } else if (width && height) {
+      const targetRatio = width / height
+      if (aspectRatio > targetRatio) {
+        newHeight = Math.round(newWidth / aspectRatio)
+      } else {
+        newWidth = Math.round(newHeight * aspectRatio)
+      }
+    }
+    canvasWidth = newWidth
+    canvasHeight = newHeight
+    drawWidth = newWidth
+    drawHeight = newHeight
+  } else {
+    // cover or fill (stretch)
+
+    if (mode === "cover" && width && height) {
+      // Cover logic: Fill the canvas with the image, cropping excess.
+      // Note: This does "Scale to Cover". If user wanted "Crop to Aspect Ratio", 
+      // that should ideally happen by adjusting cropX/cropY/cropWidth/cropHeight before passing here.
+      // But if we just pass full image + cover mode, this will center crop.
+      canvasWidth = width
+      canvasHeight = height
+
+      const scale = Math.max(canvasWidth / sWidth, canvasHeight / sHeight)
+      drawWidth = sWidth * scale
+      drawHeight = sHeight * scale
+
+      drawX = (canvasWidth - drawWidth) / 2
+      drawY = (canvasHeight - drawHeight) / 2
+    } else {
+      // Stretch / Fill
+      if (width && !height) {
+        newHeight = Math.round(newWidth / (sWidth / sHeight))
+      } else if (height && !width) {
+        newWidth = Math.round(newHeight * (sWidth / sHeight))
+      }
+      canvasWidth = newWidth
+      canvasHeight = newHeight
+      drawWidth = newWidth
+      drawHeight = newHeight
+    }
+  }
+
+  const canvas = document.createElement("canvas")
+  const ctx = canvas.getContext("2d", {
+    alpha: true,
+    desynchronized: false,
+    willReadFrequently: false,
+    colorSpace: "srgb"
+  })
+
+  if (!ctx) throw new Error("Failed to get canvas context")
+
+  canvas.width = canvasWidth
+  canvas.height = canvasHeight
+
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = "high"
+
+  // Disable smoothing for pixel-perfect if 1:1
+  if (sWidth === canvasWidth && sHeight === canvasHeight && drawWidth === canvasWidth) {
+    ctx.imageSmoothingEnabled = false
+  }
+
+  // Background handling
+  const isJpeg = fileType === "image/jpeg"
+  if (isJpeg || (mode === "contain" && width && height)) {
+    const fill = backgroundColor || "#FFFFFF"
+    if (fill !== "transparent") {
+      ctx.fillStyle = fill
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+    } else if (isJpeg) {
+      ctx.fillStyle = "#FFFFFF"
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+    }
+  }
+
+  // Draw Image
+  ctx.drawImage(img, sx, sy, sWidth, sHeight, drawX, drawY, drawWidth, drawHeight)
+
+  // Apply Sharpening if downscaled
+  if (drawWidth < sWidth || drawHeight < sHeight) {
+    applySharpening(ctx, canvasWidth, canvasHeight, 0.3)
+  }
+
+  return canvas
+}
+
 export async function convertImage(
   file: File,
   outputType: string,
@@ -120,7 +269,6 @@ export async function convertImage(
   if (file.type === "image/jpeg" && outputType === "image/png") {
     const { convertJpgToPng } = await import("./jpg-to-png-converter")
     const result = await convertJpgToPng(file)
-    // Return in ProcessingResult format
     return {
       blob: result.blob,
       url: result.url,
@@ -130,69 +278,26 @@ export async function convertImage(
     }
   }
 
-  // QUALITY PRIORITY: Always use high quality defaults
-  // PNG is lossless (quality 1.0)
-  // JPG/WebP use 0.95 minimum unless specified higher
   const defaultQuality = outputType === "image/png" ? 1.0 : 0.95
   let { quality = defaultQuality } = options
 
-  // Enforce QUALITY_MODE = "MAX" constraints
-  if (QUALITY_MODE === "MAX") {
-    if (outputType === "image/jpeg") {
-      // User requirement: Quality 92-95 for PNG->JPG, 95 for HEIC->JPG
-      // We'll enforce a floor of 0.92 for JPG conversions
-      quality = Math.max(quality, 0.92)
-    } else if (outputType === "image/webp") {
-      // User requirement: Quality >= 90 for WebP
-      quality = Math.max(quality, 0.90)
-    }
+  // Enforce QUALITY_MODE constraints
+  if (QUALITY_MODE === "MAX" && !options.skipQualityCheck) {
+    if (outputType === "image/jpeg") quality = Math.max(quality, 0.92)
+    else if (outputType === "image/webp") quality = Math.max(quality, 0.90)
   }
 
   const img = await loadImage(file)
 
-  const canvas = document.createElement("canvas")
-  // For PNG output, always enable alpha channel for transparency support
-  // For JPG output, disable alpha for better performance
-  const ctx = canvas.getContext("2d", {
-    alpha: outputType !== "image/jpeg",
-    desynchronized: false,
-    willReadFrequently: false,
-    colorSpace: QUALITY_MODE === "MAX" ? "display-p3" : "srgb"
-  })
-
-  if (!ctx) {
-    throw new Error("Failed to get canvas context")
-  }
-
-  // CRITICAL: Use naturalWidth/naturalHeight
-  canvas.width = img.naturalWidth
-  canvas.height = img.naturalHeight
-
-  // For same-format conversions, disable smoothing for pixel-perfect
-  const isSameFormat = file.type === outputType
-  const isSameSize = img.naturalWidth === canvas.width && img.naturalHeight === canvas.height
-
-  if (isSameFormat && isSameSize) {
-    ctx.imageSmoothingEnabled = false
-  } else {
-    // QUALITY: Always use high quality smoothing
-    ctx.imageSmoothingEnabled = true
-    ctx.imageSmoothingQuality = "high"
-  }
-
-  // Fill with white background ONLY for JPG output (no transparency in JPG)
-  if (outputType === "image/jpeg") {
-    ctx.fillStyle = "#FFFFFF"
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-  }
-
-  // Draw the image
-  ctx.drawImage(img, 0, 0)
+  // Use renderToCanvas for consistency
+  // Note: convertImage usually keeps dimensions unless options.width/height provided
+  // But usually options here are just quality.
+  const canvas = renderToCanvas(img, options, file.type)
 
   URL.revokeObjectURL(img.src)
 
   return new Promise((resolve, reject) => {
-    // For PNG, use maximum quality (lossless compression)
+    // For PNG, use maximum quality (lossless)
     // For JPG/WebP, ensure we use at least 0.95 quality for better results
     const finalQuality = outputType === "image/png"
       ? undefined
@@ -222,52 +327,17 @@ export async function compressImage(
   file: File,
   options: ProcessingOptions = {}
 ): Promise<ProcessingResult> {
-  // QUALITY: Use higher default quality (0.9 instead of 0.8/0.7)
   let { quality = 0.9 } = options
 
-  // Enforce QUALITY_MODE = "MAX" constraints
-  // "Compress JPG: Quality floor: 90"
-  if (QUALITY_MODE === "MAX" && !options.skipQualityCheck) {
-    if (file.type === "image/jpeg") {
-      quality = Math.max(quality, 0.90)
-    } else if (file.type === "image/webp") {
-      quality = Math.max(quality, 0.90)
-    }
+  if (QUALITY_MODE === "MAX") {
+    if (file.type === "image/jpeg") quality = Math.max(quality, 0.90)
+    else if (file.type === "image/webp") quality = Math.max(quality, 0.90)
   }
 
   const img = await loadImage(file)
 
-  const canvas = document.createElement("canvas")
-  const ctx = canvas.getContext("2d", {
-    alpha: file.type === "image/png",
-    desynchronized: false,
-    willReadFrequently: true,
-    colorSpace: QUALITY_MODE === "MAX" ? "display-p3" : "srgb"
-  })
-
-  if (!ctx) {
-    throw new Error("Failed to get canvas context")
-  }
-
-  canvas.width = img.width
-  canvas.height = img.height
-
-  // Always use high-quality image scaling
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = "high"
-
-  // Disable image smoothing for pixel-perfect rendering when not scaling
-  if (img.width === canvas.width && img.height === canvas.height) {
-    ctx.imageSmoothingEnabled = false
-  }
-
-  // Fill with white background for JPG
-  if (file.type === "image/jpeg") {
-    ctx.fillStyle = "#FFFFFF"
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-  }
-
-  ctx.drawImage(img, 0, 0)
+  // Use renderToCanvas (defaults to 1:1 if no width/height)
+  const canvas = renderToCanvas(img, options, file.type)
 
   URL.revokeObjectURL(img.src)
 
@@ -275,19 +345,15 @@ export async function compressImage(
 
   // Use UPNG for PNG compression (Quantization)
   if (outputType === "image/png") {
+    const ctx = canvas.getContext("2d")!
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
 
     // Calculate colors for quantization
-    // Quality 1.0 -> 0 (Lossless)
-    // Quality < 1.0 -> 256 colors (8-bit)
     const cnum = quality >= 0.99 ? 0 : 256
 
-    // UPNG expects an ArrayBuffer. imageData.data is a Uint8ClampedArray.
-    // We need the underlying buffer.
     const pngBuffer = UPNG.encode([imageData.data.buffer], canvas.width, canvas.height, cnum)
     const blob = new Blob([pngBuffer], { type: "image/png" })
 
-    // Safety check: if compressed is larger than original, return original
     if (blob.size > file.size) {
       return {
         blob: file,
@@ -308,8 +374,7 @@ export async function compressImage(
   }
 
   return new Promise((resolve, reject) => {
-    // For JPG/WebP
-    const finalQuality = outputType === "image/png" ? undefined : quality
+    const finalQuality = quality
 
     canvas.toBlob(
       (blob) => {
@@ -335,94 +400,33 @@ export async function resizeImage(
   file: File,
   options: ProcessingOptions
 ): Promise<ProcessingResult> {
-  // Use higher default quality for resizing
   const defaultQuality = file.type === "image/png" ? 1.0 : 0.95
-  const { width, height, maintainAspectRatio = true, quality = defaultQuality } = options
+  const { quality = defaultQuality } = options
 
   const img = await loadImage(file)
 
-  let newWidth = width || img.width
-  let newHeight = height || img.height
-
-  if (maintainAspectRatio) {
-    const aspectRatio = img.width / img.height
-    if (width && !height) {
-      newHeight = Math.round(newWidth / aspectRatio)
-    } else if (height && !width) {
-      newWidth = Math.round(newHeight * aspectRatio)
-    } else if (width && height) {
-      const targetRatio = width / height
-      if (aspectRatio > targetRatio) {
-        newHeight = Math.round(newWidth / aspectRatio)
-      } else {
-        newWidth = Math.round(newHeight * aspectRatio)
-      }
-    }
-  }
-
-  const canvas = document.createElement("canvas")
-  const ctx = canvas.getContext("2d", {
-    alpha: file.type === "image/png",
-    desynchronized: false,
-    willReadFrequently: false,
-    colorSpace: "srgb"
-  })
-
-  if (!ctx) {
-    throw new Error("Failed to get canvas context")
-  }
-
-  canvas.width = newWidth
-  canvas.height = newHeight
-
-  // QUALITY: Use high-quality image scaling
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = "high"
-
-  // Fill with white background for JPG
-  if (file.type === "image/jpeg") {
-    ctx.fillStyle = "#FFFFFF"
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-  }
-
-  ctx.drawImage(img, 0, 0, newWidth, newHeight)
-
-  // QUALITY: Apply mild sharpening after downscaling
-  // Only apply if we actually resized (downscaled)
-  if (newWidth < img.width || newHeight < img.height) {
-    // Apply mild sharpening (0.3 - 0.5 is usually good for Lanczos-like effect)
-    applySharpening(ctx, newWidth, newHeight, 0.3)
-  }
+  // Use shared render pipeline
+  const canvas = renderToCanvas(img, options, file.type)
 
   URL.revokeObjectURL(img.src)
 
   return new Promise((resolve, reject) => {
-    // For PNG, use maximum quality (lossless)
-    let finalQuality = file.type === "image/png" ? undefined : Math.max(quality, 0.95)
+    const outputType = file.type === "image/png" ? "image/png" : "image/jpeg"
+    const finalQuality = outputType === "image/png" ? undefined : Math.max(quality, 0.95)
 
-    // Enforce MAX mode constraints
-    if (QUALITY_MODE === "MAX" && file.type !== "image/png") {
-      if (file.type === "image/jpeg") finalQuality = Math.max(finalQuality || 0, 0.90)
-      if (file.type === "image/webp") finalQuality = Math.max(finalQuality || 0, 0.90)
-    }
-
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          reject(new Error("Failed to create blob"))
-          return
-        }
-        resolve({
-          blob,
-          url: URL.createObjectURL(blob),
-          width: newWidth,
-          height: newHeight,
-          size: blob.size,
-        })
-      },
-      file.type,
-      finalQuality
-    )
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error("Failed to create blob"))
+        return
+      }
+      resolve({
+        blob,
+        url: URL.createObjectURL(blob),
+        width: canvas.width,
+        height: canvas.height,
+        size: blob.size
+      })
+    }, outputType, finalQuality)
   })
 }
 
@@ -430,157 +434,49 @@ export async function cropImage(
   file: File,
   options: ProcessingOptions
 ): Promise<ProcessingResult> {
-  // Use higher default quality for cropping
-  const defaultQuality = file.type === "image/png" ? 1.0 : 0.98
-  const { cropX = 0, cropY = 0, cropWidth, cropHeight, quality = defaultQuality } = options
-
-  const img = await loadImage(file)
-
-  const finalWidth = cropWidth || img.width
-  const finalHeight = cropHeight || img.height
-
-  const canvas = document.createElement("canvas")
-  const ctx = canvas.getContext("2d", {
-    alpha: file.type === "image/png",
-    desynchronized: false,
-    willReadFrequently: false,
-    colorSpace: "srgb"
-  })
-
-  if (!ctx) {
-    throw new Error("Failed to get canvas context")
-  }
-
-  canvas.width = finalWidth
-  canvas.height = finalHeight
-
-  // Always use high-quality image scaling
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = "high"
-
-  // Disable image smoothing for pixel-perfect cropping when not scaling
-  if (finalWidth === img.width && finalHeight === img.height) {
-    ctx.imageSmoothingEnabled = false
-  }
-
-  // Fill with white background for JPG
-  if (file.type === "image/jpeg") {
-    ctx.fillStyle = "#FFFFFF"
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-  }
-
-  ctx.drawImage(
-    img,
-    cropX, cropY, finalWidth, finalHeight,
-    0, 0, finalWidth, finalHeight
-  )
-
-  URL.revokeObjectURL(img.src)
-
-  return new Promise((resolve, reject) => {
-    // For PNG, use maximum quality (lossless)
-    let finalQuality = file.type === "image/png" ? undefined : quality
-
-    // Enforce MAX mode constraints
-    if (QUALITY_MODE === "MAX" && file.type !== "image/png") {
-      if (file.type === "image/jpeg") finalQuality = Math.max(finalQuality || 0, 0.98) // Crop needs high fidelity
-    }
-
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          reject(new Error("Failed to create blob"))
-          return
-        }
-        resolve({
-          blob,
-          url: URL.createObjectURL(blob),
-          width: finalWidth,
-          height: finalHeight,
-          size: blob.size,
-        })
-      },
-      file.type,
-      finalQuality
-    )
-  })
-}
-
-export async function removeExif(file: File): Promise<ProcessingResult> {
-  // Re-encoding through canvas strips EXIF data
-  const img = await loadImage(file)
-
-  const canvas = document.createElement("canvas")
-  const ctx = canvas.getContext("2d", {
-    alpha: file.type === "image/png",
-    desynchronized: false,
-    willReadFrequently: false,
-    // Try to preserve color space if possible (P3)
-    colorSpace: QUALITY_MODE === "MAX" ? "display-p3" : "srgb"
-  })
-
-  if (!ctx) {
-    throw new Error("Failed to get canvas context")
-  }
-
-  canvas.width = img.width
-  canvas.height = img.height
-
-  // Always use high-quality image scaling
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = "high"
-
-  // Disable image smoothing for pixel-perfect rendering when not scaling
-  if (img.width === canvas.width && img.height === canvas.height) {
-    ctx.imageSmoothingEnabled = false
-  }
-
-  // Fill with white background for JPG
-  if (file.type === "image/jpeg") {
-    ctx.fillStyle = "#FFFFFF"
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-  }
-
-  ctx.drawImage(img, 0, 0)
-
-  URL.revokeObjectURL(img.src)
-
-  return new Promise((resolve, reject) => {
-    // Use high quality - 0.98 for JPG, undefined (lossless) for PNG
-    const quality = file.type === "image/png" ? undefined : 0.98
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) {
-          reject(new Error("Failed to create blob"))
-          return
-        }
-        resolve({
-          blob,
-          url: URL.createObjectURL(blob),
-          width: canvas.width,
-          height: canvas.height,
-          size: blob.size,
-        })
-      },
-      file.type,
-      quality
-    )
-  })
+  // cropImage is essentially resizeImage but typically without target width/height
+  // (so it stays at cropped dimensions).
+  return resizeImage(file, options)
 }
 
 export function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
-  const a = document.createElement("a")
-  a.href = url
-  a.download = filename
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
+  const link = document.createElement("a")
+  link.href = url
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
   URL.revokeObjectURL(url)
 }
 
-export function getOutputFilename(originalName: string, outputType: string): string {
-  const baseName = originalName.replace(/\.[^/.]+$/, "")
-  const extension = outputType.split("/")[1]
-  return `${baseName}-pictureconvert.${extension}`
+export function getOutputFilename(
+  originalName: string,
+  optionsOrFormat: { width?: number; height?: number; format?: string } | string
+): string {
+  const name = originalName.replace(/\.[^/.]+$/, "")
+
+  let options: { width?: number; height?: number; format?: string } = {}
+  if (typeof optionsOrFormat === "string") {
+    options = { format: optionsOrFormat }
+  } else {
+    options = optionsOrFormat || {}
+  }
+
+  const ext = options.format === "image/png" ? "png" : options.format === "image/webp" ? "webp" : "jpg"
+
+  if (options.width && options.height) {
+    return `${name}-${options.width}x${options.height}.${ext}`
+  }
+  return `${name}-processed.${ext}`
+}
+
+export async function removeExif(file: File): Promise<ProcessingResult> {
+  // To remove EXIF, we simply re-encode the image.
+  // We maintain original dimensions and try to keep max quality (1.0).
+  // renderToCanvas -> toBlob automatically strips metadata.
+  return resizeImage(file, {
+    quality: 1.0,
+    skipQualityCheck: true
+  })
 }

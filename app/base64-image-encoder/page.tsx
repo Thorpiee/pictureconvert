@@ -24,6 +24,8 @@ export const metadata: Metadata = {
 }
 
 export default function Base64Page() {
+  if (!tool) return null
+
   return (
     <ToolLayout tool={tool}>
       <Base64Tool />

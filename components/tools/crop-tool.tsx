@@ -1,13 +1,16 @@
 "use client"
 
-import { useState, useCallback, useRef, useEffect } from "react"
+import { useState, useCallback, useRef, useEffect, useMemo } from "react"
 import { CropperBox, CropRect, AspectMode, getCroppedImageBlob } from "./cropper-box"
 import { ImageDropzone } from "@/components/image-dropzone"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
-import { Loader2, Download, RefreshCw, CheckCircle, X } from "lucide-react"
+import { Loader2, Download, RefreshCw, CheckCircle, X, Pencil, ArrowRight } from "lucide-react"
+import { CanvasPreview } from "@/components/tools/canvas-preview"
 import { cropImage, downloadBlob, getOutputFilename, ProcessingResult, loadImage } from "@/lib/image-processor"
+
+import { ToolContentLayout } from "./shared/tool-content-layout"
 
 interface CropToolProps {
   acceptedTypes: string[]
@@ -31,66 +34,20 @@ function formatFileSize(bytes: number): string {
 }
 
 export function CropTool({ acceptedTypes }: CropToolProps) {
-  // Drag state for crop box
-  const [isCropDragging, setIsCropDragging] = useState(false)
-  const dragStartMouse = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
-  const dragStartCrop = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
-
-  // Mouse event handlers for dragging crop box
-  const handleCropBoxMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!imageDimensions) return
-    e.preventDefault()
-    e.stopPropagation()
-    setIsCropDragging(true)
-    const display = getDisplayDimensions()
-    const scale = display.scale
-    const rect = containerRef.current?.getBoundingClientRect()
-    if (!rect) return
-    // Mouse position relative to image container
-    const mouseX = (e.clientX - rect.left) / scale
-    const mouseY = (e.clientY - rect.top) / scale
-    dragStartMouse.current = { x: mouseX, y: mouseY }
-    dragStartCrop.current = { x: cropArea.x, y: cropArea.y }
-    window.addEventListener('mousemove', handleCropBoxMouseMove)
-    window.addEventListener('mouseup', handleCropBoxMouseUp)
-  }
-
-  const handleCropBoxMouseMove = (e: MouseEvent) => {
-    if (!isCropDragging || !imageDimensions) return
-    const display = getDisplayDimensions()
-    const scale = display.scale
-    const rect = containerRef.current?.getBoundingClientRect()
-    if (!rect) return
-    const mouseX = (e.clientX - rect.left) / scale
-    const mouseY = (e.clientY - rect.top) / scale
-    const dx = mouseX - dragStartMouse.current.x
-    const dy = mouseY - dragStartMouse.current.y
-    setCropArea(area => {
-      let newX = Math.round(dragStartCrop.current.x + dx)
-      let newY = Math.round(dragStartCrop.current.y + dy)
-      // Clamp to image bounds
-      newX = Math.max(0, Math.min(newX, imageDimensions.width - area.width))
-      newY = Math.max(0, Math.min(newY, imageDimensions.height - area.height))
-      return { ...area, x: newX, y: newY }
-    })
-  }
-
-  const handleCropBoxMouseUp = () => {
-    setIsCropDragging(false)
-    window.removeEventListener('mousemove', handleCropBoxMouseMove)
-    window.removeEventListener('mouseup', handleCropBoxMouseUp)
-  }
   const [file, setFile] = useState<File | null>(null)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null)
-  const [aspectRatio, setAspectRatio] = useState<AspectMode>("free")
+  const [aspectRatio, setAspectRatio] = useState<AspectRatio>("free")
   const [cropArea, setCropArea] = useState<CropRect>({ x: 0, y: 0, width: 100, height: 100 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
-  const [isProcessing, setIsProcessing] = useState(false)
   const [result, setResult] = useState<ProcessingResult | null>(null)
+  const [isProcessing, setIsProcessing] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+
+  const aspectModeForCropper = useMemo<AspectMode>(() => {
+    if (aspectRatio === "free") return "free"
+    const r = aspectRatios.find(x => x.value === aspectRatio)
+    return r?.ratio ?? "free"
+  }, [aspectRatio])
 
   const handleImageSelect = useCallback(async (selectedFile: File) => {
     setFile(selectedFile)
@@ -117,6 +74,7 @@ export function CropTool({ acceptedTypes }: CropToolProps) {
     setResult(null)
     setError(null)
     setCropArea({ x: 0, y: 0, width: 100, height: 100 })
+    setAspectRatio("free")
   }, [imageSrc])
 
   const handleAspectRatioChange = useCallback((value: AspectRatio) => {
@@ -125,13 +83,15 @@ export function CropTool({ acceptedTypes }: CropToolProps) {
 
     const selectedRatio = aspectRatios.find(r => r.value === value)
     if (!selectedRatio?.ratio) {
-      setCropArea({ x: 0, y: 0, width: imageDimensions.width, height: imageDimensions.height })
+      // For free ratio, we don't necessarily reset, but we could.
+      // Let's just keep current crop but allow free resizing.
       return
     }
 
     const imgRatio = imageDimensions.width / imageDimensions.height
     let newWidth: number, newHeight: number
 
+    // Default to a centered crop that fits
     if (selectedRatio.ratio > imgRatio) {
       newWidth = imageDimensions.width
       newHeight = Math.round(newWidth / selectedRatio.ratio)
@@ -176,213 +136,177 @@ export function CropTool({ acceptedTypes }: CropToolProps) {
   }, [result, file])
 
   const handleCropAnother = useCallback(() => {
-    if (imageSrc) URL.revokeObjectURL(imageSrc)
-    setFile(null)
-    setImageSrc(null)
-    setImageDimensions(null)
     setResult(null)
-    setError(null)
-    setCropArea({ x: 0, y: 0, width: 100, height: 100 })
-    setAspectRatio("free")
-  }, [imageSrc])
-
-  // Calculate display dimensions to fit container
-  const getDisplayDimensions = useCallback(() => {
-    if (!imageDimensions || !containerRef.current) return { width: 0, height: 0, scale: 1 }
-    
-    const containerWidth = containerRef.current.clientWidth
-    const maxHeight = 400
-    
-    const scale = Math.min(containerWidth / imageDimensions.width, maxHeight / imageDimensions.height)
-    
-    return {
-      width: imageDimensions.width * scale,
-      height: imageDimensions.height * scale,
-      scale,
-    }
-  }, [imageDimensions])
+    // Keep the image loaded, just reset result
+  }, [])
 
   return (
-    <div className="space-y-6">
-      {!file ? (
-        <ImageDropzone
-          onImageSelect={handleImageSelect}
-          acceptedTypes={acceptedTypes}
-        />
-      ) : (
-        <>
-          {!result && (
-            <Card>
-              <CardContent className="pt-6">
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <Label>Aspect Ratio</Label>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleRemove}
-                      className="text-muted-foreground"
-                    >
-                      <X className="h-4 w-4 mr-1" />
-                      Remove
-                    </Button>
-                  </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    {aspectRatios.map((ratio) => (
-                      <Button
-                        key={ratio.value}
-                        variant={aspectRatio === ratio.value ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => handleAspectRatioChange(ratio.value)}
-                      >
-                        {ratio.label}
-                      </Button>
-                    ))}
-                  </div>
-
-                  {/* Custom crop area controls */}
-                  <div className="flex flex-wrap gap-4 items-center justify-center">
-                    <div>
-                      <Label htmlFor="crop-x" className="text-xs">X</Label>
-                      <input
-                        id="crop-x"
-                        type="number"
-                        min={0}
-                        max={imageDimensions?.width ?? 0}
-                        value={cropArea.x}
-                        onChange={e => setCropArea(area => ({ ...area, x: Math.max(0, Math.min(Number(e.target.value), (imageDimensions?.width ?? 0) - area.width)) }))}
-                        className="w-16 border rounded px-2 py-1 text-xs"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="crop-y" className="text-xs">Y</Label>
-                      <input
-                        id="crop-y"
-                        type="number"
-                        min={0}
-                        max={imageDimensions?.height ?? 0}
-                        value={cropArea.y}
-                        onChange={e => setCropArea(area => ({ ...area, y: Math.max(0, Math.min(Number(e.target.value), (imageDimensions?.height ?? 0) - area.height)) }))}
-                        className="w-16 border rounded px-2 py-1 text-xs"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="crop-width" className="text-xs">Width</Label>
-                      <input
-                        id="crop-width"
-                        type="number"
-                        min={1}
-                        max={imageDimensions ? imageDimensions.width - cropArea.x : 1}
-                        value={cropArea.width}
-                        onChange={e => setCropArea(area => ({ ...area, width: Math.max(1, Math.min(Number(e.target.value), (imageDimensions ? imageDimensions.width - area.x : 1))) }))}
-                        className="w-20 border rounded px-2 py-1 text-xs"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="crop-height" className="text-xs">Height</Label>
-                      <input
-                        id="crop-height"
-                        type="number"
-                        min={1}
-                        max={imageDimensions ? imageDimensions.height - cropArea.y : 1}
-                        value={cropArea.height}
-                        onChange={e => setCropArea(area => ({ ...area, height: Math.max(1, Math.min(Number(e.target.value), (imageDimensions ? imageDimensions.height - area.y : 1))) }))}
-                        className="w-20 border rounded px-2 py-1 text-xs"
-                      />
-                    </div>
-                  </div>
-
-                  {imageSrc && imageDimensions && (
-                    <CropperBox
-                      imageSrc={imageSrc}
-                      imageNaturalWidth={imageDimensions.width}
-                      imageNaturalHeight={imageDimensions.height}
-                      aspectMode={aspectRatio}
-                      cropRect={cropArea}
-                      onChange={setCropArea}
-                      onCrop={async (blob) => {
-                        // Optionally preview or download blob
-                      }}
-                    />
-                  )}
-
-                  <p className="text-xs text-muted-foreground text-center">
-                    Crop area: {cropArea.width} x {cropArea.height} px
-                  </p>
-
-                  {error && (
-                    <div className="p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
-                      {error}
-                    </div>
-                  )}
-
+    <ToolContentLayout
+      file={file}
+      onImageSelect={handleImageSelect}
+      onRemove={handleRemove}
+      acceptedTypes={acceptedTypes}
+      preview={
+        result ? (
+          <div className="relative w-full h-full flex items-center justify-center">
+            <img
+              src={result.url}
+              alt="Cropped Result"
+              className="max-w-full max-h-[500px] object-contain shadow-lg rounded-md"
+            />
+          </div>
+        ) : (
+          imageSrc && imageDimensions && (
+            <CropperBox
+              imageSrc={imageSrc}
+              imageNaturalWidth={imageDimensions.width}
+              imageNaturalHeight={imageDimensions.height}
+              aspectMode={aspectRatio}
+              cropRect={cropArea}
+              onChange={setCropArea}
+              onCrop={() => { }} // Not used here, we have a separate button
+            />
+          )
+        )
+      }
+      controls={
+        !result ? (
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <Label>Aspect Ratio</Label>
+              <div className="flex flex-wrap gap-2">
+                {aspectRatios.map((ratio) => (
                   <Button
-                    onClick={handleCrop}
-                    disabled={isProcessing}
-                    className="w-full"
-                    size="lg"
+                    key={ratio.value}
+                    variant={aspectRatio === ratio.value ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleAspectRatioChange(ratio.value)}
                   >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Cropping...
-                      </>
-                    ) : (
-                      "Crop Image"
-                    )}
+                    {ratio.label}
                   </Button>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <Label>Precise Crop</Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="crop-x" className="text-xs text-muted-foreground">X Position</Label>
+                  <input
+                    id="crop-x"
+                    type="number"
+                    min={0}
+                    max={imageDimensions?.width ?? 0}
+                    value={Math.round(cropArea.x)}
+                    onChange={e => setCropArea(area => ({ ...area, x: Math.max(0, Math.min(Number(e.target.value), (imageDimensions?.width ?? 0) - area.width)) }))}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
                 </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {result && (
-            <Card className="border-primary/50">
-              <CardContent className="pt-6">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-primary">
-                    <CheckCircle className="h-5 w-5" />
-                    <span className="font-medium">Crop Complete!</span>
-                  </div>
-
-                  <div className="relative aspect-video bg-muted rounded-lg overflow-hidden">
-                    <img
-                      src={result.url || "/placeholder.svg"}
-                      alt="Cropped"
-                      className="w-full h-full object-contain"
-                      style={{ imageRendering: 'high-quality' }}
-                      loading="eager"
-                    />
-                  </div>
-
-                  <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-                    <div>
-                      <span className="text-muted-foreground">Size:</span>{" "}
-                      <span className="font-medium text-foreground">{formatFileSize(result.size)}</span>
-                    </div>
-                    <div>
-                      <span className="text-muted-foreground">Dimensions:</span>{" "}
-                      <span className="font-medium text-foreground">{result.width} x {result.height}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Button onClick={handleDownload} className="flex-1" size="lg">
-                      <Download className="mr-2 h-4 w-4" />
-                      Download
-                    </Button>
-                    <Button onClick={handleCropAnother} variant="outline" className="flex-1 bg-transparent" size="lg">
-                      <RefreshCw className="mr-2 h-4 w-4" />
-                      Crop Another
-                    </Button>
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="crop-y" className="text-xs text-muted-foreground">Y Position</Label>
+                  <input
+                    id="crop-y"
+                    type="number"
+                    min={0}
+                    max={imageDimensions?.height ?? 0}
+                    value={Math.round(cropArea.y)}
+                    onChange={e => setCropArea(area => ({ ...area, y: Math.max(0, Math.min(Number(e.target.value), (imageDimensions?.height ?? 0) - area.height)) }))}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="space-y-2">
+                  <Label htmlFor="crop-width" className="text-xs text-muted-foreground">Width</Label>
+                  <input
+                    id="crop-width"
+                    type="number"
+                    min={1}
+                    max={imageDimensions ? imageDimensions.width - cropArea.x : 1}
+                    value={Math.round(cropArea.width)}
+                    onChange={e => setCropArea(area => ({ ...area, width: Math.max(1, Math.min(Number(e.target.value), (imageDimensions ? imageDimensions.width - area.x : 1))) }))}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="crop-height" className="text-xs text-muted-foreground">Height</Label>
+                  <input
+                    id="crop-height"
+                    type="number"
+                    min={1}
+                    max={imageDimensions ? imageDimensions.height - cropArea.y : 1}
+                    value={Math.round(cropArea.height)}
+                    onChange={e => setCropArea(area => ({ ...area, height: Math.max(1, Math.min(Number(e.target.value), (imageDimensions ? imageDimensions.height - area.y : 1))) }))}
+                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <p className="text-sm text-muted-foreground">
+              Current Selection: {Math.round(cropArea.width)} x {Math.round(cropArea.height)} px
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2 text-primary">
+              <CheckCircle className="h-5 w-5" />
+              <span className="font-medium">Crop Complete!</span>
+            </div>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">New Size:</span>
+                <span className="font-medium">{formatFileSize(result.size)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Dimensions:</span>
+                <span className="font-medium">{result.width} x {result.height}</span>
+              </div>
+            </div>
+          </div>
+        )
+      }
+      actions={
+        <div className="space-y-4">
+          {!result ? (
+            <>
+              <Button
+                onClick={handleCrop}
+                disabled={isProcessing}
+                className="w-full"
+                size="lg"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Cropping...
+                  </>
+                ) : (
+                  <>
+                    Crop Image
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+              {error && (
+                <div className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">
+                  {error}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <Button onClick={handleDownload} className="w-full" size="lg">
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </Button>
+              <Button onClick={handleCropAnother} variant="outline" className="w-full">
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Crop Another
+              </Button>
+            </>
           )}
-        </>
-      )}
-    </div>
+        </div>
+      }
+    />
   )
 }

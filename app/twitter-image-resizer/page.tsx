@@ -1,10 +1,11 @@
+
 import { Metadata } from "next"
 import { ToolLayout } from "@/components/tool-layout"
-import { BulkCompressorTool } from "@/components/tools/bulk-compressor-tool"
+import { TwitterResizerTool } from "@/components/tools/twitter-resizer-tool"
 import { getToolBySlug } from "@/lib/tools-config"
 import { notFound } from "next/navigation"
 
-const tool = getToolBySlug("bulk-compressor")
+const tool = getToolBySlug("twitter-image-resizer")
 
 if (!tool) {
   notFound()
@@ -23,12 +24,12 @@ export const metadata: Metadata = {
   },
 }
 
-export default function BulkCompressorPage() {
+export default function TwitterResizerPage() {
   if (!tool) return null
 
   return (
     <ToolLayout tool={tool}>
-      <BulkCompressorTool />
+      <TwitterResizerTool />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

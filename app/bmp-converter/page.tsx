@@ -23,7 +23,9 @@ export const metadata: Metadata = {
   },
 }
 
-export default function BmpConverterPage() {
+export default function BmpPage() {
+  if (!tool) return null
+
   return (
     <ToolLayout tool={tool}>
       <BmpConverterTool />

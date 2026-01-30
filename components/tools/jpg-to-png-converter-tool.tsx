@@ -1,15 +1,14 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
+import { ToolContentLayout } from "./shared/tool-content-layout"
+import { CanvasPreview } from "./canvas-preview"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Loader2, Download, RefreshCw, Info, ArrowRight } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Loader2, Download, Info, ArrowRight, AlertCircle } from "lucide-react"
 import { convertJpgToPng, type JpgToPngResult } from "@/lib/jpg-to-png-converter"
 import { downloadBlob } from "@/lib/image-processor"
-import { ImageDropzone } from "@/components/image-dropzone"
-import { ImagePreview } from "@/components/image-preview"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Badge } from "@/components/ui/badge"
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -40,21 +39,26 @@ export function JpgToPngConverterTool() {
     setError(null)
   }, [])
 
-  const handleConvert = useCallback(async () => {
+  // Auto-convert when file is selected
+  useEffect(() => {
     if (!file) return
 
-    setIsProcessing(true)
-    setError(null)
+    const convert = async () => {
+      setIsProcessing(true)
+      setError(null)
 
-    try {
-      const conversionResult = await convertJpgToPng(file)
-      setResult(conversionResult)
-    } catch (err) {
-      console.error("Conversion error:", err)
-      setError(err instanceof Error ? err.message : "Failed to convert image")
-    } finally {
-      setIsProcessing(false)
+      try {
+        const conversionResult = await convertJpgToPng(file)
+        setResult(conversionResult)
+      } catch (err) {
+        console.error("Conversion error:", err)
+        setError(err instanceof Error ? err.message : "Failed to convert image")
+      } finally {
+        setIsProcessing(false)
+      }
     }
+
+    convert()
   }, [file])
 
   const handleDownload = useCallback(() => {
@@ -63,115 +67,100 @@ export function JpgToPngConverterTool() {
     downloadBlob(result.blob, filename)
   }, [result, file])
 
-  const handleConvertAnother = useCallback(() => {
-    setFile(null)
-    setResult(null)
-    setError(null)
-  }, [])
-
-  return (
-    <div className="space-y-6">
-      {!file ? (
-        <ImageDropzone
-          onImageSelect={handleImageSelect}
-          acceptedTypes={["image/jpeg", "image/jpg"]}
+  const previewContent = (
+    <div className="relative w-full h-full min-h-[300px] flex items-center justify-center bg-muted/20">
+      {isProcessing ? (
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Converting to lossless PNG...</p>
+        </div>
+      ) : result ? (
+        <CanvasPreview
+          imageSrc={result.url}
+          width={result.width}
+          height={result.height}
+          fit="contain"
+          className="w-full h-full"
         />
       ) : (
-        <>
-          <ImagePreview file={file} onRemove={handleRemove} />
-
-          {/* Controls Card */}
-          <Card className="border-border/50 shadow-lg">
-            <CardContent className="pt-6">
-              <div className="space-y-6">
-                {!result ? (
-                  <>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Output Format</span>
-                        <Badge variant="secondary">PNG (Lossless)</Badge>
-                      </div>
-                      <div className="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
-                        <p className="flex items-start gap-2">
-                          <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                          <span>
-                            Converting to PNG preserves 100% of the visual information.
-                            File size typically increases because PNG is lossless.
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-
-                    {error && (
-                      <Alert variant="destructive">
-                        <AlertCircle className="h-4 w-4" />
-                        <AlertDescription>{error}</AlertDescription>
-                      </Alert>
-                    )}
-
-                    <Button
-                      onClick={handleConvert}
-                      disabled={isProcessing}
-                      className="w-full"
-                      size="lg"
-                    >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Converting...
-                        </>
-                      ) : (
-                        <>
-                          Convert to PNG
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50">
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Original Size</p>
-                          <p className="text-lg font-semibold">{formatFileSize(file.size)}</p>
-                        </div>
-                        <ArrowRight className="h-5 w-5 text-muted-foreground/50" />
-                        <div className="space-y-1 text-right">
-                          <p className="text-sm font-medium text-muted-foreground">PNG Size</p>
-                          <p className="text-lg font-semibold text-primary">{formatFileSize(result.size)}</p>
-                        </div>
-                      </div>
-
-                      {/* Preview Image */}
-                      {result && (
-                        <div className="mt-4 relative aspect-video bg-muted rounded-lg overflow-hidden border">
-                          <img
-                            src={result.url}
-                            alt={`Converted ${file.name}`}
-                            className="object-contain w-full h-full"
-                          />
-                        </div>
-                      )}
-
-                      <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                        <Button onClick={handleDownload} className="flex-1" size="lg">
-                          <Download className="mr-2 h-4 w-4" />
-                          Download PNG
-                        </Button>
-                        <Button onClick={handleConvertAnother} variant="outline" className="flex-1" size="lg">
-                          <RefreshCw className="mr-2 h-4 w-4" />
-                          Convert Another
-                        </Button>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </>
+        <div className="text-center text-muted-foreground">
+          <p>Select an image to start</p>
+        </div>
       )}
     </div>
+  )
+
+  const controlsContent = (
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium">Output Format</span>
+          <Badge variant="secondary">PNG (Lossless)</Badge>
+        </div>
+        <div className="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
+          <p className="flex items-start gap-2">
+            <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+            <span>
+              Converting to PNG preserves 100% of the visual information.
+              File size typically increases because PNG is lossless.
+            </span>
+          </p>
+        </div>
+      </div>
+
+      {result && (
+        <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50">
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-muted-foreground">Original JPG</p>
+            <p className="text-lg font-semibold">{formatFileSize(file?.size || 0)}</p>
+          </div>
+          <ArrowRight className="h-5 w-5 text-muted-foreground/50" />
+          <div className="space-y-1 text-right">
+            <p className="text-sm font-medium text-muted-foreground">PNG Result</p>
+            <p className="text-lg font-semibold text-primary">{formatFileSize(result.size)}</p>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+    </div>
+  )
+
+  const actionsContent = (
+    <Button
+      onClick={handleDownload}
+      disabled={!result || isProcessing}
+      className="w-full sm:w-auto min-w-[200px]"
+      size="lg"
+    >
+      {isProcessing ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Converting...
+        </>
+      ) : (
+        <>
+          <Download className="mr-2 h-4 w-4" />
+          Download PNG
+        </>
+      )}
+    </Button>
+  )
+
+  return (
+    <ToolContentLayout
+      file={file}
+      onImageSelect={handleImageSelect}
+      onRemove={handleRemove}
+      preview={previewContent}
+      controls={controlsContent}
+      actions={actionsContent}
+      acceptedTypes={["image/jpeg", "image/jpg"]}
+    />
   )
 }

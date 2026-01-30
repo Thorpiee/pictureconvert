@@ -1,13 +1,12 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
+import { ToolContentLayout } from "@/components/tools/shared/tool-content-layout"
+import { CanvasPreview } from "@/components/tools/canvas-preview"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Loader2, Download, RefreshCw, Info, ArrowRight } from "lucide-react"
+import { Loader2, Download, Info, ArrowRight, AlertCircle } from "lucide-react"
 import { downloadBlob, type ProcessingResult } from "@/lib/image-processor"
 import { decodeTiff } from "@/lib/tiff-utils"
-import { ImageDropzone } from "@/components/image-dropzone"
-import { ImagePreview } from "@/components/image-preview"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 
@@ -40,50 +39,55 @@ export function TiffConverterTool() {
     setError(null)
   }, [])
 
-  const handleConvert = useCallback(async () => {
+  // Auto-process TIFF when file is selected
+  useEffect(() => {
     if (!file) return
 
-    setIsProcessing(true)
-    setError(null)
+    const convert = async () => {
+      setIsProcessing(true)
+      setError(null)
 
-    try {
-      // 1. Decode TIFF to ImageData
-      const imageData = await decodeTiff(file)
-      
-      // 2. Draw to canvas
-      const canvas = document.createElement("canvas")
-      canvas.width = imageData.width
-      canvas.height = imageData.height
-      const ctx = canvas.getContext("2d")
-      if (!ctx) throw new Error("Failed to get canvas context")
-      
-      // Fill white background (TIFF can have alpha, JPG cannot)
-      ctx.fillStyle = "#FFFFFF"
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-      
-      ctx.putImageData(imageData, 0, 0)
-      
-      // 3. Export as JPG
-      const blob = await new Promise<Blob>((resolve, reject) => {
-        canvas.toBlob((b) => {
-          if (b) resolve(b)
-          else reject(new Error("Failed to create JPG blob"))
-        }, "image/jpeg", 0.95)
-      })
+      try {
+        // 1. Decode TIFF to ImageData
+        const imageData = await decodeTiff(file)
 
-      setResult({
-        blob,
-        url: URL.createObjectURL(blob),
-        width: canvas.width,
-        height: canvas.height,
-        size: blob.size
-      })
-    } catch (err) {
-      console.error("Conversion error:", err)
-      setError(err instanceof Error ? err.message : "Failed to convert TIFF")
-    } finally {
-      setIsProcessing(false)
+        // 2. Draw to canvas
+        const canvas = document.createElement("canvas")
+        canvas.width = imageData.width
+        canvas.height = imageData.height
+        const ctx = canvas.getContext("2d")
+        if (!ctx) throw new Error("Failed to get canvas context")
+
+        // Fill white background (TIFF can have alpha, JPG cannot)
+        ctx.fillStyle = "#FFFFFF"
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+        ctx.putImageData(imageData, 0, 0)
+
+        // 3. Export as JPG
+        const blob = await new Promise<Blob>((resolve, reject) => {
+          canvas.toBlob((b) => {
+            if (b) resolve(b)
+            else reject(new Error("Failed to create JPG blob"))
+          }, "image/jpeg", 0.95)
+        })
+
+        setResult({
+          blob,
+          url: URL.createObjectURL(blob),
+          width: canvas.width,
+          height: canvas.height,
+          size: blob.size
+        })
+      } catch (err) {
+        console.error("Conversion error:", err)
+        setError(err instanceof Error ? err.message : "Failed to convert TIFF")
+      } finally {
+        setIsProcessing(false)
+      }
     }
+
+    convert()
   }, [file])
 
   const handleDownload = useCallback(() => {
@@ -92,123 +96,102 @@ export function TiffConverterTool() {
     downloadBlob(result.blob, filename)
   }, [result, file])
 
-  const handleConvertAnother = useCallback(() => {
-    setFile(null)
-    setResult(null)
-    setError(null)
-  }, [])
-
-  return (
-    <div className="space-y-6">
-      {!file ? (
-        <ImageDropzone
-          onImageSelect={handleImageSelect}
-          acceptedTypes={["image/tiff", "image/tif"]}
+  const previewContent = (
+    <div className="relative w-full h-full min-h-[300px] flex items-center justify-center bg-muted/20">
+      {isProcessing ? (
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-sm text-muted-foreground">Decoding TIFF...</p>
+        </div>
+      ) : result ? (
+        <CanvasPreview
+          imageSrc={result.url}
+          width={result.width}
+          height={result.height}
+          fit="contain"
+          className="w-full h-full"
         />
       ) : (
-        <>
-          <div className="relative aspect-video bg-muted rounded-lg overflow-hidden border flex items-center justify-center">
-            {/* TIFFs don't display in img tags usually, so we show a placeholder icon */}
-            <div className="text-center p-8">
-              <p className="text-lg font-medium">{file.name}</p>
-              <p className="text-sm text-muted-foreground">{formatFileSize(file.size)}</p>
-              <Button variant="ghost" size="sm" onClick={handleRemove} className="mt-4 text-destructive hover:text-destructive">
-                Remove File
-              </Button>
-            </div>
-          </div>
-
-          {/* Controls Card */}
-          <Card className="border-border/50 shadow-lg">
-            <CardContent className="pt-6">
-              <div className="space-y-6">
-                {!result ? (
-                  <>
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">Output Format</span>
-                        <Badge variant="secondary">JPG (Quality 95)</Badge>
-                      </div>
-                      <div className="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
-                        <p className="flex items-start gap-2">
-                          <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                          <span>
-                            Converts the first page of multi-page TIFFs. 
-                            Transparency is composited onto a white background.
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-
-                    {error && (
-                      <Alert variant="destructive">
-                        <AlertDescription>{error}</AlertDescription>
-                      </Alert>
-                    )}
-
-                    <Button
-                      onClick={handleConvert}
-                      disabled={isProcessing}
-                      className="w-full"
-                      size="lg"
-                    >
-                      {isProcessing ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Converting...
-                        </>
-                      ) : (
-                        <>
-                          Convert to JPG
-                          <ArrowRight className="ml-2 h-4 w-4" />
-                        </>
-                      )}
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50">
-                        <div className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">Original</p>
-                          <p className="text-lg font-semibold">{formatFileSize(file.size)}</p>
-                        </div>
-                        <ArrowRight className="h-5 w-5 text-muted-foreground/50" />
-                        <div className="space-y-1 text-right">
-                          <p className="text-sm font-medium text-muted-foreground">JPG Size</p>
-                          <p className="text-lg font-semibold text-primary">{formatFileSize(result.size)}</p>
-                        </div>
-                      </div>
-
-                      {/* Preview Image */}
-                      {result && (
-                        <div className="mt-4 relative aspect-video bg-muted rounded-lg overflow-hidden border">
-                          <img 
-                            src={result.url} 
-                            alt={`Converted ${file.name}`}
-                            className="object-contain w-full h-full"
-                          />
-                        </div>
-                      )}
-
-                      <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                        <Button onClick={handleDownload} className="flex-1" size="lg">
-                          <Download className="mr-2 h-4 w-4" />
-                          Download JPG
-                        </Button>
-                        <Button onClick={handleConvertAnother} variant="outline" className="flex-1" size="lg">
-                          <RefreshCw className="mr-2 h-4 w-4" />
-                          Convert Another
-                        </Button>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </>
+        <div className="text-center text-muted-foreground">
+          <p>Select a TIFF image to start</p>
+        </div>
       )}
     </div>
+  )
+
+  const controlsContent = (
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium">Output Format</span>
+          <Badge variant="secondary">JPG (Quality 95)</Badge>
+        </div>
+        <div className="p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground space-y-1">
+          <p className="flex items-start gap-2">
+            <Info className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+            <span>
+              Converts the first page of multi-page TIFFs.
+              Transparency is composited onto a white background.
+            </span>
+          </p>
+        </div>
+      </div>
+
+      {result && (
+        <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50">
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-muted-foreground">Original TIFF</p>
+            <p className="text-lg font-semibold">{formatFileSize(file?.size || 0)}</p>
+          </div>
+          <ArrowRight className="h-5 w-5 text-muted-foreground/50" />
+          <div className="space-y-1 text-right">
+            <p className="text-sm font-medium text-muted-foreground">JPG Result</p>
+            <p className="text-lg font-semibold text-primary">{formatFileSize(result.size)}</p>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+    </div>
+  )
+
+  const actionsContent = (
+    <div className="space-y-4">
+      <Button
+        onClick={handleDownload}
+        disabled={!result || isProcessing}
+        className="w-full"
+        size="lg"
+      >
+        {isProcessing ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Converting...
+          </>
+        ) : (
+          <>
+            <Download className="mr-2 h-4 w-4" />
+            Download JPG
+          </>
+        )}
+      </Button>
+    </div>
+  )
+
+  return (
+    <ToolContentLayout
+      file={file}
+      onImageSelect={handleImageSelect}
+      onRemove={handleRemove}
+      preview={previewContent}
+      controls={controlsContent}
+      actions={actionsContent}
+      acceptedTypes={["image/tiff", "image/tif"]}
+    />
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -11,6 +11,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { fileToBase64, base64ToBlob, getMimeTypeFromBase64 } from "@/lib/base64-utils"
 import { useToast } from "@/hooks/use-toast"
 
+import { ToolContentLayout } from "@/components/tools/shared/tool-content-layout"
+
 export function Base64Tool() {
   const [activeTab, setActiveTab] = useState("encode")
   const { toast } = useToast()
@@ -20,9 +22,6 @@ export function Base64Tool() {
     setMounted(true)
   }, [])
 
-  if (!mounted) {
-    return null
-  }
 
   // Encoder State
   const [encodeFile, setEncodeFile] = useState<File | null>(null)
@@ -99,115 +98,132 @@ export function Base64Tool() {
     document.body.removeChild(a)
   }, [decodeResult])
 
+  const handleClearDecode = useCallback(() => {
+    setDecodeResult(null)
+    setDecodeInput("")
+    setDecodeError(null)
+  }, [])
+
+  if (!mounted) {
+    return null
+  }
+
   return (
-    <Card className="border-border/50 shadow-lg">
-      <CardContent className="pt-6">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="encode" className="flex items-center gap-2">
-              <FileImage className="h-4 w-4" />
-              Image to Base64
-            </TabsTrigger>
-            <TabsTrigger value="decode" className="flex items-center gap-2">
-              <FileCode className="h-4 w-4" />
-              Base64 to Image
-            </TabsTrigger>
-          </TabsList>
+    <div className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
+          <TabsTrigger value="encode" className="flex items-center gap-2">
+            <FileImage className="h-4 w-4" />
+            Image to Base64
+          </TabsTrigger>
+          <TabsTrigger value="decode" className="flex items-center gap-2">
+            <FileCode className="h-4 w-4" />
+            Base64 to Image
+          </TabsTrigger>
+        </TabsList>
 
-          {/* ENCODER */}
-          <TabsContent value="encode" className="space-y-6">
-            {!encodeFile ? (
-              <ImageDropzone
-                onImageSelect={handleEncodeFileSelect}
-                acceptedTypes={["image/png", "image/jpeg", "image/webp", "image/svg+xml"]}
-              />
-            ) : (
+        <TabsContent value="encode" className="space-y-6 focus-visible:outline-none">
+          <ToolContentLayout
+            file={encodeFile}
+            onImageSelect={handleEncodeFileSelect}
+            onRemove={handleClearEncode}
+            acceptedTypes={["image/png", "image/jpeg", "image/webp", "image/svg+xml"]}
+            preview={
+              encodeResult && (
+                <div className="relative w-full h-full flex items-center justify-center bg-transparent">
+                  <img src={encodeResult} className="max-w-full max-h-full object-contain" alt="Preview" />
+                </div>
+              )
+            }
+            controls={
               <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-muted rounded overflow-hidden">
-                      {/* Try to show preview if possible */}
-                      {encodeResult && <img src={encodeResult} className="w-full h-full object-cover" />}
-                    </div>
-                    <div>
-                      <p className="font-medium text-sm">{encodeFile.name}</p>
-                      <p className="text-xs text-muted-foreground">{Math.round(encodeFile.size / 1024)} KB</p>
-                    </div>
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={handleClearEncode}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium">Base64 Output</span>
+                  <span className="text-xs text-muted-foreground">{encodeResult.length.toLocaleString()} chars</span>
                 </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium">Base64 Output</span>
-                    <span className="text-xs text-muted-foreground">{encodeResult.length.toLocaleString()} chars</span>
-                  </div>
-                  <Textarea
-                    readOnly
-                    value={encodeResult}
-                    className="font-mono text-xs h-48 resize-none bg-muted/50"
-                  />
-                </div>
-
-                <Button onClick={handleCopy} className="w-full" size="lg">
-                  <Copy className="mr-2 h-4 w-4" />
-                  Copy to Clipboard
-                </Button>
-              </div>
-            )}
-          </TabsContent>
-
-          {/* DECODER */}
-          <TabsContent value="decode" className="space-y-6">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <span className="text-sm font-medium">Paste Base64 String</span>
                 <Textarea
-                  placeholder="data:image/png;base64,..."
-                  value={decodeInput}
-                  onChange={(e) => setDecodeInput(e.target.value)}
-                  className="font-mono text-xs h-32 resize-none bg-muted/50"
+                  readOnly
+                  value={encodeResult}
+                  className="font-mono text-xs h-64 resize-none bg-muted/50"
                 />
               </div>
-
-              {decodeError && (
-                <Alert variant="destructive">
-                  <AlertDescription>{decodeError}</AlertDescription>
-                </Alert>
-              )}
-
-              <Button
-                onClick={handleDecode}
-                disabled={!decodeInput || isDecoding}
-                className="w-full"
-              >
-                {isDecoding ? <Loader2 className="animate-spin h-4 w-4" /> : "Decode Image"}
+            }
+            actions={
+              <Button onClick={handleCopy} className="w-full" size="lg">
+                <Copy className="mr-2 h-4 w-4" />
+                Copy to Clipboard
               </Button>
+            }
+          />
+        </TabsContent>
 
-              {decodeResult && (
-                <div className="space-y-4 pt-4 border-t">
-                  <div className="relative aspect-video bg-muted rounded-lg overflow-hidden border flex items-center justify-center">
-                    <img
-                      src={decodeResult.url}
-                      alt="Decoded"
-                      className="object-contain w-full h-full"
-                    />
+        <TabsContent value="decode" className="space-y-6 focus-visible:outline-none">
+          <ToolContentLayout
+            file={decodeResult ? new File([], "decoded") : null}
+            onImageSelect={() => { }}
+            onRemove={handleClearDecode}
+            dropzone={
+              <div className="w-full max-w-2xl mx-auto space-y-6 p-8 border-2 border-dashed border-border rounded-xl bg-muted/10 text-center">
+                <div className="space-y-4">
+                  <div className="p-4 bg-primary/10 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
+                    <FileCode className="h-8 w-8 text-primary" />
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Detected Type: {decodeResult.mime}</span>
-                    <Button onClick={handleDownloadDecoded} size="sm">
-                      <Download className="mr-2 h-4 w-4" />
-                      Download Image
-                    </Button>
+                  <h3 className="text-xl font-semibold">Paste Base64 String</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Paste your Base64 string below to decode it into an image.
+                  </p>
+                  <Textarea
+                    placeholder="data:image/png;base64,..."
+                    value={decodeInput}
+                    onChange={(e) => setDecodeInput(e.target.value)}
+                    className="font-mono text-xs h-48 resize-none bg-background"
+                  />
+                  {decodeError && (
+                    <Alert variant="destructive" className="text-left">
+                      <AlertDescription>{decodeError}</AlertDescription>
+                    </Alert>
+                  )}
+                  <Button
+                    onClick={handleDecode}
+                    disabled={!decodeInput || isDecoding}
+                    className="w-full"
+                    size="lg"
+                  >
+                    {isDecoding ? <Loader2 className="animate-spin h-4 w-4" /> : "Decode Image"}
+                  </Button>
+                </div>
+              </div>
+            }
+            preview={
+              decodeResult && (
+                <div className="relative w-full h-full flex items-center justify-center bg-transparent">
+                  <img src={decodeResult.url} className="max-w-full max-h-full object-contain" alt="Decoded" />
+                </div>
+              )
+            }
+            controls={
+              <div className="space-y-4">
+                <div className="p-4 bg-muted/30 rounded-lg border space-y-2">
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Format</span>
+                    <span className="font-medium">{decodeResult?.mime}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Size</span>
+                    <span className="font-medium">{(decodeResult?.blob.size ? decodeResult.blob.size / 1024 : 0).toFixed(1)} KB</span>
                   </div>
                 </div>
-              )}
-            </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+              </div>
+            }
+            actions={
+              <Button onClick={handleDownloadDecoded} className="w-full" size="lg">
+                <Download className="mr-2 h-4 w-4" />
+                Download Image
+              </Button>
+            }
+          />
+        </TabsContent>
+      </Tabs>
+    </div>
   )
 }
