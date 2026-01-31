@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useCallback, useEffect } from "react"
+import React, { useState, useCallback, useEffect, useId, useRef } from "react"
 import { Upload, X, FileImage, AlertCircle, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -18,6 +18,8 @@ export function ImageDropzone(props: ImageDropzoneProps) {
   const [isDragging, setIsDragging] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
+  const inputId = useId()
+  const inputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -106,12 +108,14 @@ export function ImageDropzone(props: ImageDropzoneProps) {
       aria-label="Upload image"
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
-          document.getElementById('file-input')?.click()
+          inputRef.current?.click()
         }
       }}
     >
+      <label className="sr-only" htmlFor={inputId}>Upload image</label>
       <input
-        id="file-input"
+        id={inputId}
+        ref={inputRef}
         type="file"
         accept={acceptString}
         onChange={handleFileInput}

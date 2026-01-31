@@ -2,29 +2,45 @@ export function JsonLd() {
     const softwareSchema = {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
+        "@id": "https://pictureconvert.com/#software",
         "name": "PictureConvert",
+        "url": "https://pictureconvert.com",
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Windows, macOS, Android, iOS, Linux",
         "offers": {
             "@type": "Offer",
-            "price": "0",
+            "price": 0,
             "priceCurrency": "USD"
         },
         "description": "Free online image converter and compressor. Process images locally in your browser with no file uploads.",
         "aggregateRating": {
             "@type": "AggregateRating",
-            "ratingValue": "4.8",
-            "ratingCount": "1250"
+            "ratingValue": 4.8,
+            "ratingCount": 1250
         },
-        "featureList": "Image Compression, Format Conversion (JPG, PNG, WebP, HEIC, AVIF), Image Resizing, EXIF Removal, Privacy-focused (Local Processing)"
+        "featureList": [
+            "Image Compression",
+            "Format Conversion (JPG, PNG, WebP, HEIC, AVIF)",
+            "Image Resizing",
+            "EXIF Removal",
+            "Privacy-focused (Local Processing)"
+        ],
+        "publisher": {
+            "@type": "Organization",
+            "@id": "https://pictureconvert.com/#organization"
+        }
     }
 
     const organizationSchema = {
         "@context": "https://schema.org",
         "@type": "Organization",
+        "@id": "https://pictureconvert.com/#organization",
         "name": "PictureConvert",
         "url": "https://pictureconvert.com",
-        "logo": "https://pictureconvert.com/android-chrome-512x512.png",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "https://pictureconvert.com/android-chrome-512x512.png"
+        },
         "description": "Secure, privacy-first online image tools for converting, compressing, and editing images locally in your browser."
     }
 
