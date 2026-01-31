@@ -11,6 +11,7 @@ import { Slider } from "@/components/ui/slider"
 import { Loader2, Download, RefreshCw, Info, ArrowRight, Target, CheckCircle } from "lucide-react"
 import { downloadBlob, compressImage } from "@/lib/image-processor"
 import { useImagePipeline } from "@/hooks/use-image-pipeline"
+import { trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 
@@ -20,7 +21,7 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
 }
 
-export function SmartOptimizerTool() {
+export function SmartOptimizerTool({ toolName }: { toolName: string }) {
   const {
     file,
     imageSrc,
@@ -100,12 +101,12 @@ export function SmartOptimizerTool() {
         quality: Math.round(bestQuality * 100)
       })
 
-      trackConvertComplete(toolName, {
-        inputSize: file.size,
-        outputSize: bestBlob.size,
-        duration: Date.now() - startTime,
-        settings: { targetSizeKB }
-      })
+      trackConvertComplete(
+        toolName,
+        Date.now() - startTime,
+        bestBlob.size / 1024,
+        true
+      )
 
       if (bestBlob.size > targetBytes) {
         setError(`Could not reach target size. Best result: ${formatFileSize(bestBlob.size)}`)
@@ -125,8 +126,9 @@ export function SmartOptimizerTool() {
     // compressImage usually preserves type or defaults to jpeg. 
     // Let's assume the blob type is correct.
     const ext = result.blob.type.split('/')[1] || "jpg"
+    trackDownloadClick(toolName, result.blob.type, result.size / 1024)
     downloadBlob(result.blob, `${file.name.replace(/\.[^/.]+$/, "")}-optimized.${ext}`)
-  }, [result, file])
+  }, [result, file, toolName])
 
   return (
     <ToolContentLayout

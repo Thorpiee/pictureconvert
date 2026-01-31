@@ -13,11 +13,6 @@ export function JsonLd() {
             "priceCurrency": "USD"
         },
         "description": "Free online image converter and compressor. Process images locally in your browser with no file uploads.",
-        "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": 4.8,
-            "ratingCount": 1250
-        },
         "featureList": [
             "Image Compression",
             "Format Conversion (JPG, PNG, WebP, HEIC, AVIF)",

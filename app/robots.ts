@@ -1,13 +1,14 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = 'https://pictureconvert.com'
+
   return {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/api/'],
+      disallow: '/private/',
     },
-    sitemap: 'https://pictureconvert.com/sitemap.xml',
-    host: 'https://pictureconvert.com',
+    sitemap: `${baseUrl}/sitemap.xml`,
   }
 }

@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { generateToolMetadata } from "@/lib/seo-utils"
 import { ToolLayout } from "@/components/tool-layout"
 import { TiffConverterTool } from "@/components/tools/tiff-converter-tool"
 import { getToolBySlug } from "@/lib/tools-config"
@@ -10,41 +11,7 @@ if (!tool) {
   notFound()
 }
 
-export const metadata: Metadata = {
-  title: tool!.name,
-  description: `${tool!.longDescription} Free, fast, and secure - all processing happens in your browser. No uploads, no signup required.`,
-  keywords: [
-    tool!.slug.replace(/-/g, ' '),
-    'image converter',
-    'free online tool',
-    'browser based',
-    'privacy focused',
-    tool!.category === 'convert' ? 'format converter' : tool!.category === 'compress' ? 'image compressor' : 'image editor',
-  ],
-  openGraph: {
-    title: `${tool!.name} | PictureConvert`,
-    description: `${tool!.longDescription} Free, fast, and secure - all processing happens in your browser.`,
-    url: `https://pictureconvert.com/${tool!.slug}`,
-    type: 'website',
-    images: [
-      {
-        url: `https://pictureconvert.com/og-image.png`,
-        width: 1200,
-        height: 630,
-        alt: tool!.name,
-      },
-    ],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: `${tool!.name} | PictureConvert`,
-    description: tool!.longDescription,
-    images: ['https://pictureconvert.com/og-image.png'],
-  },
-  alternates: {
-    canonical: `https://pictureconvert.com/${tool!.slug}`,
-  },
-}
+export const metadata: Metadata = generateToolMetadata(tool!)
 
 export default function TiffPage() {
   if (!tool) return null
