@@ -6,6 +6,7 @@ import { CanvasPreview } from "@/components/tools/canvas-preview"
 import { Button } from "@/components/ui/button"
 import { Loader2, Download, RefreshCw, Info, ArrowRight, Settings2, AlertCircle } from "lucide-react"
 import { downloadBlob, type ProcessingResult, loadImage } from "@/lib/image-processor"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -22,7 +23,7 @@ function getOutputFilename(originalName: string): string {
   return `${baseName}.png`
 }
 
-export function SvgConverterTool() {
+export function SvgConverterTool({ toolName = "SVG Converter" }: { toolName?: string }) {
   const [file, setFile] = useState<File | null>(null)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -37,6 +38,7 @@ export function SvgConverterTool() {
     setFile(selectedFile)
     setResult(null)
     setError(null)
+    trackFileUpload(toolName, selectedFile.type, selectedFile.size / 1024)
 
     const url = URL.createObjectURL(selectedFile)
     setImageSrc(url)
@@ -52,7 +54,7 @@ export function SvgConverterTool() {
     } catch (e) {
       // Ignore
     }
-  }, [])
+  }, [toolName])
 
   const handleRemove = useCallback(() => {
     if (imageSrc) URL.revokeObjectURL(imageSrc)
@@ -67,6 +69,8 @@ export function SvgConverterTool() {
 
     setIsProcessing(true)
     setError(null)
+    const startTime = Date.now()
+    trackConvertStart(toolName, "convert", "image/png")
 
     try {
       const img = await loadImage(file)
@@ -112,19 +116,22 @@ export function SvgConverterTool() {
         height: finalHeight,
         size: blob.size
       })
+      trackConvertComplete(toolName, Date.now() - startTime, blob.size / 1024, true)
     } catch (err) {
       console.error("Conversion error:", err)
       setError(err instanceof Error ? err.message : "Failed to convert SVG")
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false)
     } finally {
       setIsProcessing(false)
     }
-  }, [file, width, height, background, maintainAspectRatio])
+  }, [file, width, height, background, maintainAspectRatio, toolName])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name)
+    trackDownloadClick(toolName, "image/png", result.size / 1024)
     downloadBlob(result.blob, filename)
-  }, [result, file])
+  }, [result, file, toolName])
 
   // Cleanup
   useEffect(() => {

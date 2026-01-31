@@ -10,12 +10,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Download, Link2, Link2Off } from "lucide-react"
 import { resizeImage, downloadBlob, getOutputFilename, ProcessingResult, loadImage } from "@/lib/image-processor"
 import { CanvasPreview } from "@/components/tools/canvas-preview"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 
 interface ResizeToolProps {
   acceptedTypes: string[]
+  toolName?: string
 }
 
-export function ResizeTool({ acceptedTypes }: ResizeToolProps) {
+export function ResizeTool({ acceptedTypes, toolName = "Resize Tool" }: ResizeToolProps) {
   const [file, setFile] = useState<File | null>(null)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [originalDimensions, setOriginalDimensions] = useState<{ width: number; height: number } | null>(null)
@@ -34,6 +36,7 @@ export function ResizeTool({ acceptedTypes }: ResizeToolProps) {
     setImageSrc(url)
     setResult(null)
     setError(null)
+    trackFileUpload(toolName, selectedFile.type, selectedFile.size / 1024)
 
     try {
       const img = await loadImage(selectedFile)
@@ -43,7 +46,7 @@ export function ResizeTool({ acceptedTypes }: ResizeToolProps) {
     } catch {
       setError("Failed to load image dimensions")
     }
-  }, [])
+  }, [toolName])
 
   const handleRemove = useCallback(() => {
     if (imageSrc) URL.revokeObjectURL(imageSrc)
@@ -95,6 +98,8 @@ export function ResizeTool({ acceptedTypes }: ResizeToolProps) {
 
     setIsProcessing(true)
     setError(null)
+    const startTime = Date.now()
+    trackConvertStart(toolName, "resize", `${newWidth}x${newHeight}`)
 
     try {
       const processed = await resizeImage(file, {
@@ -105,18 +110,21 @@ export function ResizeTool({ acceptedTypes }: ResizeToolProps) {
         backgroundColor: (!maintainAspectRatio && fitMode === "contain") ? backgroundColor : undefined,
       })
       setResult(processed)
+      trackConvertComplete(toolName, Date.now() - startTime, processed.blob.size / 1024, true)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to resize image")
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false)
     } finally {
       setIsProcessing(false)
     }
-  }, [file, width, height, maintainAspectRatio, fitMode, backgroundColor])
+  }, [file, width, height, maintainAspectRatio, fitMode, backgroundColor, toolName])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name, file.type)
+    trackDownloadClick(toolName, file.type, result.blob.size / 1024)
     downloadBlob(result.blob, filename)
-  }, [result, file])
+  }, [result, file, toolName])
 
   const previewContent = imageSrc ? (
     <CanvasPreview

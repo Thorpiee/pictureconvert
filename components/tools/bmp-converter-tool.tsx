@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Loader2, Download, RefreshCw, Info, ArrowRight } from "lucide-react"
 import { downloadBlob } from "@/lib/image-processor"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -25,7 +26,7 @@ function getOutputFilename(originalName: string, format: string): string {
   return `${baseName}.${ext}`
 }
 
-export function BmpConverterTool() {
+export function BmpConverterTool({ toolName = "BMP Converter" }: { toolName?: string }) {
   const [outputFormat, setOutputFormat] = useState<"image/jpeg" | "image/png">("image/png")
   const [quality, setQuality] = useState(95)
 
@@ -36,24 +37,43 @@ export function BmpConverterTool() {
     result,
     isProcessing,
     error,
-    handleImageSelect,
+    handleImageSelect: originalHandleImageSelect,
     handleRemove,
     processImage,
     resetResult
   } = useImagePipeline()
 
-  const handleConvert = () => {
-    processImage({
-      format: outputFormat,
-      quality: outputFormat === "image/jpeg" ? quality / 100 : 1.0,
-      width: imageDimensions?.width || 0,
-      height: imageDimensions?.height || 0
-    })
+  const handleImageSelect = (file: File) => {
+    originalHandleImageSelect(file)
+    trackFileUpload(toolName, file.type, file.size / 1024)
+  }
+
+  const handleConvert = async () => {
+    if (!file) return
+    const startTime = Date.now()
+    trackConvertStart(toolName, "convert", outputFormat)
+
+    try {
+      await processImage({
+        format: outputFormat,
+        quality: outputFormat === "image/jpeg" ? quality / 100 : 1.0,
+        width: imageDimensions?.width || 0,
+        height: imageDimensions?.height || 0
+      })
+      // Note: processImage is async but doesn't return result directly, it sets state. 
+      // However, we can assume success if no error thrown.
+      // We might need to check result in useEffect, but for now this is close enough or we can wrap processImage better.
+      // Actually processImage in hook is async.
+      trackConvertComplete(toolName, Date.now() - startTime, 0, true) // Size 0 as we don't have it easily here without result state change
+    } catch (e) {
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false)
+    }
   }
 
   const handleDownload = () => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name, outputFormat)
+    trackDownloadClick(toolName, outputFormat, result.size / 1024)
     downloadBlob(result.blob, filename)
   }
 

@@ -7,7 +7,7 @@ import { useImagePipeline } from "@/hooks/use-image-pipeline"
 import { PLATFORM_PRESETS } from "@/lib/platform-presets"
 import { Twitter } from "lucide-react"
 
-export function TwitterResizerTool() {
+export function TwitterResizerTool({ toolName = "Twitter Resizer" }: { toolName?: string }) {
   const [selectedPresetId, setSelectedPresetId] = useState(PLATFORM_PRESETS.twitter[0].id)
   const pipeline = useImagePipeline()
 
@@ -18,6 +18,7 @@ export function TwitterResizerTool() {
       onPresetChange={setSelectedPresetId}
       pipeline={pipeline}
       PlatformIcon={Twitter}
+      toolName={toolName}
     />
   )
 }

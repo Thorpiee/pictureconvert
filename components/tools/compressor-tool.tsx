@@ -12,9 +12,12 @@ import { Loader2, Download, CheckCircle, TrendingDown, ArrowRight, Pencil } from
 import { compressImage, downloadBlob, getOutputFilename, ProcessingResult } from "@/lib/image-processor"
 import { useImagePipeline } from "@/hooks/use-image-pipeline"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { useRef } from "react"
 
 interface CompressorToolProps {
   acceptedTypes: string[]
+  toolName?: string
 }
 
 function formatFileSize(bytes: number): string {
@@ -23,7 +26,7 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
 }
 
-export function CompressorTool({ acceptedTypes }: CompressorToolProps) {
+export function CompressorTool({ acceptedTypes, toolName = "Compressor" }: CompressorToolProps) {
   // Use pipeline for file handling and dimensions
   const {
     file,
@@ -38,6 +41,7 @@ export function CompressorTool({ acceptedTypes }: CompressorToolProps) {
   const [isProcessing, setIsProcessing] = useState(false)
   const [result, setResult] = useState<ProcessingResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const startTimeRef = useRef<number | null>(null)
 
   // Reset result when file changes
   useEffect(() => {
@@ -50,6 +54,8 @@ export function CompressorTool({ acceptedTypes }: CompressorToolProps) {
 
     setIsProcessing(true)
     setError(null)
+    const startTime = Date.now()
+    trackConvertStart(toolName, "compress", `${file.size}`)
 
     try {
       let currentQuality = quality / 100
@@ -73,12 +79,21 @@ export function CompressorTool({ acceptedTypes }: CompressorToolProps) {
       }
 
       setResult(processed)
+      trackConvertComplete(toolName, Date.now() - startTime, processed.size / 1024, true)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to compress image")
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false, err instanceof Error ? err.message : "Failed")
     } finally {
       setIsProcessing(false)
     }
-  }, [file, quality, targetSize])
+  }, [file, quality, targetSize, toolName])
+
+  const handleDownload = useCallback(() => {
+    if (!result || !file) return
+    const filename = getOutputFilename(file.name, file.type)
+    downloadBlob(result.blob, filename)
+    trackDownloadClick(toolName, "compressed-image", result.size / 1024)
+  }, [result, file, toolName])
 
   const savedPercentage = file && result
     ? Math.round((1 - result.size / file.size) * 100)
@@ -117,7 +132,7 @@ export function CompressorTool({ acceptedTypes }: CompressorToolProps) {
                   <Pencil className="mr-2 h-4 w-4" />
                   Adjust Settings
                 </Button>
-                <Button onClick={() => downloadBlob(result.blob, getOutputFilename(file.name, file.type))} className="w-full">
+                <Button onClick={handleDownload} className="w-full">
                   <Download className="mr-2 h-4 w-4" />
                   Download
                 </Button>
@@ -133,7 +148,10 @@ export function CompressorTool({ acceptedTypes }: CompressorToolProps) {
   return (
     <ToolContentLayout
       file={file}
-      onImageSelect={handleImageSelect}
+      onImageSelect={(f) => {
+        handleImageSelect(f)
+        trackFileUpload(toolName, f.type, f.size / 1024)
+      }}
       onRemove={handleRemove}
       acceptedTypes={acceptedTypes}
       preview={

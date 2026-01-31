@@ -9,11 +9,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Loader2, Download, RefreshCw, CheckCircle, X, Pencil, ArrowRight } from "lucide-react"
 import { CanvasPreview } from "@/components/tools/canvas-preview"
 import { cropImage, downloadBlob, getOutputFilename, ProcessingResult, loadImage } from "@/lib/image-processor"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 
 import { ToolContentLayout } from "./shared/tool-content-layout"
 
 interface CropToolProps {
   acceptedTypes: string[]
+  toolName?: string
 }
 
 type AspectRatio = "free" | "1:1" | "4:3" | "16:9" | "9:16" | "3:2"
@@ -33,7 +35,7 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
 }
 
-export function CropTool({ acceptedTypes }: CropToolProps) {
+export function CropTool({ acceptedTypes, toolName = "Crop Tool" }: CropToolProps) {
   const [file, setFile] = useState<File | null>(null)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [imageDimensions, setImageDimensions] = useState<{ width: number; height: number } | null>(null)
@@ -53,6 +55,7 @@ export function CropTool({ acceptedTypes }: CropToolProps) {
     setFile(selectedFile)
     setResult(null)
     setError(null)
+    trackFileUpload(toolName, selectedFile.type, selectedFile.size / 1024)
 
     const url = URL.createObjectURL(selectedFile)
     setImageSrc(url)
@@ -64,7 +67,7 @@ export function CropTool({ acceptedTypes }: CropToolProps) {
     } catch {
       setError("Failed to load image")
     }
-  }, [])
+  }, [toolName])
 
   const handleRemove = useCallback(() => {
     if (imageSrc) URL.revokeObjectURL(imageSrc)
@@ -113,6 +116,8 @@ export function CropTool({ acceptedTypes }: CropToolProps) {
 
     setIsProcessing(true)
     setError(null)
+    const startTime = Date.now()
+    trackConvertStart(toolName, "crop", `${cropArea.width}x${cropArea.height}`)
 
     try {
       const processed = await cropImage(file, {
@@ -122,18 +127,21 @@ export function CropTool({ acceptedTypes }: CropToolProps) {
         cropHeight: cropArea.height,
       })
       setResult(processed)
+      trackConvertComplete(toolName, Date.now() - startTime, processed.blob.size / 1024, true)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to crop image")
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false)
     } finally {
       setIsProcessing(false)
     }
-  }, [file, cropArea])
+  }, [file, cropArea, toolName])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name, file.type)
+    trackDownloadClick(toolName, file.type, result.blob.size / 1024)
     downloadBlob(result.blob, filename)
-  }, [result, file])
+  }, [result, file, toolName])
 
   const handleCropAnother = useCallback(() => {
     setResult(null)
@@ -161,7 +169,7 @@ export function CropTool({ acceptedTypes }: CropToolProps) {
               imageSrc={imageSrc}
               imageNaturalWidth={imageDimensions.width}
               imageNaturalHeight={imageDimensions.height}
-              aspectMode={aspectRatio}
+              aspectMode={aspectModeForCropper}
               cropRect={cropArea}
               onChange={setCropArea}
               onCrop={() => { }} // Not used here, we have a separate button

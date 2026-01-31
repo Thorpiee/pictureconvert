@@ -3,11 +3,13 @@
 
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { motion, useReducedMotion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
 import { type ToolConfig, getToolBySlug } from "@/lib/tools-config"
+import { trackToolView } from "@/lib/analytics"
 import {
   ArrowRightLeft,
   FileImage,
@@ -67,6 +69,12 @@ interface ToolLayoutProps {
 export function ToolLayout({ tool, children }: ToolLayoutProps) {
   const prefersReducedMotion = useReducedMotion()
   const [mounted, setMounted] = useState(false)
+  const pathname = usePathname()
+
+  useEffect(() => {
+    trackToolView(tool.name, tool.category, pathname)
+  }, [tool.name, tool.category, pathname])
+
   const relatedTools = tool.relatedTools
     .map(slug => getToolBySlug(slug))
     .filter((t): t is ToolConfig => t !== undefined)
@@ -302,6 +310,26 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
           </motion.section>
         )}
       </div>
+
+      {/* Schema.org Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            "name": tool.name,
+            "description": tool.description,
+            "applicationCategory": "MultimediaApplication",
+            "operatingSystem": "Web",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            }
+          })
+        }}
+      />
     </div>
   )
 }

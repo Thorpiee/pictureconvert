@@ -1,14 +1,12 @@
 "use client"
 
-import React from "react"
-
-import { useState } from "react"
+import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Mail, MessageSquare, CheckCircle } from "lucide-react"
+import { MessageSquare, CheckCircle, Mail } from "lucide-react"
 
 export default function ContactPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -28,27 +26,25 @@ export default function ContactPage() {
   return (
     <div className="py-12 md:py-16">
       <div className="container mx-auto px-4">
-        <div className="max-w-2xl mx-auto">
-          <div className="text-center mb-8">
+        <div className="max-w-xl mx-auto">
+          <div className="text-center mb-10">
             <h1 className="text-3xl md:text-4xl font-bold text-foreground">
               Contact Us
             </h1>
             <p className="mt-4 text-lg text-muted-foreground">
-              Have questions, feedback, or suggestions? We'd love to hear from you.
+              We're a small team, but we're here to help.
             </p>
           </div>
 
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <MessageSquare className="h-5 w-5" />
-                </div>
-                <div>
-                  <CardTitle>Send us a message</CardTitle>
-                  <CardDescription>We typically respond within 24-48 hours.</CardDescription>
-                </div>
+          <Card className="border-0 shadow-lg bg-card/50 backdrop-blur-sm">
+            <CardHeader className="text-center pb-2">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+                <Mail className="h-6 w-6" />
               </div>
+              <CardTitle className="text-xl">Send a Message</CardTitle>
+              <CardDescription>
+                We usually reply within 24-48 hours. No tickets, just email.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {isSubmitted ? (
@@ -58,46 +54,34 @@ export default function ContactPage() {
                   </div>
                   <h3 className="text-xl font-semibold text-foreground mb-2">Message Sent!</h3>
                   <p className="text-muted-foreground">
-                    Thank you for reaching out. We'll get back to you as soon as possible.
+                    Thanks for reaching out. We'll be in touch soon.
                   </p>
                   <Button
                     variant="outline"
-                    className="mt-6 bg-transparent"
+                    className="mt-6"
                     onClick={() => setIsSubmitted(false)}
                   >
-                    Send Another Message
+                    Send Another
                   </Button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        placeholder="Your name"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="your@email.com"
-                        required
-                      />
-                    </div>
-                  </div>
-
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="subject">Subject</Label>
+                    <Label htmlFor="name">Name</Label>
                     <Input
-                      id="subject"
-                      name="subject"
-                      placeholder="What is this about?"
+                      id="name"
+                      name="name"
+                      placeholder="Your name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      name="email"
+                      type="email"
+                      placeholder="your@email.com"
                       required
                     />
                   </div>
@@ -107,8 +91,8 @@ export default function ContactPage() {
                     <Textarea
                       id="message"
                       name="message"
-                      placeholder="Your message..."
-                      rows={5}
+                      placeholder="How can we help?"
+                      rows={4}
                       required
                     />
                   </div>
@@ -121,11 +105,11 @@ export default function ContactPage() {
             </CardContent>
           </Card>
 
-          <div className="mt-8 text-center">
+          <div className="mt-10 text-center">
             <p className="text-sm text-muted-foreground">
-              You can also reach us directly at{" "}
-              <a href="mailto:hello@pictureconvert.com" className="text-primary hover:underline">
-                hello@pictureconvert.com
+              Or email us directly at{" "}
+              <a href="mailto:support@pictureconvert.com" className="text-primary hover:underline font-medium">
+                support@pictureconvert.com
               </a>
             </p>
           </div>

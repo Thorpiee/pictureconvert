@@ -49,6 +49,8 @@ export function SmartOptimizerTool() {
 
     setIsProcessing(true)
     setError(null)
+    const startTime = Date.now()
+    trackConvertStart(toolName, "optimize", `${file.size}`)
 
     try {
       // Binary search for target size

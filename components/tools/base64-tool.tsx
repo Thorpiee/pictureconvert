@@ -10,10 +10,11 @@ import { ImageDropzone } from "@/components/image-dropzone"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { fileToBase64, base64ToBlob, getMimeTypeFromBase64 } from "@/lib/base64-utils"
 import { useToast } from "@/hooks/use-toast"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 
 import { ToolContentLayout } from "@/components/tools/shared/tool-content-layout"
 
-export function Base64Tool() {
+export function Base64Tool({ toolName = "Base64 Tool" }: { toolName?: string }) {
   const [activeTab, setActiveTab] = useState("encode")
   const { toast } = useToast()
   const [mounted, setMounted] = useState(false)
@@ -73,19 +74,24 @@ export function Base64Tool() {
     setIsDecoding(true)
     setDecodeError(null)
     setDecodeResult(null)
+    const startTime = Date.now()
+    trackConvertStart(toolName, "base64-decode", `${decodeInput.length} chars`)
 
     try {
       const blob = base64ToBlob(decodeInput)
       const mime = getMimeTypeFromBase64(decodeInput) || blob.type || "image/png" // Fallback
       const url = URL.createObjectURL(blob)
       setDecodeResult({ url, blob, mime })
+      trackConvertComplete(toolName, Date.now() - startTime, blob.size / 1024, true)
     } catch (error) {
       console.error(error)
+      const errorMessage = "Invalid Base64 string"
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false, errorMessage)
       setDecodeError("Invalid Base64 string. Please check the input.")
     } finally {
       setIsDecoding(false)
     }
-  }, [decodeInput])
+  }, [decodeInput, toolName])
 
   const handleDownloadDecoded = useCallback(() => {
     if (!decodeResult) return
@@ -93,10 +99,11 @@ export function Base64Tool() {
     const a = document.createElement("a")
     a.href = decodeResult.url
     a.download = `decoded-image.${ext}`
+    trackDownloadClick(toolName, "base64-image", decodeResult.blob.size / 1024)
     document.body.appendChild(a)
     a.click()
     document.body.removeChild(a)
-  }, [decodeResult])
+  }, [decodeResult, toolName])
 
   const handleClearDecode = useCallback(() => {
     setDecodeResult(null)

@@ -7,7 +7,7 @@ import { useImagePipeline } from "@/hooks/use-image-pipeline"
 import { PLATFORM_PRESETS } from "@/lib/platform-presets"
 import { Youtube } from "lucide-react"
 
-export function YoutubeResizerTool() {
+export function YoutubeResizerTool({ toolName = "YouTube Resizer" }: { toolName?: string }) {
   const [selectedPresetId, setSelectedPresetId] = useState(PLATFORM_PRESETS.youtube[0].id)
   const pipeline = useImagePipeline()
 
@@ -18,6 +18,7 @@ export function YoutubeResizerTool() {
       onPresetChange={setSelectedPresetId}
       pipeline={pipeline}
       PlatformIcon={Youtube}
+      toolName={toolName}
     />
   )
 }

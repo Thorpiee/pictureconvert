@@ -8,9 +8,11 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Loader2, Download, CheckCircle, AlertTriangle, MapPin, Calendar, Camera, FileType } from "lucide-react"
 import { removeExif, downloadBlob, getOutputFilename, ProcessingResult } from "@/lib/image-processor"
 import { Badge } from "@/components/ui/badge"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 
 interface ExifRemoverToolProps {
   acceptedTypes?: string[]
+  toolName?: string
 }
 
 interface ExifData {
@@ -51,7 +53,7 @@ async function detectExifData(file: File): Promise<ExifData> {
         details.push("EXIF metadata detected")
         details.push("Date/Time information likely present")
         details.push("Camera information likely present")
-        
+
         // Check for GPS data (simplified check)
         const segment = new Uint8Array(buffer, offset, Math.min(1000, buffer.byteLength - offset))
         const segmentStr = String.fromCharCode(...segment)
@@ -71,7 +73,7 @@ async function detectExifData(file: File): Promise<ExifData> {
     const header = new Uint8Array(buffer, 0, 8)
     const pngSignature = [137, 80, 78, 71, 13, 10, 26, 10]
     const isPng = pngSignature.every((byte, i) => header[i] === byte)
-    
+
     if (isPng) {
       details.push("PNG file - may contain metadata in tEXt chunks")
       hasDateTime = true
@@ -88,7 +90,7 @@ async function detectExifData(file: File): Promise<ExifData> {
   return { hasLocation, hasDateTime, hasCamera, hasSoftware, details }
 }
 
-export function ExifRemoverTool({ acceptedTypes = ["image/jpeg", "image/png", "image/webp"] }: ExifRemoverToolProps) {
+export function ExifRemoverTool({ acceptedTypes = ["image/jpeg", "image/png", "image/webp"], toolName = "Exif Remover" }: ExifRemoverToolProps) {
   const [file, setFile] = useState<File | null>(null)
   const [exifData, setExifData] = useState<ExifData | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -116,6 +118,8 @@ export function ExifRemoverTool({ acceptedTypes = ["image/jpeg", "image/png", "i
     const process = async () => {
       setIsProcessing(true)
       setError(null)
+      const startTime = Date.now()
+      trackConvertStart(toolName, "remove-exif", `${file.size}`)
 
       try {
         // Run detection and removal in parallel
@@ -123,25 +127,28 @@ export function ExifRemoverTool({ acceptedTypes = ["image/jpeg", "image/png", "i
           detectExifData(file),
           removeExif(file)
         ])
-        
+
         setExifData(detected)
         setResult(processed)
+        trackConvertComplete(toolName, Date.now() - startTime, processed.size / 1024, true)
       } catch (err) {
         console.error("Processing error:", err)
         setError(err instanceof Error ? err.message : "Failed to process image")
+        trackConvertComplete(toolName, Date.now() - startTime, 0, false, err instanceof Error ? err.message : "Failed")
       } finally {
         setIsProcessing(false)
       }
     }
 
     process()
-  }, [file])
+  }, [file, toolName])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name, file.type)
     downloadBlob(result.blob, filename)
-  }, [result, file])
+    trackDownloadClick(toolName, "cleaned-image", result.size / 1024)
+  }, [result, file, toolName])
 
   const previewContent = (
     <div className="relative w-full h-full min-h-[300px] flex items-center justify-center bg-muted/20">
@@ -172,74 +179,74 @@ export function ExifRemoverTool({ acceptedTypes = ["image/jpeg", "image/png", "i
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium">Metadata Status</span>
           {result ? (
-             <Badge variant="outline" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200">
-               Cleaned
-             </Badge>
+            <Badge variant="outline" className="bg-green-500/10 text-green-600 hover:bg-green-500/20 border-green-200">
+              Cleaned
+            </Badge>
           ) : (
-             <Badge variant="secondary">Analyzing</Badge>
+            <Badge variant="secondary">Analyzing</Badge>
           )}
         </div>
-        
+
         {exifData ? (
           <div className="space-y-3">
-             <p className="text-sm font-medium text-muted-foreground">Detected & Removed:</p>
-             <div className="grid grid-cols-2 gap-3">
-               <div className={`flex items-center gap-2 p-3 rounded-lg ${exifData.hasLocation ? 'bg-destructive/10 text-destructive' : 'bg-muted text-muted-foreground opacity-50'}`}>
-                 <MapPin className="h-4 w-4" />
-                 <span className="text-sm">GPS</span>
-               </div>
-               <div className={`flex items-center gap-2 p-3 rounded-lg ${exifData.hasDateTime ? 'bg-amber-500/10 text-amber-600' : 'bg-muted text-muted-foreground opacity-50'}`}>
-                 <Calendar className="h-4 w-4" />
-                 <span className="text-sm">Date</span>
-               </div>
-               <div className={`flex items-center gap-2 p-3 rounded-lg ${exifData.hasCamera ? 'bg-amber-500/10 text-amber-600' : 'bg-muted text-muted-foreground opacity-50'}`}>
-                 <Camera className="h-4 w-4" />
-                 <span className="text-sm">Camera</span>
-               </div>
-               <div className={`flex items-center gap-2 p-3 rounded-lg ${exifData.hasSoftware ? 'bg-amber-500/10 text-amber-600' : 'bg-muted text-muted-foreground opacity-50'}`}>
-                 <FileType className="h-4 w-4" />
-                 <span className="text-sm">Software</span>
-               </div>
-             </div>
-             
-             {exifData.details.length > 0 && (
-                <div className="p-3 rounded-lg bg-muted/50 text-xs text-muted-foreground">
-                  <ul className="list-disc list-inside space-y-1">
-                    {exifData.details.slice(0, 3).map((detail, i) => (
-                      <li key={i}>{detail}</li>
-                    ))}
-                  </ul>
-                </div>
-             )}
+            <p className="text-sm font-medium text-muted-foreground">Detected & Removed:</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className={`flex items-center gap-2 p-3 rounded-lg ${exifData.hasLocation ? 'bg-destructive/10 text-destructive' : 'bg-muted text-muted-foreground opacity-50'}`}>
+                <MapPin className="h-4 w-4" />
+                <span className="text-sm">GPS</span>
+              </div>
+              <div className={`flex items-center gap-2 p-3 rounded-lg ${exifData.hasDateTime ? 'bg-amber-500/10 text-amber-600' : 'bg-muted text-muted-foreground opacity-50'}`}>
+                <Calendar className="h-4 w-4" />
+                <span className="text-sm">Date</span>
+              </div>
+              <div className={`flex items-center gap-2 p-3 rounded-lg ${exifData.hasCamera ? 'bg-amber-500/10 text-amber-600' : 'bg-muted text-muted-foreground opacity-50'}`}>
+                <Camera className="h-4 w-4" />
+                <span className="text-sm">Camera</span>
+              </div>
+              <div className={`flex items-center gap-2 p-3 rounded-lg ${exifData.hasSoftware ? 'bg-amber-500/10 text-amber-600' : 'bg-muted text-muted-foreground opacity-50'}`}>
+                <FileType className="h-4 w-4" />
+                <span className="text-sm">Software</span>
+              </div>
+            </div>
+
+            {exifData.details.length > 0 && (
+              <div className="p-3 rounded-lg bg-muted/50 text-xs text-muted-foreground">
+                <ul className="list-disc list-inside space-y-1">
+                  {exifData.details.slice(0, 3).map((detail, i) => (
+                    <li key={i}>{detail}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         ) : null}
       </div>
 
       {result && (
         <div className="p-4 bg-green-500/10 rounded-lg border border-green-200/50">
-           <div className="flex items-start gap-3">
-             <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-             <div className="space-y-1">
-               <p className="font-medium text-green-700">Metadata Removed Successfully</p>
-               <p className="text-sm text-green-600/80">
-                 The image has been re-encoded and all EXIF data (location, camera info, timestamps) has been stripped.
-               </p>
-             </div>
-           </div>
+          <div className="flex items-start gap-3">
+            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+            <div className="space-y-1">
+              <p className="font-medium text-green-700">Metadata Removed Successfully</p>
+              <p className="text-sm text-green-600/80">
+                The image has been re-encoded and all EXIF data (location, camera info, timestamps) has been stripped.
+              </p>
+            </div>
+          </div>
         </div>
       )}
 
       {error && (
         <div className="p-4 bg-destructive/10 rounded-lg border border-destructive/20 text-destructive text-sm">
-           {error}
+          {error}
         </div>
       )}
     </div>
   )
 
   const actionsContent = (
-    <Button 
-      onClick={handleDownload} 
+    <Button
+      onClick={handleDownload}
       disabled={!result || isProcessing}
       className="w-full sm:w-auto min-w-[200px]"
       size="lg"

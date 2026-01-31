@@ -42,7 +42,7 @@ export function ToolContentLayout({
   return (
     <div className={`space-y-8 ${className}`}>
       {/* Workspace / Preview Area */}
-      <div className="relative rounded-xl overflow-hidden border border-border bg-muted/30 min-h-[500px] md:min-h-[600px] flex items-center justify-center shadow-sm">
+      <div className="relative rounded-xl overflow-hidden border border-border bg-muted/30 min-h-[350px] md:min-h-[600px] xl:min-h-[700px] flex items-center justify-center shadow-sm">
         {onRemove && (
           <div className="absolute top-4 right-4 z-20">
             <Button

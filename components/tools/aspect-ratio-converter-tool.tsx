@@ -15,6 +15,8 @@ import { CanvasPreview } from "@/components/tools/canvas-preview"
 import { ToolContentLayout } from "@/components/tools/shared/tool-content-layout"
 import { useImagePipeline, calculateCenterCrop } from "@/hooks/use-image-pipeline"
 import { downloadBlob } from "@/lib/image-processor"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { useRef } from "react"
 
 const RATIOS = [
   { label: "1:1 Square", w: 1, h: 1 },
@@ -25,12 +27,13 @@ const RATIOS = [
   { label: "3:2 Classic", w: 3, h: 2 },
 ]
 
-export function AspectRatioConverterTool() {
+export function AspectRatioConverterTool({ toolName = "Aspect Ratio Converter" }: { toolName?: string }) {
   const [ratioW, setRatioW] = useState<number>(1)
   const [ratioH, setRatioH] = useState<number>(1)
   const [fitMode, setFitMode] = useState<"cover" | "contain">("cover")
   const [backgroundColor, setBackgroundColor] = useState<string>("#ffffff")
   const [isEditingCrop, setIsEditingCrop] = useState(false)
+  const startTimeRef = useRef<number | null>(null)
 
   // Calculated target dimensions
   const [targetWidth, setTargetWidth] = useState<number>(0)
@@ -113,14 +116,29 @@ export function AspectRatioConverterTool() {
     }
   }, [imageDimensions, ratioW, ratioH, fitMode, setCropRect])
 
-  const handleProcess = () => {
-    processImage({
-      width: targetWidth,
-      height: targetHeight,
-      quality: 0.92,
-      fit: fitMode === "cover" ? "fill" : "contain",
-      maintainAspectRatio: fitMode === "contain",
-    })
+  const handleProcess = async () => {
+    const startTime = Date.now()
+    trackConvertStart(toolName, "aspect-ratio", `${targetWidth}x${targetHeight}`)
+
+    try {
+      await processImage({
+        width: targetWidth,
+        height: targetHeight,
+        quality: 0.92,
+        fit: fitMode === "cover" ? "fill" : "contain",
+        maintainAspectRatio: fitMode === "contain",
+      })
+      trackConvertComplete(toolName, Date.now() - startTime, 0, true)
+    } catch (e) {
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false)
+    }
+  }
+
+  const handleDownload = () => {
+    if (!result || !file) return
+    const filename = getOutputFilename()
+    downloadBlob(result.blob, filename)
+    trackDownloadClick(toolName, "aspect-ratio-image", result.size / 1024)
   }
 
   const getOutputFilename = () => {
@@ -160,7 +178,7 @@ export function AspectRatioConverterTool() {
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </Button>
-              <Button onClick={() => downloadBlob(result.blob, getOutputFilename())} className="w-full">
+              <Button onClick={handleDownload} className="w-full">
                 <Download className="mr-2 h-4 w-4" />
                 Download
               </Button>
@@ -175,7 +193,10 @@ export function AspectRatioConverterTool() {
   return (
     <ToolContentLayout
       file={file}
-      onImageSelect={handleImageSelect}
+      onImageSelect={(f) => {
+        handleImageSelect(f)
+        trackFileUpload(toolName, f.type, f.size / 1024)
+      }}
       onRemove={handleRemove}
       preview={
         imageSrc && imageDimensions && cropRect && (

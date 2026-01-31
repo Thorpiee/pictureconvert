@@ -4,7 +4,7 @@ import React from "react"
 
 import { useCallback, useState, useEffect } from "react"
 import { motion, useReducedMotion } from "framer-motion"
-import { Upload, ImageIcon, X, Sparkles } from "lucide-react"
+import { Upload, ImageIcon, X, Sparkles, Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type ImageDropzoneProps = {

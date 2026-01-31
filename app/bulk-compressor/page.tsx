@@ -11,15 +11,15 @@ if (!tool) {
 }
 
 export const metadata: Metadata = {
-  title: tool.name,
-  description: tool.description,
+  title: tool!.name,
+  description: tool!.description,
   openGraph: {
-    title: `${tool.name} | PictureConvert`,
-    description: tool.description,
-    url: `https://pictureconvert.com/${tool.slug}`,
+    title: `${tool!.name} | PictureConvert`,
+    description: tool!.description,
+    url: `https://pictureconvert.com/${tool!.slug}`,
   },
   alternates: {
-    canonical: `https://pictureconvert.com/${tool.slug}`,
+    canonical: `https://pictureconvert.com/${tool!.slug}`,
   },
 }
 
@@ -27,15 +27,15 @@ export default function BulkCompressorPage() {
   if (!tool) return null
 
   return (
-    <ToolLayout tool={tool}>
-      <BulkCompressorTool />
+    <ToolLayout tool={tool!}>
+      <BulkCompressorTool toolName={tool!.name} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            "mainEntity": tool.faq.map((item) => ({
+            "mainEntity": tool!.faq.map((item) => ({
               "@type": "Question",
               "name": item.question,
               "acceptedAnswer": {

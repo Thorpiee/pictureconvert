@@ -39,10 +39,10 @@ export function ImagePreview({ file, onRemove, className }: ImagePreviewProps) {
       <div className="relative aspect-video bg-muted flex items-center justify-center">
         {preview ? (
           <img
-            src={preview || "/placeholder.svg"}
+            src={preview}
             alt="Preview"
             className="max-w-full max-h-full object-contain"
-            style={{ imageRendering: 'high-quality' }}
+            style={{ imageRendering: 'auto' }}
             loading="eager"
           />
         ) : (

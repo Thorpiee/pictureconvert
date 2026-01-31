@@ -1,6 +1,6 @@
 import { Metadata } from "next"
 import { ToolLayout } from "@/components/tool-layout"
-import { WebpConverterTool } from "@/components/tools/webp-converter-tool"
+import { ConverterTool } from "@/components/tools/converter-tool"
 import { getToolBySlug } from "@/lib/tools-config"
 import { notFound } from "next/navigation"
 
@@ -11,29 +11,34 @@ if (!tool) {
 }
 
 export const metadata: Metadata = {
-  title: tool.name,
-  description: tool.description,
+  title: tool!.name,
+  description: tool!.description,
   openGraph: {
-    title: `${tool.name} | PictureConvert`,
-    description: tool.description,
-    url: `https://pictureconvert.com/${tool.slug}`,
+    title: `${tool!.name} | PictureConvert`,
+    description: tool!.description,
+    url: `https://pictureconvert.com/${tool!.slug}`,
   },
   alternates: {
-    canonical: `https://pictureconvert.com/${tool.slug}`,
+    canonical: `https://pictureconvert.com/${tool!.slug}`,
   },
 }
 
-export default function WebpConverterPage() {
+export default function WebpToJpgPage() {
   return (
-    <ToolLayout tool={tool}>
-      <WebpConverterTool />
+    <ToolLayout tool={tool!}>
+      <ConverterTool
+        toolName={tool!.name}
+        acceptedTypes={tool!.acceptedTypes}
+        outputType={tool!.outputType}
+        showQuality={false}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            "mainEntity": tool.faq.map((item) => ({
+            "mainEntity": tool!.faq.map((item) => ({
               "@type": "Question",
               "name": item.question,
               "acceptedAnswer": {

@@ -1,18 +1,21 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { ToolContentLayout } from "@/components/tools/shared/tool-content-layout"
 import { useImagePipeline } from "@/hooks/use-image-pipeline"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Loader2, ArrowRight, Code, Copy, AlertCircle } from "lucide-react"
+import { Loader2, ArrowRight, Code, Copy, AlertCircle, Download } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
 import { CanvasPreview } from "@/components/tools/canvas-preview"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { downloadBlob, getOutputFilename } from "@/lib/image-processor"
 
-export function WebsiteOptimizerTool() {
+export function WebsiteOptimizerTool({ toolName = "Website Optimizer" }: { toolName?: string }) {
   const { toast } = useToast()
+  const startTimeRef = useRef<number>(0)
 
   const {
     file,
@@ -26,7 +29,7 @@ export function WebsiteOptimizerTool() {
     processImage
   } = useImagePipeline()
 
-  const handleOptimize = () => {
+  const handleOptimize = async () => {
     if (!imageDimensions) return
 
     let targetWidth = imageDimensions.width
@@ -39,14 +42,32 @@ export function WebsiteOptimizerTool() {
       targetHeight = Math.round(1920 * ratio)
     }
 
-    processImage({
-      width: targetWidth,
-      height: targetHeight,
-      quality: 0.85,
+    trackConvertStart(toolName, "optimize", `${file?.size}`)
+    startTimeRef.current = Date.now()
+
+    try {
+      await processImage({
+        width: targetWidth,
+        height: targetHeight,
+        quality: 0.85,
+        format: "image/webp",
+        maintainAspectRatio: true,
+        skipQualityCheck: true
+      })
+      trackConvertComplete(toolName, Date.now() - startTimeRef.current, 0, true)
+    } catch (e) {
+      trackConvertComplete(toolName, Date.now() - startTimeRef.current, 0, false)
+    }
+  }
+
+  const handleDownload = () => {
+    if (!result || !file) return
+    const filename = getOutputFilename(file.name, {
       format: "image/webp",
-      maintainAspectRatio: true,
-      skipQualityCheck: true
+      suffix: "optimized"
     })
+    trackDownloadClick(toolName, "image/webp", result.size / 1024)
+    downloadBlob(result.blob, filename)
   }
 
   const getEmbedCode = () => {
@@ -143,13 +164,19 @@ export function WebsiteOptimizerTool() {
           )}
         </Button>
       ) : (
-        <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50">
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="h-5 text-[10px] px-1.5">
-              WebP
-            </Badge>
-            <span className="text-sm text-muted-foreground">Ready</span>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border border-border/50">
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="h-5 text-[10px] px-1.5">
+                WebP
+              </Badge>
+              <span className="text-sm text-muted-foreground">Ready</span>
+            </div>
           </div>
+          <Button onClick={handleDownload} className="w-full">
+            <Download className="mr-2 h-4 w-4" />
+            Download Optimized Image
+          </Button>
         </div>
       )}
     </div>
@@ -158,7 +185,10 @@ export function WebsiteOptimizerTool() {
   return (
     <ToolContentLayout
       file={file}
-      onImageSelect={handleImageSelect}
+      onImageSelect={(f) => {
+        handleImageSelect(f)
+        trackFileUpload(toolName, f.type, f.size / 1024)
+      }}
       onRemove={handleRemove}
       preview={previewContent}
       controls={controlsContent}

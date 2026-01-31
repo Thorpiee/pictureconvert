@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Loader2, Download, Info, ArrowRight, AlertCircle } from "lucide-react"
 import { convertJpgToPng, type JpgToPngResult } from "@/lib/jpg-to-png-converter"
 import { downloadBlob } from "@/lib/image-processor"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 function formatFileSize(bytes: number): string {
@@ -21,7 +22,7 @@ function getOutputFilename(originalName: string): string {
   return `${baseName}.png`
 }
 
-export function JpgToPngConverterTool() {
+export function JpgToPngConverterTool({ toolName = "JPG to PNG" }: { toolName?: string }) {
   const [file, setFile] = useState<File | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [result, setResult] = useState<JpgToPngResult | null>(null)
@@ -31,7 +32,8 @@ export function JpgToPngConverterTool() {
     setFile(selectedFile)
     setResult(null)
     setError(null)
-  }, [])
+    trackFileUpload(toolName, selectedFile.type, selectedFile.size / 1024)
+  }, [toolName])
 
   const handleRemove = useCallback(() => {
     setFile(null)
@@ -46,26 +48,31 @@ export function JpgToPngConverterTool() {
     const convert = async () => {
       setIsProcessing(true)
       setError(null)
+      const startTime = Date.now()
+      trackConvertStart(toolName, "convert", "image/png")
 
       try {
         const conversionResult = await convertJpgToPng(file)
         setResult(conversionResult)
+        trackConvertComplete(toolName, Date.now() - startTime, conversionResult.blob.size / 1024, true)
       } catch (err) {
         console.error("Conversion error:", err)
         setError(err instanceof Error ? err.message : "Failed to convert image")
+        trackConvertComplete(toolName, Date.now() - startTime, 0, false)
       } finally {
         setIsProcessing(false)
       }
     }
 
     convert()
-  }, [file])
+  }, [file, toolName])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name)
+    trackDownloadClick(toolName, "image/png", result.blob.size / 1024)
     downloadBlob(result.blob, filename)
-  }, [result, file])
+  }, [result, file, toolName])
 
   const previewContent = (
     <div className="relative w-full h-full min-h-[300px] flex items-center justify-center bg-muted/20">

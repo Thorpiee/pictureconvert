@@ -9,6 +9,7 @@ import { downloadBlob, type ProcessingResult } from "@/lib/image-processor"
 import { decodeTiff } from "@/lib/tiff-utils"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -21,7 +22,7 @@ function getOutputFilename(originalName: string): string {
   return `${baseName}.jpg`
 }
 
-export function TiffConverterTool() {
+export function TiffConverterTool({ toolName = "TIFF Converter" }: { toolName?: string }) {
   const [file, setFile] = useState<File | null>(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [result, setResult] = useState<ProcessingResult | null>(null)
@@ -31,7 +32,8 @@ export function TiffConverterTool() {
     setFile(selectedFile)
     setResult(null)
     setError(null)
-  }, [])
+    trackFileUpload(toolName, selectedFile.type, selectedFile.size / 1024)
+  }, [toolName])
 
   const handleRemove = useCallback(() => {
     setFile(null)
@@ -46,6 +48,8 @@ export function TiffConverterTool() {
     const convert = async () => {
       setIsProcessing(true)
       setError(null)
+      const startTime = Date.now()
+      trackConvertStart(toolName, "convert", "image/jpeg")
 
       try {
         // 1. Decode TIFF to ImageData
@@ -79,22 +83,26 @@ export function TiffConverterTool() {
           height: canvas.height,
           size: blob.size
         })
+        trackConvertComplete(toolName, Date.now() - startTime, blob.size / 1024, true)
       } catch (err) {
         console.error("Conversion error:", err)
-        setError(err instanceof Error ? err.message : "Failed to convert TIFF")
+        const errorMessage = err instanceof Error ? err.message : "Failed to convert TIFF"
+        setError(errorMessage)
+        trackConvertComplete(toolName, Date.now() - startTime, 0, false, errorMessage)
       } finally {
         setIsProcessing(false)
       }
     }
 
     convert()
-  }, [file])
+  }, [file, toolName])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name)
+    trackDownloadClick(toolName, "image/jpeg", result.size / 1024)
     downloadBlob(result.blob, filename)
-  }, [result, file])
+  }, [result, file, toolName])
 
   const previewContent = (
     <div className="relative w-full h-full min-h-[300px] flex items-center justify-center bg-muted/20">

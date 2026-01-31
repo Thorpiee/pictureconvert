@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -22,7 +23,7 @@ function getOutputFilename(originalName: string): string {
   return `${baseName}.jpg`
 }
 
-export function WebpConverterTool() {
+export function WebpConverterTool({ toolName = "WebP Converter" }: { toolName?: string }) {
   const [file, setFile] = useState<File | null>(null)
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [originalDimensions, setOriginalDimensions] = useState<{ width: number; height: number } | null>(null)
@@ -63,6 +64,8 @@ export function WebpConverterTool() {
 
     setIsProcessing(true)
     setError(null)
+    const startTime = Date.now()
+    trackConvertStart(toolName, "image/jpeg", `${quality}%`)
 
     try {
       const options = {
@@ -71,13 +74,16 @@ export function WebpConverterTool() {
 
       const conversionResult = await convertImage(file, "image/jpeg", options)
       setResult(conversionResult)
+      trackConvertComplete(toolName, Date.now() - startTime, conversionResult.blob.size / 1024, true)
     } catch (err) {
       console.error("Conversion error:", err)
-      setError(err instanceof Error ? err.message : "Failed to convert image")
+      const errorMessage = err instanceof Error ? err.message : "Failed to convert image"
+      setError(errorMessage)
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false, errorMessage)
     } finally {
       setIsProcessing(false)
     }
-  }, [file, quality])
+  }, [file, quality, toolName])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return

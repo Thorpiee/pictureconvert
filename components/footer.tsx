@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { ImageIcon, Twitter, Github, Mail, Shield } from "lucide-react"
+import NextImage from "next/image"
+import { Shield } from "lucide-react"
 
 const toolLinks = [
   { href: "/jpg-to-png", label: "JPG to PNG" },
@@ -26,24 +27,24 @@ const companyLinks = [
   { href: "/contact", label: "Contact" },
 ]
 
-const socialLinks = [
-  { href: "#", label: "Twitter", icon: Twitter },
-  { href: "#", label: "GitHub", icon: Github },
-  { href: "mailto:hello@pictureconvert.com", label: "Email", icon: Mail },
-]
-
 export function Footer() {
   return (
     <footer className="border-t border-border/50 bg-muted/20">
-      <div className="container mx-auto px-4 py-12 md:py-16">
+      <div className="max-w-[1600px] mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
           {/* Brand */}
           <div className="col-span-2 lg:col-span-1 space-y-4">
             <Link href="/" className="flex items-center gap-2.5 w-fit">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/20">
-                <ImageIcon className="h-5 w-5 text-primary-foreground" />
+              <div className="relative flex items-center h-14 w-auto">
+                <NextImage
+                  src="/logo.png"
+                  alt="PictureConvert Logo"
+                  width={180}
+                  height={50}
+                  className="h-full w-auto object-contain"
+                  priority
+                />
               </div>
-              <span className="text-lg font-semibold text-foreground">PictureConvert</span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
               Convert, compress, and edit images right in your browser. Fast, free, and private.
@@ -52,22 +53,7 @@ export function Footer() {
               <Shield className="h-3.5 w-3.5" />
               <span>Files never leave your device</span>
             </div>
-            {/* Social links */}
-            <div className="flex items-center gap-2 pt-2">
-              {socialLinks.map((link) => {
-                const Icon = link.icon
-                return (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
-                    aria-label={link.label}
-                  >
-                    <Icon className="h-4 w-4" />
-                  </Link>
-                )
-              })}
-            </div>
+
           </div>
 
           {/* Convert Tools */}

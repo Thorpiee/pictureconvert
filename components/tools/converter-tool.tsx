@@ -12,11 +12,13 @@ import { Progress } from "@/components/ui/progress"
 import { Loader2, Download, RefreshCw, CheckCircle, Sparkles, ArrowRight } from "lucide-react"
 import { convertImage, downloadBlob, getOutputFilename, type ProcessingResult } from "@/lib/image-processor"
 import { convertHeicToJpg } from "@/lib/heic-converter"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 
 interface ConverterToolProps {
   acceptedTypes: string[]
   outputType: string
   showQuality?: boolean
+  toolName?: string
 }
 
 function formatFileSize(bytes: number): string {
@@ -25,7 +27,7 @@ function formatFileSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`
 }
 
-export function ConverterTool({ acceptedTypes, outputType, showQuality = false }: ConverterToolProps) {
+export function ConverterTool({ acceptedTypes, outputType, showQuality = false, toolName = "Converter" }: ConverterToolProps) {
   const [file, setFile] = useState<File | null>(null)
   // Default to 98% quality for better results (was 92%)
   const [quality, setQuality] = useState(98)
@@ -43,7 +45,8 @@ export function ConverterTool({ acceptedTypes, outputType, showQuality = false }
     setFile(selectedFile)
     setResult(null)
     setError(null)
-  }, [])
+    trackFileUpload(toolName, selectedFile.type, selectedFile.size / 1024)
+  }, [toolName])
 
   const handleRemove = useCallback(() => {
     setFile(null)
@@ -56,6 +59,8 @@ export function ConverterTool({ acceptedTypes, outputType, showQuality = false }
 
     setIsProcessing(true)
     setError(null)
+    const startTime = Date.now()
+    trackConvertStart(toolName, outputType, `${file.size}`)
 
     try {
       let processed: ProcessingResult
@@ -68,18 +73,22 @@ export function ConverterTool({ acceptedTypes, outputType, showQuality = false }
       }
 
       setResult(processed)
+      trackConvertComplete(toolName, Date.now() - startTime, processed.blob.size / 1024, true)
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to convert image")
+      const errorMessage = err instanceof Error ? err.message : "Failed to convert image"
+      setError(errorMessage)
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false, errorMessage)
     } finally {
       setIsProcessing(false)
     }
-  }, [file, outputType, quality])
+  }, [file, outputType, quality, toolName])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name, outputType)
     downloadBlob(result.blob, filename)
-  }, [result, file, outputType])
+    trackDownloadClick(toolName, outputType, result.blob.size / 1024)
+  }, [result, file, outputType, toolName])
 
   const handleConvertAnother = useCallback(() => {
     setFile(null)
@@ -206,7 +215,7 @@ export function ConverterTool({ acceptedTypes, outputType, showQuality = false }
                             src={result.url || "/placeholder.svg"}
                             alt="Converted"
                             className="w-full h-full object-contain"
-                            style={{ imageRendering: 'high-quality' }}
+                            style={{ imageRendering: 'auto' }}
                             loading="eager"
                           />
                         </div>
@@ -325,7 +334,7 @@ export function ConverterTool({ acceptedTypes, outputType, showQuality = false }
                           src={result.url || "/placeholder.svg"}
                           alt="Converted"
                           className="w-full h-full object-contain"
-                          style={{ imageRendering: 'high-quality' }}
+                          style={{ imageRendering: 'auto' }}
                           loading="eager"
                         />
                       </div>

@@ -452,11 +452,11 @@ export function downloadBlob(blob: Blob, filename: string) {
 
 export function getOutputFilename(
   originalName: string,
-  optionsOrFormat: { width?: number; height?: number; format?: string } | string
+  optionsOrFormat: { width?: number; height?: number; format?: string; suffix?: string } | string
 ): string {
   const name = originalName.replace(/\.[^/.]+$/, "")
 
-  let options: { width?: number; height?: number; format?: string } = {}
+  let options: { width?: number; height?: number; format?: string; suffix?: string } = {}
   if (typeof optionsOrFormat === "string") {
     options = { format: optionsOrFormat }
   } else {
@@ -464,6 +464,10 @@ export function getOutputFilename(
   }
 
   const ext = options.format === "image/png" ? "png" : options.format === "image/webp" ? "webp" : "jpg"
+
+  if (options.suffix) {
+    return `${name}-${options.suffix}.${ext}`
+  }
 
   if (options.width && options.height) {
     return `${name}-${options.width}x${options.height}.${ext}`

@@ -12,6 +12,7 @@ import { useImagePipeline } from "@/hooks/use-image-pipeline"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -29,7 +30,7 @@ function getPackageFilename(originalName: string): string {
   return `${baseName}-favicon-package.zip`
 }
 
-export function FaviconGeneratorTool() {
+export function FaviconGeneratorTool({ toolName = "Favicon Generator" }: { toolName?: string }) {
   const {
     file,
     imageSrc,
@@ -52,6 +53,8 @@ export function FaviconGeneratorTool() {
 
     setIsProcessing(true)
     setError(null)
+    const startTime = Date.now()
+    trackConvertStart(toolName, "convert", `${file.size}`)
 
     try {
       const [icoBlob, pkgBlob] = await Promise.all([
@@ -66,25 +69,29 @@ export function FaviconGeneratorTool() {
         icoSize: icoBlob.size,
         pkgSize: pkgBlob.size
       })
+      trackConvertComplete(toolName, Date.now() - startTime, icoBlob.size / 1024, true)
     } catch (err) {
       console.error("Conversion error:", err)
       setError(err instanceof Error ? err.message : "Failed to generate favicon")
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false, err instanceof Error ? err.message : "Failed")
     } finally {
       setIsProcessing(false)
     }
-  }, [file])
+  }, [file, toolName])
 
   const handleDownloadIco = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name)
     downloadBlob(result.ico, filename)
-  }, [result, file])
+    trackDownloadClick(toolName, "ico", result.icoSize / 1024)
+  }, [result, file, toolName])
 
   const handleDownloadPackage = useCallback(() => {
     if (!result || !file) return
     const filename = getPackageFilename(file.name)
     downloadBlob(result.pkg, filename)
-  }, [result, file])
+    trackDownloadClick(toolName, "package", result.pkgSize / 1024)
+  }, [result, file, toolName])
 
   return (
     <ToolContentLayout

@@ -11,24 +11,25 @@ if (!tool) {
 }
 
 export const metadata: Metadata = {
-  title: tool.name,
-  description: tool.description,
+  title: tool!.name,
+  description: tool!.description,
   openGraph: {
-    title: `${tool.name} | PictureConvert`,
-    description: tool.description,
-    url: `https://pictureconvert.com/${tool.slug}`,
+    title: `${tool!.name} | PictureConvert`,
+    description: tool!.description,
+    url: `https://pictureconvert.com/${tool!.slug}`,
   },
   alternates: {
-    canonical: `https://pictureconvert.com/${tool.slug}`,
+    canonical: `https://pictureconvert.com/${tool!.slug}`,
   },
 }
 
 export default function WebpToPngPage() {
   return (
-    <ToolLayout tool={tool}>
+    <ToolLayout tool={tool!}>
       <ConverterTool
-        acceptedTypes={tool.acceptedTypes}
-        outputType={tool.outputType}
+        toolName={tool!.name}
+        acceptedTypes={tool!.acceptedTypes}
+        outputType={tool!.outputType}
       />
       <script
         type="application/ld+json"
@@ -36,7 +37,7 @@ export default function WebpToPngPage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            "mainEntity": tool.faq.map((item) => ({
+            "mainEntity": tool!.faq.map((item) => ({
               "@type": "Question",
               "name": item.question,
               "acceptedAnswer": {

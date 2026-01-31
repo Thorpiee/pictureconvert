@@ -12,6 +12,8 @@ import { Preset } from "@/lib/platform-presets"
 import { ImagePipeline, calculateCenterCrop } from "@/hooks/use-image-pipeline"
 import { ToolContentLayout } from "@/components/tools/shared/tool-content-layout"
 import { downloadBlob, getOutputFilename } from "@/lib/image-processor"
+import { trackConvertStart, trackConvertComplete, trackDownloadClick, trackFileUpload } from "@/lib/analytics"
+import { useRef, useCallback } from "react"
 
 interface SocialToolLayoutProps {
   presets: Preset[]
@@ -20,6 +22,7 @@ interface SocialToolLayoutProps {
   pipeline: ImagePipeline
   PlatformIcon: React.ElementType
   className?: string
+  toolName?: string
 }
 
 export function SocialToolLayout({
@@ -28,7 +31,8 @@ export function SocialToolLayout({
   onPresetChange,
   pipeline,
   PlatformIcon,
-  className
+  className,
+  toolName = "Social Resizer"
 }: SocialToolLayoutProps) {
   // Social tools always enforce "cover" mode (no contain/letterbox)
   const [format, setFormat] = useState<"image/jpeg" | "image/png" | "image/webp">("image/jpeg")
@@ -43,10 +47,15 @@ export function SocialToolLayout({
     result,
     isProcessing,
     error,
-    handleImageSelect,
+    handleImageSelect: originalHandleImageSelect,
     handleRemove,
     processImage
   } = pipeline
+
+  const handleImageSelect = (file: File) => {
+    originalHandleImageSelect(file)
+    trackFileUpload(toolName, file.type, file.size / 1024)
+  }
 
   const selectedPreset = presets.find(p => p.id === selectedPresetId) || presets[0]
 
@@ -65,17 +74,25 @@ export function SocialToolLayout({
     setIsEditingCrop(false)
   }, [imageDimensions, selectedPresetId, selectedPreset, setCropRect])
 
-  const handleProcess = () => {
+  const handleProcess = async () => {
     if (!selectedPreset) return
 
-    processImage({
-      width: selectedPreset.width,
-      height: selectedPreset.height,
-      quality: selectedPreset.quality,
-      fit: "fill", // Always fill/cover
-      maintainAspectRatio: false, // We handle crop manually via CropperBox
-      format: format
-    })
+    const startTime = Date.now()
+    trackConvertStart(toolName, "resize", format, selectedPreset.name)
+
+    try {
+      await processImage({
+        width: selectedPreset.width,
+        height: selectedPreset.height,
+        quality: selectedPreset.quality,
+        fit: "fill", // Always fill/cover
+        maintainAspectRatio: false, // We handle crop manually via CropperBox
+        format: format
+      })
+      trackConvertComplete(toolName, Date.now() - startTime, 0, true)
+    } catch (e) {
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false)
+    }
   }
 
   const handleDownload = () => {
@@ -85,6 +102,7 @@ export function SocialToolLayout({
       height: selectedPreset.height,
       format: format
     })
+    trackDownloadClick(toolName, format, result.size / 1024)
     downloadBlob(result.blob, filename)
   }
 

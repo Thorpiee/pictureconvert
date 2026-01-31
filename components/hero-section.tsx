@@ -118,7 +118,7 @@ export function HeroSection() {
           }}
         />
 
-        <div className="container mx-auto px-4 relative">
+        <div className="max-w-[1600px] mx-auto px-4 relative">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left content */}
             <div className="text-center lg:text-left max-w-2xl mx-auto lg:mx-0">
@@ -210,7 +210,7 @@ export function HeroSection() {
             </motion.div>
 
             <motion.h1
-              className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground text-balance"
+              className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground text-balance"
               initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.5 }}
@@ -221,7 +221,7 @@ export function HeroSection() {
             </motion.h1>
 
             <motion.p
-              className="mt-6 text-lg md:text-xl text-muted-foreground leading-relaxed text-balance"
+              className="mt-6 text-lg md:text-xl xl:text-2xl text-muted-foreground leading-relaxed text-balance"
               initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.5 }}

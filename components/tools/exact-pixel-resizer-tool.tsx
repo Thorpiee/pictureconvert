@@ -13,7 +13,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CropperBox } from "@/components/tools/cropper-box"
 import { CanvasPreview } from "@/components/tools/canvas-preview"
 import { useImagePipeline, calculateCenterCrop } from "@/hooks/use-image-pipeline"
-import { downloadBlob } from "@/lib/image-processor"
+import { downloadBlob, getOutputFilename } from "@/lib/image-processor"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 
 const QUICK_SIZES = [
   { width: 1920, height: 1080, label: "FHD (16:9)" },
@@ -24,7 +25,7 @@ const QUICK_SIZES = [
 
 import { ToolContentLayout } from "@/components/tools/shared/tool-content-layout"
 
-export function ExactPixelResizerTool() {
+export function ExactPixelResizerTool({ toolName = "Exact Pixel Resizer" }: { toolName?: string }) {
   const [width, setWidth] = useState<number>(1920)
   const [height, setHeight] = useState<number>(1080)
   const [lockAspectRatio, setLockAspectRatio] = useState(true)
@@ -96,21 +97,33 @@ export function ExactPixelResizerTool() {
     }
   }
 
-  const handleProcess = () => {
-    processImage({
-      width,
-      height,
-      quality: 0.92,
-      fit: fitMode === "cover" ? "fill" : (fitMode === "contain" ? "contain" : "fill"),
-      maintainAspectRatio: fitMode === "contain",
-      backgroundColor: backgroundColor
-    })
+  const handleProcess = async () => {
+    const startTime = Date.now()
+    trackConvertStart("exact-pixel-resizer", "resize", "image/jpeg", `${width}x${height}`)
+    try {
+      await processImage({
+        width,
+        height,
+        quality: 0.92,
+        fit: fitMode === "cover" ? "fill" : (fitMode === "contain" ? "contain" : "fill"),
+        maintainAspectRatio: fitMode === "contain",
+        backgroundColor: backgroundColor
+      })
+      trackConvertComplete("exact-pixel-resizer", Date.now() - startTime, 0, true)
+    } catch (e) {
+      trackConvertComplete("exact-pixel-resizer", Date.now() - startTime, 0, false)
+    }
   }
 
-  const getOutputFilename = () => {
-    if (!file) return "resized.jpg"
-    const name = file.name.replace(/\.[^/.]+$/, "")
-    return `${name}-${width}x${height}.jpg`
+  const handleDownload = () => {
+    if (!result || !file) return
+    const filename = getOutputFilename(file.name, {
+      width,
+      height,
+      suffix: "resized"
+    })
+    trackDownloadClick("exact-pixel-resizer", "image/jpeg", result.size / 1024)
+    downloadBlob(result.blob, filename)
   }
 
   if (result) {
@@ -144,7 +157,7 @@ export function ExactPixelResizerTool() {
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </Button>
-              <Button onClick={() => downloadBlob(result.blob, getOutputFilename())} className="w-full">
+              <Button onClick={handleDownload} className="w-full">
                 <Download className="mr-2 h-4 w-4" />
                 Download
               </Button>

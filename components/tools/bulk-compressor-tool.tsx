@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import JSZip from "jszip"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -28,7 +29,7 @@ interface ProcessedFile {
 
 import { ToolContentLayout } from "./shared/tool-content-layout"
 
-export function BulkCompressorTool() {
+export function BulkCompressorTool({ toolName = "Bulk Compressor" }: { toolName?: string }) {
   const [files, setFiles] = useState<ProcessedFile[]>([])
   const [isProcessing, setIsProcessing] = useState(false)
   const [progress, setProgress] = useState(0)
@@ -39,7 +40,7 @@ export function BulkCompressorTool() {
     setMounted(true)
   }, [])
 
-  const handleFilesSelect = useCallback((selectedFiles: File[]) => {
+  const handleFilesSelect = useCallback((selectedFiles: File | File[]) => {
     // Handle both single File and File[] inputs
     const fileArray = Array.isArray(selectedFiles) ? selectedFiles : [selectedFiles]
 
@@ -50,6 +51,12 @@ export function BulkCompressorTool() {
       originalSize: f.size,
       newSize: 0
     }))
+
+    // Track uploads
+    newFiles.forEach(f => {
+      trackFileUpload(toolName, f.originalFile.type, f.originalSize / 1024)
+    })
+
     // Limit to 30
     if (newFiles.length > 30) {
       alert("Please select up to 30 images at a time.")
@@ -69,6 +76,8 @@ export function BulkCompressorTool() {
   const handleCompressAll = useCallback(async () => {
     setIsProcessing(true)
     setProgress(0)
+    const startTime = Date.now()
+    trackConvertStart(toolName, "batch", `${files.length} files`)
 
     const results = [...files]
     let completed = 0
@@ -117,10 +126,14 @@ export function BulkCompressorTool() {
 
       const content = await zip.generateAsync({ type: "blob" })
       setZipBlob(content)
+      const totalNewSize = results.reduce((acc, r) => acc + (r.newSize || 0), 0)
+      trackConvertComplete(toolName, Date.now() - startTime, totalNewSize / 1024, true)
+    } else {
+      trackConvertComplete(toolName, Date.now() - startTime, 0, false, "All failed")
     }
 
     setIsProcessing(false)
-  }, [files])
+  }, [files, toolName])
 
   const handleDownloadZip = useCallback(() => {
     if (!zipBlob) return

@@ -7,7 +7,7 @@ import { useImagePipeline } from "@/hooks/use-image-pipeline"
 import { PLATFORM_PRESETS } from "@/lib/platform-presets"
 import { Music2 } from "lucide-react" // Using Music2 as TikTok proxy
 
-export function TiktokResizerTool() {
+export function TiktokResizerTool({ toolName = "TikTok Resizer" }: { toolName?: string }) {
   const [selectedPresetId, setSelectedPresetId] = useState(PLATFORM_PRESETS.tiktok[0].id)
   const pipeline = useImagePipeline()
 
@@ -18,6 +18,7 @@ export function TiktokResizerTool() {
       onPresetChange={setSelectedPresetId}
       pipeline={pipeline}
       PlatformIcon={Music2}
+      toolName={toolName}
     />
   )
 }

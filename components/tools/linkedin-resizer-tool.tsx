@@ -7,7 +7,7 @@ import { useImagePipeline } from "@/hooks/use-image-pipeline"
 import { PLATFORM_PRESETS } from "@/lib/platform-presets"
 import { Linkedin } from "lucide-react"
 
-export function LinkedinResizerTool() {
+export function LinkedinResizerTool({ toolName = "LinkedIn Resizer" }: { toolName?: string }) {
   const [selectedPresetId, setSelectedPresetId] = useState(PLATFORM_PRESETS.linkedin[0].id)
   const pipeline = useImagePipeline()
 
@@ -18,6 +18,7 @@ export function LinkedinResizerTool() {
       onPresetChange={setSelectedPresetId}
       pipeline={pipeline}
       PlatformIcon={Linkedin}
+      toolName={toolName}
     />
   )
 }

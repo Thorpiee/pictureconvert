@@ -408,7 +408,7 @@ export function CropperBox({
       >
         {/* Handles */}
         {resizable && handles.map(h => {
-          const size = 12;
+          const size = 24; // Increased for better touch targets
           let style: React.CSSProperties = {
             position: "absolute",
             width: size,
@@ -419,7 +419,8 @@ export function CropperBox({
             cursor: h.cursor,
             pointerEvents: "auto",
             touchAction: "none",
-            borderRadius: "50%"
+            borderRadius: "50%",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
           };
 
           switch (h.key) {
