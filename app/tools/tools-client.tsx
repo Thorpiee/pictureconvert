@@ -80,9 +80,10 @@ export function ToolsPageClient() {
       <div className="container mx-auto px-4 max-w-[1600px]">
         <motion.div
           className="max-w-3xl mx-auto text-center mb-12"
-          initial={prefersReducedMotion ? {} : { opacity: 0, y: 20 }}
+          suppressHydrationWarning
+          initial={prefersReducedMotion ? {} : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.3 }}
         >
           <Badge variant="secondary" className="mb-4">
             <Shield className="mr-1.5 h-3 w-3" />

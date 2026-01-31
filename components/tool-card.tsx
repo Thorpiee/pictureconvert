@@ -2,12 +2,13 @@
 
 
 import Link from "next/link"
-import { motion, useReducedMotion } from "framer-motion"
+import { motion } from "framer-motion"
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { ToolConfig } from "@/lib/tools-config"
 import { cn } from "@/lib/utils"
+import { useSafeReducedMotion } from "@/components/motion"
 import {
   ArrowRightLeft,
   FileImage,
@@ -61,7 +62,7 @@ interface ToolCardProps {
 
 export function ToolCard({ tool, badges = [], index = 0 }: ToolCardProps) {
   const Icon = iconMap[tool.icon as keyof typeof iconMap]
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = useSafeReducedMotion()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -71,9 +72,16 @@ export function ToolCard({ tool, badges = [], index = 0 }: ToolCardProps) {
   const cardContent = (
     <Link href={`/${tool.slug}`}>
       <motion.div
-        whileHover={prefersReducedMotion || !mounted ? {} : { y: -4 }}
+        suppressHydrationWarning
+        initial={prefersReducedMotion ? {} : { opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.2,
+          delay: Math.min(index * 0.03, 0.3), // Cap the stagger delay for better perceived performance
+          ease: "easeOut"
+        }}
+        whileHover={prefersReducedMotion || !mounted ? {} : { y: -2 }}
         whileTap={prefersReducedMotion || !mounted ? {} : { scale: 0.98 }}
-        transition={{ duration: 0.2 }}
       >
         <Card className={cn(
           "h-full cursor-pointer group transition-all duration-300",

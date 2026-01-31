@@ -20,9 +20,9 @@ function HeroMockPanel() {
 
       <motion.div
         className="relative bg-card border border-border/50 rounded-2xl shadow-2xl shadow-primary/10 overflow-hidden"
-        initial={prefersReducedMotion ? {} : { opacity: 0, y: 20, scale: 0.95 }}
+        suppressHydrationWarning
+        initial={false}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
       >
         {/* Header bar */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-muted/30">
@@ -45,8 +45,8 @@ function HeroMockPanel() {
             transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
           >
             <motion.div
-              animate={prefersReducedMotion ? {} : { y: [0, -5, 0] }}
-              transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+              animate={prefersReducedMotion ? {} : { y: [0, -3, 0] }}
+              transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
             >
               <Upload className="h-8 w-8 text-primary/60" />
             </motion.div>
@@ -78,7 +78,7 @@ function HeroMockPanel() {
                 className="h-full bg-primary rounded-full"
                 initial={{ width: "0%" }}
                 animate={{ width: "75%" }}
-                transition={{ delay: 0.5, duration: 1, ease: "easeOut" }}
+                transition={{ delay: 0.4, duration: 1.2, ease: "easeOut" }}
               />
             </div>
           </div>
