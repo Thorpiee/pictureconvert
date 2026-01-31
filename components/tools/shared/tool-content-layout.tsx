@@ -50,6 +50,7 @@ export function ToolContentLayout({
               size="icon"
               onClick={onRemove}
               className="h-10 w-10 bg-background/50 hover:bg-background/80 backdrop-blur-md text-foreground rounded-full shadow-sm"
+              aria-label="Remove image"
             >
               <X className="h-5 w-5" />
             </Button>

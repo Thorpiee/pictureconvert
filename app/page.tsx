@@ -7,7 +7,6 @@ import { getAllTools, toolCategories, type ToolConfig } from "@/lib/tools-config
 import { Shield, Zap, Lock, Upload, Settings, Download, ArrowRight, Smartphone, Globe, Sparkles, CheckCircle2 } from "lucide-react"
 import { HeroSection } from "@/components/hero-section"
 import { ToolCard } from "@/components/tool-card"
-import { AnimatedSection } from "@/components/animated-section"
 
 const features = [
   {
@@ -122,7 +121,7 @@ export default function HomePage() {
       <HeroSection />
 
       {/* Tools Grid */}
-      <AnimatedSection id="tools" className="py-16 md:py-24 bg-muted/30">
+      <section id="tools" className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <Badge variant="outline" className="mb-4">{tools.length} Free Tools</Badge>
@@ -201,10 +200,10 @@ export default function HomePage() {
             </Button>
           </div>
         </div>
-      </AnimatedSection>
+      </section>
 
       {/* How It Works */}
-      <AnimatedSection id="how-it-works" className="py-16 md:py-24">
+      <section id="how-it-works" className="py-16 md:py-24">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <Badge variant="outline" className="mb-4">Simple Process</Badge>
@@ -238,10 +237,10 @@ export default function HomePage() {
             })}
           </div>
         </div>
-      </AnimatedSection>
+      </section>
 
       {/* Features Grid */}
-      <AnimatedSection id="features" className="py-16 md:py-24 bg-muted/30">
+      <section id="features" className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-14">
             <Badge variant="outline" className="mb-4">Why PictureConvert</Badge>
@@ -273,10 +272,10 @@ export default function HomePage() {
             })}
           </div>
         </div>
-      </AnimatedSection>
+      </section>
 
       {/* FAQ Section */}
-      <AnimatedSection id="faq" className="py-16 md:py-24 bg-muted/30">
+      <section id="faq" className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent overflow-hidden relative">
@@ -314,10 +313,10 @@ export default function HomePage() {
             </Card>
           </div>
         </div>
-      </AnimatedSection>
+      </section>
 
       {/* FAQ Section */}
-      <AnimatedSection id="faq" className="py-16 md:py-24 bg-muted/30">
+      <section id="faq-list" className="py-16 md:py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
@@ -343,37 +342,23 @@ export default function HomePage() {
             </Accordion>
           </div>
         </div>
-      </AnimatedSection>
+      </section>
 
       {/* CTA Section */}
       <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <Card className="overflow-hidden border-0 bg-primary text-primary-foreground shadow-2xl shadow-primary/25">
-              <CardContent className="p-8 md:p-12 text-center">
-                <Sparkles className="h-10 w-10 mx-auto mb-4 opacity-80" />
-                <h2 className="text-3xl md:text-4xl font-bold">
-                  Start Converting in Seconds
-                </h2>
-                <p className="mt-4 text-lg opacity-90 max-w-xl mx-auto">
-                  No signup required. Just pick a tool and drop your image. It's that simple.
-                </p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button asChild size="lg" variant="secondary" className="text-base shadow-lg group">
-                    <Link href="/tools">
-                      Browse All Tools
-                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-                    </Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="text-base border-primary-foreground/30 hover:bg-primary-foreground/10 bg-transparent text-primary-foreground">
-                    <Link href="/about">
-                      Learn More
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6 text-balance">
+            Ready to optimize your images?
+          </h2>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto text-balance">
+            Join thousands of users who trust PictureConvert for fast, private, and free image processing.
+          </p>
+          <Button asChild size="lg" className="h-12 px-8 text-lg shadow-lg shadow-primary/20 group">
+            <Link href="/tools">
+              Start Converting Now
+              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </Button>
         </div>
       </section>
       {/* Schema.org Data */}

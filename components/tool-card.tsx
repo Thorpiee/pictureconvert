@@ -2,13 +2,10 @@
 
 
 import Link from "next/link"
-import { motion } from "framer-motion"
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { ToolConfig } from "@/lib/tools-config"
 import { cn } from "@/lib/utils"
-import { useSafeReducedMotion } from "@/components/motion"
 import {
   ArrowRightLeft,
   FileImage,
@@ -62,27 +59,10 @@ interface ToolCardProps {
 
 export function ToolCard({ tool, badges = [], index = 0 }: ToolCardProps) {
   const Icon = iconMap[tool.icon as keyof typeof iconMap]
-  const prefersReducedMotion = useSafeReducedMotion()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const cardContent = (
     <Link href={`/${tool.slug}`}>
-      <motion.div
-        suppressHydrationWarning
-        initial={prefersReducedMotion ? {} : { opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.2,
-          delay: Math.min(index * 0.03, 0.3), // Cap the stagger delay for better perceived performance
-          ease: "easeOut"
-        }}
-        whileHover={prefersReducedMotion || !mounted ? {} : { y: -2 }}
-        whileTap={prefersReducedMotion || !mounted ? {} : { scale: 0.98 }}
-      >
+      <div>
         <Card className={cn(
           "h-full cursor-pointer group transition-all duration-300",
           "hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5",
@@ -91,59 +71,47 @@ export function ToolCard({ tool, badges = [], index = 0 }: ToolCardProps) {
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex items-center gap-3">
-                <motion.div
+                <div
                   className={cn(
                     "flex h-11 w-11 items-center justify-center rounded-xl",
                     "bg-primary/10 text-primary",
                     "group-hover:bg-primary group-hover:text-primary-foreground",
                     "transition-colors duration-300"
                   )}
-                  whileHover={prefersReducedMotion || !mounted ? {} : { rotate: [0, -5, 5, 0] }}
-                  transition={{ duration: 0.3 }}
                 >
                   <Icon className="h-5 w-5" />
-                </motion.div>
-                <CardTitle className="text-base font-semibold leading-tight">
-                  {tool.shortName}
-                </CardTitle>
-              </div>
-              {badges.length > 0 && (
-                <div className="flex gap-1.5 flex-wrap justify-end">
-                  {badges.map((badge) => (
-                    <Badge
-                      key={badge.label}
-                      variant={badge.variant}
-                      className="text-[10px] px-1.5 py-0"
-                    >
-                      {badge.label}
-                    </Badge>
-                  ))}
                 </div>
-              )}
+                <h3 className="font-semibold text-base leading-tight group-hover:text-primary transition-colors">
+                  {tool.name}
+                </h3>
+              </div>
             </div>
           </CardHeader>
-          <CardContent>
-            <CardDescription className="text-sm leading-relaxed line-clamp-2">
+          <div className="px-6 pb-4">
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-3 h-10">
               {tool.description}
-            </CardDescription>
-          </CardContent>
+            </p>
+            {badges.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {badges.map((badge, i) => (
+                  <Badge
+                    key={i}
+                    variant={badge.variant}
+                    className={cn(
+                      "text-[10px] px-2 h-5 font-normal",
+                      badge.label === "Popular" && "bg-gradient-to-r from-pink-500 to-violet-500 text-white border-0"
+                    )}
+                  >
+                    {badge.label}
+                  </Badge>
+                ))}
+              </div>
+            )}
+          </div>
         </Card>
-      </motion.div>
+      </div>
     </Link>
   )
 
-  if (prefersReducedMotion || !mounted) {
-    return <div>{cardContent}</div>
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-50px" }}
-      transition={{ delay: Math.min(index * 0.05, 0.3), duration: 0.4 }}
-    >
-      {cardContent}
-    </motion.div>
-  )
+  return cardContent
 }

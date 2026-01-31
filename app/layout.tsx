@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
+import { JsonLd } from '@/components/json-ld'
 import { GoogleAnalytics } from '@next/third-parties/google'
 import './globals.css'
 
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
   creator: 'PictureConvert',
   metadataBase: new URL('https://pictureconvert.com'),
   alternates: {
-    canonical: './',
+    canonical: '/',
   },
   openGraph: {
     type: 'website',
@@ -78,6 +79,7 @@ export default function RootLayout({
             {children}
           </main>
           <Footer />
+          <JsonLd />
         </ThemeProvider>
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ""} />
       </body>

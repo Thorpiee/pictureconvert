@@ -105,8 +105,37 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
     </ol>
   )
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://pictureconvert.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": "https://pictureconvert.com/tools"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": tool.name,
+        "item": `https://pictureconvert.com/${tool.slug}`
+      }
+    ]
+  }
+
   const headerContent = (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <div className="flex justify-center mb-4">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
           <Icon className="h-8 w-8" />

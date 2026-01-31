@@ -100,6 +100,13 @@ export function SmartOptimizerTool() {
         quality: Math.round(bestQuality * 100)
       })
 
+      trackConvertComplete(toolName, {
+        inputSize: file.size,
+        outputSize: bestBlob.size,
+        duration: Date.now() - startTime,
+        settings: { targetSizeKB }
+      })
+
       if (bestBlob.size > targetBytes) {
         setError(`Could not reach target size. Best result: ${formatFileSize(bestBlob.size)}`)
       }
@@ -140,129 +147,130 @@ export function SmartOptimizerTool() {
       }
       controls={
         <div className="space-y-6">
-          <Card>
-            <CardContent className="pt-6 space-y-6">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Target File Size</Label>
-                  <span className="font-mono font-medium">{targetSizeKB} KB</span>
-                </div>
-                <div className="pt-2">
-                  <Slider
-                    value={[targetSizeKB]}
-                    onValueChange={(vals) => setTargetSizeKB(vals[0])}
-                    min={10}
-                    max={file ? Math.round(file.size / 1024) : 1000}
-                    step={5}
-                    className="cursor-pointer"
-                  />
-                </div>
-                <div className="flex justify-between text-xs text-muted-foreground pt-1">
-                  <span>10 KB</span>
-                  <span>{file ? formatFileSize(file.size) : "Max"}</span>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Manual Input</Label>
-                <div className="relative">
-                  <Input
-                    type="number"
-                    value={targetSizeKB}
-                    onChange={(e) => setTargetSizeKB(Number(e.target.value))}
-                    min={1}
-                    className="pr-12"
-                  />
-                  <span className="absolute right-3 top-2.5 text-sm text-muted-foreground">KB</span>
-                </div>
-              </div>
-
-              <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground space-y-1">
-                <p className="flex items-start gap-2">
-                  <Target className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
-                  <span>
-                    We'll adjust quality settings to try and match your target size while maintaining the best possible look.
-                  </span>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      }
-      actions={
-        <div className="space-y-6">
-          <Card>
-            <CardContent className="pt-6 space-y-4">
-              {result ? (
-                <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
-                  <div className="flex items-center gap-2 text-primary font-medium">
-                    <CheckCircle className="h-5 w-5" />
-                    <span>Optimization Complete!</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="h-full">
+              <CardContent className="pt-6 space-y-6">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Target File Size</Label>
+                    <span className="font-mono font-medium">{targetSizeKB} KB</span>
                   </div>
-
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between p-2 bg-muted/30 rounded border border-border/50">
-                      <span className="text-muted-foreground">Original:</span>
-                      <span className="font-medium">{file && formatFileSize(file.size)}</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-muted/30 rounded border border-border/50">
-                      <span className="text-muted-foreground">Optimized:</span>
-                      <span className="font-medium text-primary">{formatFileSize(result.size)}</span>
-                    </div>
-                    <div className="flex justify-between p-2 bg-muted/30 rounded border border-border/50">
-                      <span className="text-muted-foreground">Quality Used:</span>
-                      <span className="font-medium">{result.quality}%</span>
-                    </div>
+                  <div className="pt-2">
+                    <Slider
+                      value={[targetSizeKB]}
+                      onValueChange={(vals) => setTargetSizeKB(vals[0])}
+                      min={10}
+                      max={file ? Math.round(file.size / 1024) : 1000}
+                      step={5}
+                      className="cursor-pointer"
+                    />
                   </div>
-
-                  <Button onClick={handleDownload} className="w-full" size="lg">
-                    <Download className="mr-2 h-4 w-4" />
-                    Download Optimized Image
-                  </Button>
-
-                  <Button onClick={() => setResult(null)} variant="ghost" className="w-full">
-                    <RefreshCw className="mr-2 h-4 w-4" />
-                    Optimize Another
-                  </Button>
+                  <div className="flex justify-between text-xs text-muted-foreground pt-1">
+                    <span>10 KB</span>
+                    <span>{file ? formatFileSize(file.size) : "Max"}</span>
+                  </div>
                 </div>
-              ) : (
-                <>
-                  <div className="space-y-2">
-                    <Label>Summary</Label>
-                    <div className="text-sm text-muted-foreground space-y-1">
-                      <div className="flex justify-between">
-                        <span>Original Size:</span>
-                        <span className="font-medium text-foreground">{file ? formatFileSize(file.size) : "-"}</span>
+
+                <div className="space-y-2">
+                  <Label>Manual Input</Label>
+                  <div className="relative">
+                    <Input
+                      type="number"
+                      value={targetSizeKB}
+                      onChange={(e) => setTargetSizeKB(Number(e.target.value))}
+                      min={1}
+                      className="pr-12"
+                    />
+                    <span className="absolute right-3 top-2.5 text-sm text-muted-foreground">KB</span>
+                  </div>
+                </div>
+
+                <div className="p-3 bg-muted/50 rounded-lg text-sm text-muted-foreground space-y-1">
+                  <p className="flex items-start gap-2">
+                    <Target className="h-4 w-4 mt-0.5 shrink-0 text-primary" />
+                    <span>
+                      We'll adjust quality settings to try and match your target size while maintaining the best possible look.
+                    </span>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="h-full">
+              <CardContent className="pt-6 space-y-4">
+                {result ? (
+                  <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                    <div className="flex items-center gap-2 text-primary font-medium">
+                      <CheckCircle className="h-5 w-5" />
+                      <span>Optimization Complete!</span>
+                    </div>
+
+                    <div className="space-y-2 text-sm">
+                      <div className="flex justify-between p-2 bg-muted/30 rounded border border-border/50">
+                        <span className="text-muted-foreground">Original:</span>
+                        <span className="font-medium">{file && formatFileSize(file.size)}</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span>Target Size:</span>
-                        <span className="font-medium text-foreground">{targetSizeKB} KB</span>
+                      <div className="flex justify-between p-2 bg-muted/30 rounded border border-border/50">
+                        <span className="text-muted-foreground">Optimized:</span>
+                        <span className="font-medium text-primary">{formatFileSize(result.size)}</span>
+                      </div>
+                      <div className="flex justify-between p-2 bg-muted/30 rounded border border-border/50">
+                        <span className="text-muted-foreground">Quality Used:</span>
+                        <span className="font-medium">{result.quality}%</span>
                       </div>
                     </div>
-                  </div>
 
-                  <Button
-                    onClick={handleOptimize}
-                    disabled={isProcessing || !file}
-                    className="w-full"
-                    size="lg"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Optimizing...
-                      </>
-                    ) : (
-                      <>
-                        Optimize Image
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </>
-                    )}
-                  </Button>
-                </>
-              )}
-            </CardContent>
-          </Card>
+                    <Button onClick={handleDownload} className="w-full" size="lg">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Optimized Image
+                    </Button>
+
+                    <Button onClick={() => setResult(null)} variant="ghost" className="w-full">
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Optimize Another
+                    </Button>
+                  </div>
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      <Label>Summary</Label>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <div className="flex justify-between">
+                          <span>Original Size:</span>
+                          <span className="font-medium text-foreground">{file ? formatFileSize(file.size) : "-"}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Target Size:</span>
+                          <span className="font-medium text-foreground">{targetSizeKB} KB</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4">
+                      <Button
+                        onClick={handleOptimize}
+                        disabled={isProcessing || !file}
+                        className="w-full"
+                        size="lg"
+                      >
+                        {isProcessing ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Optimizing...
+                          </>
+                        ) : (
+                          <>
+                            Optimize Image
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </div>
 
           {error && (
             <Alert variant="destructive">

@@ -3,11 +3,9 @@
 import Link from "next/link"
 import NextImage from "next/image"
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Menu, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useSafeReducedMotion } from "@/components/motion"
 import {
   Sheet,
   SheetContent,
@@ -20,14 +18,13 @@ const navLinks = [
   { href: "/tools", label: "Tools" },
   { href: "/#features", label: "Features" },
   { href: "/privacy", label: "Privacy" },
-  { href: "/#faq", label: "FAQ" },
+  { href: "/#faq-list", label: "FAQ" },
   { href: "/contact", label: "Contact" },
 ]
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const prefersReducedMotion = useSafeReducedMotion()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,10 +46,8 @@ export function Header() {
       <div className="max-w-[1600px] mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
-            <motion.div
-              className="relative flex items-center h-14 w-auto"
-              whileHover={prefersReducedMotion ? {} : { scale: 1.05 }}
-              whileTap={prefersReducedMotion ? {} : { scale: 0.95 }}
+            <div
+              className="relative flex items-center h-14 w-auto hover:scale-105 active:scale-95 transition-transform"
             >
               <NextImage
                 src="/logo.png"
@@ -62,7 +57,7 @@ export function Header() {
                 className="h-full w-auto object-contain"
                 priority
               />
-            </motion.div>
+            </div>
           </Link>
 
           <nav className="hidden lg:flex items-center gap-1">
