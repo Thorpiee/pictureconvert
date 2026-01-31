@@ -4,7 +4,7 @@ export function JsonLd() {
         "@type": "SoftwareApplication",
         "name": "PictureConvert",
         "applicationCategory": "MultimediaApplication",
-        "operatingSystem": "Any",
+        "operatingSystem": "Windows, macOS, Android, iOS, Linux",
         "offers": {
             "@type": "Offer",
             "price": "0",
@@ -16,13 +16,7 @@ export function JsonLd() {
             "ratingValue": "4.8",
             "ratingCount": "1250"
         },
-        "featureList": [
-            "Image Compression",
-            "Format Conversion (JPG, PNG, WebP, HEIC, AVIF)",
-            "Image Resizing",
-            "EXIF Removal",
-            "Privacy-focused (Local Processing)"
-        ]
+        "featureList": "Image Compression, Format Conversion (JPG, PNG, WebP, HEIC, AVIF), Image Resizing, EXIF Removal, Privacy-focused (Local Processing)"
     }
 
     const organizationSchema = {
