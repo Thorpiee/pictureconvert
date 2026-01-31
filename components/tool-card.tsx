@@ -26,6 +26,8 @@ import {
   Ratio,
   Maximize,
   Music2,
+  Compass,
+  Info,
 } from "lucide-react"
 
 const iconMap = {
@@ -49,6 +51,8 @@ const iconMap = {
   Maximize,
   Music2,
   TikTok: Music2,
+  Compass,
+  Info,
 }
 
 interface ToolCardProps {

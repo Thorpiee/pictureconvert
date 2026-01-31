@@ -11,7 +11,7 @@ import { Slider } from "@/components/ui/slider"
 import { Loader2, Download, RefreshCw, Info, ArrowRight, Target, CheckCircle } from "lucide-react"
 import { downloadBlob, compressImage } from "@/lib/image-processor"
 import { useImagePipeline } from "@/hooks/use-image-pipeline"
-import { trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { trackConvertStart, trackConvertComplete, trackDownloadClick, trackFileUpload } from "@/lib/analytics"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 
@@ -133,7 +133,10 @@ export function SmartOptimizerTool({ toolName }: { toolName: string }) {
   return (
     <ToolContentLayout
       file={file}
-      onImageSelect={handleImageSelect}
+      onImageSelect={(f) => {
+        handleImageSelect(f)
+        trackFileUpload(toolName, f.type, f.size / 1024)
+      }}
       onRemove={handleRemove}
       preview={
         imageSrc && imageDimensions && (

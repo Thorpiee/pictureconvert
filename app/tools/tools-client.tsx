@@ -24,6 +24,8 @@ import {
   Ratio,
   Maximize,
   Music2,
+  Compass,
+  Info,
 } from "lucide-react"
 
 const iconMap = {
@@ -46,6 +48,8 @@ const iconMap = {
   Ratio,
   Maximize,
   Music2,
+  Compass,
+  Info,
   TikTok: Music2,
 }
 

@@ -16,6 +16,7 @@ import {
 
 const navLinks = [
   { href: "/tools", label: "Tools" },
+  { href: "/guides", label: "Guides" },
   { href: "/#features", label: "Features" },
   { href: "/privacy", label: "Privacy" },
   { href: "/#faq-list", label: "FAQ" },

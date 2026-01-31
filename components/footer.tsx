@@ -22,6 +22,7 @@ const moreTools = [
 
 const companyLinks = [
   { href: "/about", label: "About" },
+  { href: "/guides", label: "Guides" },
   { href: "/privacy", label: "Privacy Policy" },
   { href: "/terms", label: "Terms of Service" },
   { href: "/contact", label: "Contact" },

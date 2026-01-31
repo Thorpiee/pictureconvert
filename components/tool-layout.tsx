@@ -35,6 +35,8 @@ import {
   Shield,
   Zap,
   CheckCircle2,
+  Compass,
+  Info,
 } from "lucide-react"
 
 const iconMap = {
@@ -58,6 +60,8 @@ const iconMap = {
   Maximize,
   Music2,
   TikTok: Music2,
+  Compass,
+  Info,
 }
 
 interface ToolLayoutProps {
@@ -158,6 +162,33 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
     </>
   )
 
+  function TextWithLinks({ text }: { text: string }) {
+    if (!text) return null
+
+    // Split by markdown link pattern [text](url)
+    const parts = text.split(/(\[[^\]]+\]\(\/[^)]+\))/g)
+
+    return (
+      <>
+        {parts.map((part, index) => {
+          const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+          if (match) {
+            return (
+              <Link
+                key={index}
+                href={match[2]}
+                className="text-primary hover:underline font-medium"
+              >
+                {match[1]}
+              </Link>
+            )
+          }
+          return part
+        })}
+      </>
+    )
+  }
+
   return (
     <div className="py-8 md:py-12">
       <div className="container mx-auto px-4">
@@ -181,13 +212,17 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
           {/* What It Does */}
           <section>
             <h2 className="text-2xl font-bold text-foreground mb-4">What This Tool Does</h2>
-            <p className="text-muted-foreground leading-relaxed">{tool.whatItDoes}</p>
+            <p className="text-muted-foreground leading-relaxed">
+              <TextWithLinks text={tool.whatItDoes} />
+            </p>
           </section>
 
           {/* When To Use */}
           <section>
             <h2 className="text-2xl font-bold text-foreground mb-4">When To Use It</h2>
-            <p className="text-muted-foreground leading-relaxed">{tool.whenToUse}</p>
+            <p className="text-muted-foreground leading-relaxed">
+              <TextWithLinks text={tool.whenToUse} />
+            </p>
           </section>
 
           {/* Tips */}
@@ -239,7 +274,7 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
                             <RelatedIcon className="h-5 w-5" />
                           </div>
                           <CardTitle className="text-base font-semibold flex items-center gap-2">
-                            {relatedTool.shortName}
+                            {relatedTool.name}
                             <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                           </CardTitle>
                         </div>
