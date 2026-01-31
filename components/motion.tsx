@@ -1,109 +1,50 @@
 "use client"
 
-import { motion, useReducedMotion } from "framer-motion"
-import { type ComponentProps, type ReactNode, useState, useEffect } from "react"
+import { type ComponentProps, type ReactNode } from "react"
 
-// Hook to safely handle reduced motion during SSR/Hydration
-export function useSafeReducedMotion() {
-  const shouldReduceMotion = useReducedMotion()
-  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+// Dummy variants to maintain API compatibility
+export const fadeIn = {}
+export const fadeInUp = {}
+export const fadeInDown = {}
+export const scaleIn = {}
+export const staggerContainer = {}
+export const staggerItem = {}
 
-  useEffect(() => {
-    if (shouldReduceMotion) {
-      setPrefersReducedMotion(true)
-    }
-  }, [shouldReduceMotion])
-
-  return prefersReducedMotion
+// Static replacements for Motion components
+interface MotionDivProps extends ComponentProps<"div"> {
+  variants?: any
+  initial?: any
+  animate?: any
+  exit?: any
+  transition?: any
+  viewport?: any
+  whileHover?: any
+  whileTap?: any
 }
 
-// Reusable animation variants
-export const fadeIn = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.5 } }
+export function MotionDiv({ children, variants, initial, animate, exit, transition, viewport, whileHover, whileTap, ...props }: MotionDivProps) {
+  return <div {...props}>{children}</div>
 }
 
-export const fadeInUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+interface MotionSectionProps extends ComponentProps<"section"> {
+  variants?: any
+  initial?: any
+  animate?: any
+  exit?: any
+  transition?: any
+  viewport?: any
 }
 
-export const fadeInDown = {
-  hidden: { opacity: 0, y: -20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+export function MotionSection({ children, variants, initial, animate, exit, transition, viewport, ...props }: MotionSectionProps) {
+  return <section {...props}>{children}</section>
 }
 
-export const scaleIn = {
-  hidden: { opacity: 0, scale: 0.95 },
-  visible: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: "easeOut" } }
-}
-
-export const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.1
-    }
-  }
-}
-
-export const staggerItem = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } }
-}
-
-// Motion components with reduced motion support
-interface MotionDivProps extends ComponentProps<typeof motion.div> {
-  children?: ReactNode
-}
-
-export function MotionDiv({ children, ...props }: MotionDivProps) {
-  const prefersReducedMotion = useSafeReducedMotion()
-
-  if (prefersReducedMotion) {
-    return <div className={props.className as string}>{children}</div>
-  }
-
-  return <motion.div {...props}>{children}</motion.div>
-}
-
-interface MotionSectionProps extends ComponentProps<typeof motion.section> {
-  children?: ReactNode
-}
-
-export function MotionSection({ children, ...props }: MotionSectionProps) {
-  const prefersReducedMotion = useSafeReducedMotion()
-
-  if (prefersReducedMotion) {
-    return <section className={props.className as string}>{children}</section>
-  }
-
-  return <motion.section {...props}>{children}</motion.section>
-}
-
-// Page transition wrapper
+// Page transition wrapper - renders children directly
 export function PageTransition({ children }: { children: ReactNode }) {
-  const prefersReducedMotion = useSafeReducedMotion()
-
-  if (prefersReducedMotion) {
-    return <>{children}</>
-  }
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.3, ease: "easeInOut" }}
-    >
-      {children}
-    </motion.div>
-  )
+  return <>{children}</>
 }
 
-// Hover card effect
+// Hover card effect - static div
 export function HoverCard({
   children,
   className = ""
@@ -111,24 +52,10 @@ export function HoverCard({
   children: ReactNode
   className?: string
 }) {
-  const prefersReducedMotion = useSafeReducedMotion()
-
-  if (prefersReducedMotion) {
-    return <div className={className}>{children}</div>
-  }
-
-  return (
-    <motion.div
-      className={className}
-      whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      whileTap={{ scale: 0.98 }}
-    >
-      {children}
-    </motion.div>
-  )
+  return <div className={className}>{children}</div>
 }
 
-// Animated counter
+// Animated counter - static span
 export function AnimatedCounter({
   value,
   suffix = "",
@@ -139,13 +66,13 @@ export function AnimatedCounter({
   className?: string
 }) {
   return (
-    <motion.span
-      className={className}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      key={value}
-    >
+    <span className={className}>
       {value}{suffix}
-    </motion.span>
+    </span>
   )
+}
+
+// Hook compatibility
+export function useSafeReducedMotion() {
+  return true // Act as if reduced motion is always preferred (no animations)
 }

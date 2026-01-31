@@ -2,12 +2,10 @@
 
 import React, { useState, useMemo } from "react"
 import Link from "next/link"
-import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useSafeReducedMotion } from "@/components/motion"
 
 import { getAllTools, toolCategories, getToolsByCategory, type ToolCategory } from "@/lib/tools-config"
 import {
@@ -54,7 +52,6 @@ const iconMap = {
 export function ToolsPageClient() {
   const [searchQuery, setSearchQuery] = useState("")
   const [activeCategory, setActiveCategory] = useState<ToolCategory | "all">("all")
-  const prefersReducedMotion = useSafeReducedMotion()
 
   const allTools = getAllTools()
 
@@ -78,12 +75,8 @@ export function ToolsPageClient() {
   return (
     <div className="py-12 md:py-20">
       <div className="container mx-auto px-4 max-w-[1600px]">
-        <motion.div
+        <div
           className="max-w-3xl mx-auto text-center mb-12"
-          suppressHydrationWarning
-          initial={prefersReducedMotion ? {} : { opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
         >
           <Badge variant="secondary" className="mb-4">
             <Shield className="mr-1.5 h-3 w-3" />
@@ -95,7 +88,7 @@ export function ToolsPageClient() {
           <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
             {allTools.length} free tools to convert, compress, and edit your images. All processing happens in your browser - files never leave your device.
           </p>
-        </motion.div>
+        </div>
 
         {/* Search and Filter */}
         <div className="max-w-4xl mx-auto mb-8">
@@ -140,50 +133,39 @@ export function ToolsPageClient() {
         </div>
 
         {/* Tools Grid */}
-        <motion.div
+        <div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 max-w-[1600px] mx-auto"
-          initial={prefersReducedMotion ? {} : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={prefersReducedMotion ? {} : { opacity: 0 }}
-          transition={{ duration: 0.2 }}
         >
-          <AnimatePresence mode="popLayout">
-            {filteredTools.map((tool) => (
-              <motion.div
-                key={tool.slug}
-                layout
-                initial={prefersReducedMotion ? {} : { opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={prefersReducedMotion ? {} : { opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Link href={`/${tool.slug}`}>
-                  <Card className="h-full hover:bg-accent/50 transition-colors border-border/50 bg-background/50 backdrop-blur-sm">
-                    <CardHeader>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
-                          {iconMap[tool.icon as keyof typeof iconMap] && React.createElement(iconMap[tool.icon as keyof typeof iconMap], { className: "h-6 w-6" })}
-                        </div>
-                        {tool.category === "privacy" && (
-                          <Badge variant="outline" className="text-[10px] h-5 px-1.5">Privacy</Badge>
-                        )}
+          {filteredTools.map((tool) => (
+            <div
+              key={tool.slug}
+            >
+              <Link href={`/${tool.slug}`}>
+                <Card className="h-full hover:bg-accent/50 transition-colors border-border/50 bg-background/50 backdrop-blur-sm">
+                  <CardHeader>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
+                        {iconMap[tool.icon as keyof typeof iconMap] && React.createElement(iconMap[tool.icon as keyof typeof iconMap], { className: "h-6 w-6" })}
                       </div>
-                      <CardTitle className="text-xl">{tool.name}</CardTitle>
-                      <CardDescription className="line-clamp-2">
-                        {tool.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center text-sm text-primary font-medium">
-                        Try Tool <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </motion.div>
+                      {tool.category === "privacy" && (
+                        <Badge variant="outline" className="text-[10px] h-5 px-1.5">Privacy</Badge>
+                      )}
+                    </div>
+                    <h2 className="text-xl font-semibold leading-none">{tool.name}</h2>
+                    <CardDescription className="line-clamp-2">
+                      {tool.description}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-center text-sm text-primary font-medium">
+                      Try Tool <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            </div>
+          ))}
+        </div>
 
         {filteredTools.length === 0 && (
           <div className="text-center py-12">
@@ -201,6 +183,6 @@ export function ToolsPageClient() {
           </div>
         )}
       </div>
-    </div>
+    </div >
   )
 }

@@ -31,19 +31,24 @@ export const toolsConfig: Record<string, ToolConfig> = {
     icon: "ArrowRightLeft",
     acceptedTypes: ["image/jpeg"],
     outputType: "image/png",
-    whatItDoes: "This tool converts JPG/JPEG images to PNG format. PNG (Portable Network Graphics) supports lossless compression and transparency, unlike JPG which uses lossy compression and doesn't support transparent backgrounds.",
-    whenToUse: "Use this converter when you need transparency in your image, want to preserve image quality for editing, or need a format that supports lossless compression. Great for logos, graphics, screenshots, and images with text.",
+    whatItDoes: "This tool converts JPG/JPEG images to PNG format with zero quality loss. PNG (Portable Network Graphics) uses lossless compression, meaning every pixel is preserved exactly as decoded from the original JPG. Unlike JPG, PNG supports transparency (alpha channel), making it ideal for graphics, logos, and images that need transparent backgrounds. The conversion process preserves EXIF orientation data and maintains 1:1 pixel fidelity, ensuring your image looks identical to the original JPG when displayed.",
+    whenToUse: "Use this converter when you need transparency in your image, want to preserve image quality for further editing, or need a format that supports lossless compression. Perfect for logos and graphics that require transparent backgrounds, screenshots that need to be edited, images with text that must remain sharp, or when you're preparing images for design work where quality preservation is critical. Also ideal when you need to avoid further quality degradation from repeated JPG compression cycles.",
     tips: [
-      "PNG files are typically larger than JPGs - consider if you really need PNG format",
-      "If your image has a solid background, the conversion won't automatically make it transparent",
-      "PNG is ideal for images with sharp edges, text, or graphics",
-      "For photos you'll share online, JPG is often the better choice for smaller file sizes"
+      "PNG files are typically 2-5x larger than JPGs - only convert if you truly need PNG features like transparency",
+      "The conversion preserves exact pixel data - no quality is lost during the conversion process",
+      "If your image has a solid background, the conversion won't automatically make it transparent - use an image editor for that",
+      "PNG is ideal for images with sharp edges, text overlays, or graphics with few colors",
+      "For photographs you'll share online, JPG is usually better for smaller file sizes",
+      "PNG supports lossless compression, so you can edit and re-save without quality degradation",
+      "Use PNG when you need to preserve exact colors and avoid compression artifacts"
     ],
     faq: [
-      { question: "Will converting to PNG improve my image quality?", answer: "Converting from JPG to PNG won't recover quality lost during JPG compression. However, PNG will preserve the current quality without further degradation." },
-      { question: "Why is my PNG file larger than the original JPG?", answer: "PNG uses lossless compression while JPG uses lossy compression. This means PNG files are typically larger but maintain exact pixel data." },
-      { question: "Can I add transparency after converting?", answer: "The conversion itself doesn't add transparency. You'll need an image editor to remove backgrounds and utilize PNG's transparency feature." },
-      { question: "Is this conversion secure?", answer: "Yes! All processing happens in your browser. Your images are never uploaded to any server." }
+      { question: "Will converting to PNG improve my image quality?", answer: "Converting from JPG to PNG won't recover quality that was already lost during the original JPG compression. However, PNG will preserve the current decoded quality perfectly - no additional quality loss occurs. This means if you need to edit the image multiple times, PNG prevents the quality degradation that would happen with repeated JPG saves." },
+      { question: "Why is my PNG file larger than the original JPG?", answer: "PNG uses lossless compression while JPG uses lossy compression. JPG achieves smaller file sizes by discarding some image data, while PNG preserves every pixel exactly. This means PNG files are typically 2-5x larger but maintain perfect pixel fidelity. The trade-off is worth it when you need transparency or want to avoid further quality loss." },
+      { question: "Can I add transparency after converting?", answer: "The conversion itself doesn't add transparency - it preserves the image as-is. To add transparency, you'll need to use an image editor to remove the background. Once you have a transparent PNG, you can use it in designs, websites, or anywhere you need a transparent background." },
+      { question: "Is this conversion secure and private?", answer: "Yes! All processing happens entirely in your browser using client-side JavaScript. Your images are never uploaded to any server, ensuring complete privacy and security. The conversion happens instantly on your device." },
+      { question: "Does the tool preserve EXIF data and orientation?", answer: "Yes, the tool correctly handles EXIF orientation data, ensuring your image displays with the correct orientation. However, EXIF metadata (like GPS, camera settings) is typically not preserved in PNG format, which can be a privacy benefit." },
+      { question: "Can I convert multiple JPG files at once?", answer: "Yes! The tool supports batch conversion. Simply drag and drop multiple JPG files, and they'll all be converted to PNG format. Each file is processed individually to ensure quality." }
     ],
     relatedTools: ["png-to-jpg", "jpg-to-webp", "compress-png", "resize-image", "crop-image"]
   },
@@ -57,19 +62,24 @@ export const toolsConfig: Record<string, ToolConfig> = {
     icon: "ArrowRightLeft",
     acceptedTypes: ["image/png"],
     outputType: "image/jpeg",
-    whatItDoes: "This tool converts PNG images to JPG/JPEG format. JPG uses lossy compression to create smaller files, making it ideal for photographs and web images where file size matters more than pixel-perfect quality.",
-    whenToUse: "Use this converter when you need smaller file sizes for web uploads, email attachments, or storage. Perfect for photographs, social media images, and any situation where transparency isn't needed.",
+    whatItDoes: "This tool converts PNG images to JPG/JPEG format with customizable quality settings. JPG uses lossy compression to create significantly smaller files - typically 50-90% smaller than PNG. The conversion process allows you to control the quality vs. file size trade-off, making it ideal for photographs, web images, and any situation where file size matters more than pixel-perfect quality. Transparent areas in PNG are automatically filled with a white background since JPG doesn't support transparency.",
+    whenToUse: "Use this converter when you need smaller file sizes for web uploads, email attachments, social media posts, or storage optimization. Perfect for photographs taken from cameras or phones, social media images where file size limits apply, website images where loading speed matters, or when sharing images via email or messaging apps. Also ideal when you don't need transparency and want to save storage space or bandwidth.",
     tips: [
-      "Transparent areas in PNG will become white (or the background color) in JPG",
-      "Adjust the quality slider to balance file size and image quality",
-      "JPG is best for photographs; for graphics with sharp edges, consider keeping PNG",
-      "A quality setting of 80-85% usually provides good results with reasonable file sizes"
+      "Transparent areas in PNG will become white (or the selected background color) in JPG - this is automatic",
+      "Adjust the quality slider to find the perfect balance between file size and image quality",
+      "JPG is best for photographs and complex images; for graphics with sharp edges or text, consider keeping PNG",
+      "A quality setting of 80-85% usually provides excellent results with reasonable file sizes",
+      "For web use, 70-80% quality is often sufficient and dramatically reduces file size",
+      "For print or high-quality displays, use 90-95% quality to minimize visible compression artifacts",
+      "Photos compress better than graphics - expect larger size reductions for photographic content"
     ],
     faq: [
-      { question: "What happens to transparency when converting?", answer: "JPG doesn't support transparency. Transparent areas will be filled with a solid color (typically white)." },
-      { question: "How much smaller will my file be?", answer: "Typically 50-90% smaller, depending on the original image and quality setting chosen." },
-      { question: "What quality setting should I use?", answer: "For most uses, 80-85% offers a good balance. Use higher for print, lower for web thumbnails." },
-      { question: "Is there any quality loss?", answer: "Yes, JPG uses lossy compression. Some quality is lost, but it's often imperceptible at higher quality settings." }
+      { question: "What happens to transparency when converting PNG to JPG?", answer: "JPG format doesn't support transparency. When converting, all transparent areas in your PNG will be automatically filled with a solid color - typically white. If you need transparency, keep your image as PNG or use a format like WebP that supports transparency." },
+      { question: "How much smaller will my file be after conversion?", answer: "Typically 50-90% smaller, depending on the original PNG image content and the quality setting you choose. Photographs usually compress better than graphics or images with many solid colors. A high-quality photo PNG might reduce from 5MB to 500KB, while a simple graphic might go from 200KB to 100KB." },
+      { question: "What quality setting should I use for PNG to JPG conversion?", answer: "For most web and social media uses, 80-85% offers an excellent balance of quality and file size. Use 90-95% for print, professional photography, or when quality is critical. Use 70-75% for thumbnails, previews, or when file size is the primary concern. The tool lets you preview the result before downloading." },
+      { question: "Is there any quality loss when converting to JPG?", answer: "Yes, JPG uses lossy compression, which means some image data is discarded to achieve smaller file sizes. However, at quality settings of 80% and above, the quality loss is often imperceptible to the human eye, especially for photographs. The trade-off is worth it for the significant file size reduction." },
+      { question: "Can I convert PNG with transparency and keep it transparent?", answer: "No, JPG doesn't support transparency. If you need to keep transparency, consider converting to WebP format instead, which supports transparency and still offers better compression than PNG. Alternatively, keep your image as PNG if transparency is essential." },
+      { question: "Will the conversion work for all PNG files?", answer: "Yes, the tool supports all standard PNG files including those with transparency, indexed colors, and full-color images. Very large PNG files (over 50MB) may take longer to process depending on your device's capabilities." }
     ],
     relatedTools: ["jpg-to-png", "png-to-webp", "compress-jpg", "resize-image", "crop-image"]
   },
@@ -161,19 +171,24 @@ export const toolsConfig: Record<string, ToolConfig> = {
     icon: "FileImage",
     acceptedTypes: ["image/heic", "image/heif"],
     outputType: "image/jpeg",
-    whatItDoes: "This tool converts HEIC/HEIF images to JPG format. HEIC is Apple's default photo format on iPhones and iPads, offering great compression. However, many platforms and software don't support it, making JPG conversion essential for sharing.",
-    whenToUse: "Use this converter when you need to share iPhone photos with non-Apple users, upload to websites that don't accept HEIC, or edit photos in software that doesn't support the HEIC format.",
+    whatItDoes: "This tool converts HEIC/HEIF images from your iPhone or iPad to the universally compatible JPG format. HEIC (High Efficiency Image Container) is Apple's default photo format, offering superior compression while maintaining quality. However, many platforms, websites, and software applications don't support HEIC, making JPG conversion essential for sharing, uploading, and editing. The conversion preserves image quality and handles EXIF orientation data correctly, ensuring your photos display properly.",
+    whenToUse: "Use this converter when you need to share iPhone photos with Windows users or non-Apple devices, upload photos to websites or social media that don't accept HEIC files, edit photos in software that doesn't support HEIC (like older versions of Photoshop or GIMP), send photos via email or messaging apps that don't support HEIC, or when you need maximum compatibility across all platforms and devices. Essential for anyone who takes photos with an iPhone and needs to use them outside the Apple ecosystem.",
     tips: [
-      "HEIC files from iPhones contain high-quality images that convert well to JPG",
-      "You can change your iPhone settings to capture in JPG directly if preferred",
-      "Some metadata may be preserved during conversion",
-      "Adjust quality settings based on your needs - higher for printing, lower for web"
+      "HEIC files from iPhones contain high-quality images that convert excellently to JPG",
+      "You can change your iPhone camera settings to capture in JPG directly if you prefer (Settings > Camera > Formats)",
+      "EXIF metadata and orientation are preserved during conversion",
+      "Adjust quality settings based on your needs - use 90-95% for printing or professional use, 80-85% for web and social media",
+      "HEIC files are typically smaller than equivalent JPGs, so expect the converted JPG to be larger",
+      "The conversion maintains the original image dimensions and aspect ratio",
+      "All processing happens in your browser - your photos never leave your device"
     ],
     faq: [
-      { question: "What is HEIC format?", answer: "HEIC (High Efficiency Image Container) is Apple's default photo format. It provides better compression than JPG while maintaining quality, but has limited compatibility." },
-      { question: "Why can't I open HEIC files on my computer?", answer: "HEIC requires specific software support. Windows and many apps don't natively support it, which is why conversion to JPG is often needed." },
-      { question: "Is there quality loss in conversion?", answer: "There's minimal quality loss when converting at high quality settings. HEIC images are high-quality, and JPG preserves most of that quality." },
-      { question: "Can I convert multiple HEIC files?", answer: "You can convert images one at a time. For batch conversion, process each file separately." }
+      { question: "What is HEIC format and why does my iPhone use it?", answer: "HEIC (High Efficiency Image Container) is Apple's modern photo format introduced with iOS 11. It provides better compression than JPG (typically 50% smaller files) while maintaining similar or better quality. Apple uses it as the default to save storage space on iPhones. However, it has limited compatibility outside the Apple ecosystem." },
+      { question: "Why can't I open HEIC files on my Windows computer or upload them to websites?", answer: "HEIC requires specific software support that many platforms lack. Windows 10/11 can view HEIC files with a codec pack, but many websites, email clients, and image editing software don't support it. Converting to JPG ensures universal compatibility - JPG works on virtually every device, platform, and application." },
+      { question: "Is there quality loss when converting HEIC to JPG?", answer: "There's minimal quality loss when converting at high quality settings (90-95%). HEIC images are high-quality, and JPG preserves most of that quality. At 90% quality, the difference is typically imperceptible. The tool allows you to choose the quality setting to balance file size and quality based on your needs." },
+      { question: "Can I convert multiple HEIC files at once?", answer: "Currently, you can convert one HEIC file at a time for optimal quality and processing. For batch conversion, process each file separately. The conversion is fast, so processing multiple files doesn't take long." },
+      { question: "Will the converted JPG be larger or smaller than the original HEIC?", answer: "The converted JPG will typically be larger than the original HEIC file. HEIC uses more efficient compression, so a 2MB HEIC might become a 3-4MB JPG at high quality. However, JPG offers universal compatibility, which is often worth the larger file size." },
+      { question: "Is my privacy protected when converting HEIC files?", answer: "Yes! All conversion happens entirely in your browser. Your HEIC photos are never uploaded to any server - they stay on your device throughout the entire process. This ensures complete privacy and security for your personal photos." }
     ],
     relatedTools: ["jpg-to-png", "jpg-to-webp", "compress-jpg", "resize-image", "remove-exif"]
   },
@@ -369,19 +384,24 @@ export const toolsConfig: Record<string, ToolConfig> = {
     icon: "Minimize2",
     acceptedTypes: ["image/jpeg"],
     outputType: "image/jpeg",
-    whatItDoes: "This tool compresses JPG images by reducing file size through quality optimization. It uses intelligent compression to minimize file size while preserving visual quality as much as possible.",
-    whenToUse: "Use this compressor when your JPG files are too large for uploading, emailing, or storage. Great for preparing images for websites, social media, or when you need to meet file size requirements.",
+    whatItDoes: "This tool compresses JPG images by intelligently optimizing the compression quality to reduce file size while preserving visual quality. It uses advanced algorithms to minimize file size without creating noticeable artifacts. The tool provides real-time preview so you can see exactly how the compression affects your image before downloading. Perfect for reducing file sizes for web use, email attachments, social media uploads, or storage optimization while maintaining professional image quality.",
+    whenToUse: "Use this compressor when your JPG files are too large for uploading to websites or social media platforms, sending via email (which often has size limits), optimizing website loading speeds, saving cloud storage space, or meeting specific file size requirements for forms or applications. Ideal for photographers, web developers, social media managers, or anyone who needs smaller file sizes without sacrificing too much quality.",
     tips: [
-      "Start with a quality of 80% - often provides good balance of size and quality",
-      "Preview the result before downloading to ensure acceptable quality",
-      "Compression works best on larger, high-resolution images",
-      "Already compressed images may not reduce much further without quality loss"
+      "Start with a quality of 80% - this often provides the best balance of size reduction and visual quality",
+      "Always preview the result before downloading to ensure the quality meets your standards",
+      "Compression works best on larger, high-resolution images - expect 40-80% size reduction",
+      "Already heavily compressed images may not reduce much further without noticeable quality loss",
+      "For web use, 70-80% quality is usually sufficient and dramatically reduces file size",
+      "For print or professional use, use 85-95% quality to minimize visible compression artifacts",
+      "Compare the file sizes before and after to see your savings - often 50-70% reduction is achievable"
     ],
     faq: [
-      { question: "How much can I reduce the file size?", answer: "Typically 40-80% reduction is possible, depending on the original image and quality settings. Higher original quality images compress more." },
-      { question: "Will compression affect image quality?", answer: "Some quality loss occurs, but at 70-85% quality settings, it's often imperceptible to the human eye." },
-      { question: "What quality setting should I use?", answer: "80% is a good starting point. Use 90%+ for important images, 60-70% for thumbnails or when maximum compression is needed." },
-      { question: "Can I compress the same image multiple times?", answer: "Yes, but each compression adds more quality loss. It's better to start from the original when possible." }
+      { question: "How much can I reduce the file size with JPG compression?", answer: "Typically 40-80% reduction is possible, depending on the original image quality and the compression setting you choose. High-quality, uncompressed original images compress the most. For example, a 5MB high-quality photo might compress to 1-2MB at 80% quality, while an already compressed 500KB image might only reduce to 400KB." },
+      { question: "Will compression affect my image quality?", answer: "Some quality loss occurs with JPG compression, but at 70-85% quality settings, it's often imperceptible to the human eye, especially for photographs. The tool provides a preview so you can see exactly how the compression affects your specific image before downloading. Higher quality settings (85-95%) preserve more detail, while lower settings (60-70%) prioritize file size." },
+      { question: "What quality setting should I use for JPG compression?", answer: "80% is an excellent starting point for most uses - it provides significant file size reduction with minimal visible quality loss. Use 90%+ for important images, professional photography, or print. Use 60-70% for thumbnails, previews, or when maximum compression is needed. The preview feature helps you find the perfect balance for your specific image." },
+      { question: "Can I compress the same image multiple times?", answer: "Yes, but each compression cycle adds more quality loss. It's always better to start from the original, uncompressed image when possible. If you must compress multiple times, use higher quality settings (85%+) to minimize cumulative quality degradation. For best results, keep your original file and compress it once to your target size." },
+      { question: "Is the compression secure and private?", answer: "Yes! All compression happens entirely in your browser. Your images are never uploaded to any server, ensuring complete privacy and security. The compression is instant and works offline once the page is loaded." },
+      { question: "Why is my compressed file not much smaller?", answer: "If your original JPG is already heavily compressed (low quality), there's less room for further compression. High-resolution, high-quality originals compress the most. Also, images with lots of detail, noise, or fine textures compress less than smooth, simple images. Try a slightly lower quality setting if you need more compression." }
     ],
     relatedTools: ["compress-png", "jpg-to-webp", "resize-image", "jpg-to-png", "crop-image"]
   },

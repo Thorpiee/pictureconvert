@@ -3,7 +3,23 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "Simple, fair terms for using PictureConvert.",
+  description: "Simple, fair terms for using PictureConvert. Free image conversion tools with no signup required. Your files stay on your device.",
+  openGraph: {
+    images: [
+      {
+        url: 'https://pictureconvert.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'PictureConvert',
+      },
+    ],
+    title: "Terms of Service | PictureConvert",
+    description: "Simple, fair terms for using PictureConvert. Free image conversion tools with no signup required.",
+    url: "https://pictureconvert.com/terms",
+  },
+  alternates: {
+    canonical: "https://pictureconvert.com/terms",
+  },
 }
 
 export default function TermsPage() {

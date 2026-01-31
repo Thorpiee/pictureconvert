@@ -5,12 +5,21 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Shield, Zap, Lock, Heart, ArrowRight } from "lucide-react"
 
 export const metadata: Metadata = {
-  title: "About",
-  description: "Learn about PictureConvert - a free, privacy-focused image converter that processes everything in your browser.",
+  title: "About Us - Free & Private Image Tools",
+  description: "Learn about PictureConvert - a free, privacy-focused image converter that processes everything in your browser. Your files never leave your device. Fast, secure, and no signup required.",
   openGraph: {
     title: "About | PictureConvert",
-    description: "Learn about PictureConvert - a free, privacy-focused image converter.",
+    description: "Learn about PictureConvert - a free, privacy-focused image converter that processes everything in your browser.",
     url: "https://pictureconvert.com/about",
+    type: 'website',
+    images: [
+      {
+        url: 'https://pictureconvert.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'About PictureConvert',
+      },
+    ],
   },
   alternates: {
     canonical: "https://pictureconvert.com/about",

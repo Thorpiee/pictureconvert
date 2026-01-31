@@ -2,11 +2,20 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
-  description: "Our privacy promise: 100% local processing. Your files never leave your device.",
+  description: "Our privacy promise: 100% local processing. Your files never leave your device. Learn how PictureConvert protects your privacy with browser-based image processing. No uploads, no data collection, no tracking.",
   openGraph: {
+    images: [
+      {
+        url: 'https://pictureconvert.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'PictureConvert',
+      },
+    ],
     title: "Privacy Policy | PictureConvert",
     description: "Our privacy promise: 100% local processing. Your files never leave your device.",
     url: "https://pictureconvert.com/privacy",
+    type: 'website',
   },
   alternates: {
     canonical: "https://pictureconvert.com/privacy",

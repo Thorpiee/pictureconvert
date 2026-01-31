@@ -250,6 +250,22 @@ export default function HomePage() {
             <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto">
               Unlike other converters, your files never leave your device. Everything runs locally in your browser.
             </p>
+            <div className="mt-8 text-left max-w-4xl mx-auto space-y-6 text-muted-foreground">
+              <p>
+                PictureConvert is a comprehensive suite of online image tools designed for modern creators, developers, and everyday users.
+                Whether you need to convert HEIC photos from your iPhone to JPG, compress large PNG files for your website, or resize images
+                for social media, our tools handle it all directly in your web browser.
+              </p>
+              <p>
+                Traditional image converters upload your files to a remote server, process them, and then send them back.
+                This can be slow and raises privacy concerns. PictureConvert uses advanced WebAssembly and modern browser APIs
+                to process images directly on your device. This means your personal photos, documents, and designs never leave your computer or phone.
+              </p>
+              <p>
+                We support a wide range of formats including JPG, PNG, WebP, AVIF, TIFF, and HEIC. Our tools are optimized for speed and quality,
+                ensuring your images look great while keeping file sizes low. Best of all, it's completely free to use with no sign-up required.
+              </p>
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {features.map((feature, index) => {

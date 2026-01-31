@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     default: 'PictureConvert - Free Online Image Converter & Compressor',
     template: '%s | PictureConvert'
   },
-  description: 'Convert, compress, and edit images right in your browser. Free, fast, and private - files never leave your device.',
+  description: 'Convert, compress, and edit images right in your browser. Free, fast, and private - files never leave your device. Supports JPG, PNG, WebP, HEIC, AVIF, and more.',
   keywords: ['image converter', 'image compressor', 'jpg to png', 'png to jpg', 'webp converter', 'heic to jpg', 'resize image', 'crop image', 'remove exif'],
   authors: [{ name: 'PictureConvert' }],
   creator: 'PictureConvert',
@@ -29,12 +29,21 @@ export const metadata: Metadata = {
     url: 'https://pictureconvert.com',
     siteName: 'PictureConvert',
     title: 'PictureConvert - Free Online Image Converter & Compressor',
-    description: 'Convert, compress, and edit images right in your browser. Free, fast, and private - files never leave your device.',
+    description: 'Convert, compress, and edit images right in your browser. Free, fast, and private - files never leave your device. Supports JPG, PNG, WebP, HEIC, AVIF, and more.',
+    images: [
+      {
+        url: 'https://pictureconvert.com/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'PictureConvert - Free Online Image Converter & Compressor',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'PictureConvert - Free Online Image Converter & Compressor',
     description: 'Convert, compress, and edit images right in your browser. Free, fast, and private.',
+    images: ['https://pictureconvert.com/og-image.png'],
   },
   robots: {
     index: true,

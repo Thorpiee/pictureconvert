@@ -4,7 +4,6 @@
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { motion, useReducedMotion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
@@ -67,8 +66,6 @@ interface ToolLayoutProps {
 }
 
 export function ToolLayout({ tool, children }: ToolLayoutProps) {
-  const prefersReducedMotion = useReducedMotion()
-  const [mounted, setMounted] = useState(false)
   const pathname = usePathname()
 
   useEffect(() => {
@@ -82,9 +79,6 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
 
   const Icon = iconMap[tool.icon as keyof typeof iconMap]
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const breadcrumbContent = (
     <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -168,37 +162,14 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
     <div className="py-8 md:py-12">
       <div className="container mx-auto px-4">
         {/* Breadcrumbs */}
-        {prefersReducedMotion || !mounted ? (
-          <nav className="max-w-4xl mx-auto mb-6" aria-label="Breadcrumb">
-            {breadcrumbContent}
-          </nav>
-        ) : (
-          <motion.nav
-            className="max-w-4xl mx-auto mb-6"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            aria-label="Breadcrumb"
-          >
-            {breadcrumbContent}
-          </motion.nav>
-        )}
+        <nav className="max-w-4xl mx-auto mb-6" aria-label="Breadcrumb">
+          {breadcrumbContent}
+        </nav>
 
         {/* Header */}
-        {prefersReducedMotion || !mounted ? (
-          <div className="max-w-3xl mx-auto text-center mb-10">
-            {headerContent}
-          </div>
-        ) : (
-          <motion.div
-            className="max-w-3xl mx-auto text-center mb-10"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {headerContent}
-          </motion.div>
-        )}
+        <div className="max-w-3xl mx-auto text-center mb-10">
+          {headerContent}
+        </div>
 
         {/* Main Tool Area */}
         <div className="max-w-4xl mx-auto">
@@ -253,91 +224,38 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
         </div>
 
         {/* Related Tools */}
-        {prefersReducedMotion || !mounted ? (
-          <section className="max-w-5xl mx-auto mt-16">
-            <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Related Tools</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {relatedTools.map((relatedTool) => {
-                const RelatedIcon = iconMap[relatedTool.icon as keyof typeof iconMap]
-                return (
-                  <div key={relatedTool.slug}>
-                    <Link href={`/${relatedTool.slug}`}>
-                      <Card className="h-full hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer group">
-                        <CardHeader className="pb-3">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                              <RelatedIcon className="h-5 w-5" />
-                            </div>
-                            <CardTitle className="text-base font-semibold flex items-center gap-2">
-                              {relatedTool.shortName}
-                              <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            </CardTitle>
+        <section className="max-w-5xl mx-auto mt-16">
+          <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Related Tools</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {relatedTools.map((relatedTool) => {
+              const RelatedIcon = iconMap[relatedTool.icon as keyof typeof iconMap]
+              return (
+                <div key={relatedTool.slug}>
+                  <Link href={`/${relatedTool.slug}`}>
+                    <Card className="h-full hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                      <CardHeader className="pb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                            <RelatedIcon className="h-5 w-5" />
                           </div>
-                        </CardHeader>
-                        <CardContent>
-                          <CardDescription className="text-sm leading-relaxed">
-                            {relatedTool.description}
-                          </CardDescription>
-                        </CardContent>
-                      </Card>
-                    </Link>
-                  </div>
-                )
-              })}
-            </div>
-          </section>
-        ) : (
-          <motion.section
-            className="max-w-5xl mx-auto mt-16"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Related Tools</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {relatedTools.map((relatedTool, index) => {
-                const RelatedIcon = iconMap[relatedTool.icon as keyof typeof iconMap]
-                return (
-                  <motion.div
-                    key={relatedTool.slug}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: index * 0.05, duration: 0.3 }}
-                  >
-                    <Link href={`/${relatedTool.slug}`}>
-                      <motion.div
-                        whileHover={{ y: -4 }}
-                        whileTap={{ scale: 0.98 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <Card className="h-full hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer group">
-                          <CardHeader className="pb-3">
-                            <div className="flex items-center gap-3">
-                              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                                <RelatedIcon className="h-5 w-5" />
-                              </div>
-                              <CardTitle className="text-base font-semibold flex items-center gap-2">
-                                {relatedTool.shortName}
-                                <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                              </CardTitle>
-                            </div>
-                          </CardHeader>
-                          <CardContent>
-                            <CardDescription className="text-sm leading-relaxed">
-                              {relatedTool.description}
-                            </CardDescription>
-                          </CardContent>
-                        </Card>
-                      </motion.div>
-                    </Link>
-                  </motion.div>
-                )
-              })}
-            </div>
-          </motion.section>
-        )}
+                          <CardTitle className="text-base font-semibold flex items-center gap-2">
+                            {relatedTool.shortName}
+                            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </CardTitle>
+                        </div>
+                      </CardHeader>
+                      <CardContent>
+                        <CardDescription className="text-sm leading-relaxed">
+                          {relatedTool.description}
+                        </CardDescription>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                </div>
+              )
+            })}
+          </div>
+        </section>
       </div>
 
       {/* Schema.org Data */}
