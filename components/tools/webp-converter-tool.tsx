@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Slider } from "@/components/ui/slider"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick, trackConversionComplete } from "@/lib/analytics"
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -89,7 +89,9 @@ export function WebpConverterTool({ toolName = "WebP Converter" }: { toolName?: 
     if (!result || !file) return
     const filename = getOutputFilename(file.name)
     downloadBlob(result.blob, filename)
-  }, [result, file])
+    trackDownloadClick(toolName, "image/jpeg", result.blob.size / 1024)
+    trackConversionComplete(toolName, "image/jpeg")
+  }, [result, file, toolName])
 
   // Cleanup
   useEffect(() => {

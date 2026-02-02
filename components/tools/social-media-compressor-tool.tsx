@@ -13,7 +13,7 @@ import { Instagram, Linkedin, Twitter, Check, Loader2, ArrowRight, Pencil, X, Al
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CropperBox } from "@/components/tools/cropper-box"
 import { CanvasPreview } from "@/components/tools/canvas-preview"
-import { trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { trackConvertStart, trackConvertComplete, trackDownloadClick, trackConversionComplete } from "@/lib/analytics"
 import { downloadBlob, getOutputFilename } from "@/lib/image-processor"
 
 export function SocialMediaCompressorTool({ toolName = "Social Media Compressor" }: { toolName?: string }) {
@@ -84,6 +84,7 @@ export function SocialMediaCompressorTool({ toolName = "Social Media Compressor"
     })
     trackDownloadClick(toolName, "image/jpeg", result.size / 1024)
     downloadBlob(result.blob, filename)
+    trackConversionComplete(toolName, "image/jpeg")
   }, [result, file, selectedPreset, toolName])
 
   if (result) {

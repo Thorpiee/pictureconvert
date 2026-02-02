@@ -11,7 +11,7 @@ import { Progress } from "@/components/ui/progress"
 import { Loader2, Download, RefreshCw, CheckCircle, Sparkles, ArrowRight } from "lucide-react"
 import { convertImage, downloadBlob, getOutputFilename, type ProcessingResult } from "@/lib/image-processor"
 import { convertHeicToJpg } from "@/lib/heic-converter"
-import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { getToolNameFromPath, trackConversionComplete } from "@/lib/analytics"
 
 interface ConverterToolProps {
   acceptedTypes: string[]
@@ -43,7 +43,6 @@ export function ConverterTool({ acceptedTypes, outputType, showQuality = false, 
     setFile(selectedFile)
     setResult(null)
     setError(null)
-    trackFileUpload(toolName, selectedFile.type, selectedFile.size / 1024)
   }, [toolName])
 
   const handleRemove = useCallback(() => {
@@ -57,8 +56,6 @@ export function ConverterTool({ acceptedTypes, outputType, showQuality = false, 
 
     setIsProcessing(true)
     setError(null)
-    const startTime = Date.now()
-    trackConvertStart(toolName, outputType, `${file.size}`)
 
     try {
       let processed: ProcessingResult
@@ -71,22 +68,20 @@ export function ConverterTool({ acceptedTypes, outputType, showQuality = false, 
       }
 
       setResult(processed)
-      trackConvertComplete(toolName, Date.now() - startTime, processed.blob.size / 1024, true)
+      trackConversionComplete(getToolNameFromPath(), outputType)
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to convert image"
       setError(errorMessage)
-      trackConvertComplete(toolName, Date.now() - startTime, 0, false, errorMessage)
     } finally {
       setIsProcessing(false)
     }
-  }, [file, outputType, quality, toolName])
+  }, [file, outputType, quality])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name, outputType)
     downloadBlob(result.blob, filename)
-    trackDownloadClick(toolName, outputType, result.blob.size / 1024)
-  }, [result, file, outputType, toolName])
+  }, [result, file, outputType])
 
   const handleConvertAnother = useCallback(() => {
     setFile(null)

@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Loader2, Download, RefreshCw, CheckCircle, X, Pencil, ArrowRight } from "lucide-react"
 import { CanvasPreview } from "@/components/tools/canvas-preview"
 import { cropImage, downloadBlob, getOutputFilename, ProcessingResult, loadImage } from "@/lib/image-processor"
-import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { getToolNameFromPath, trackConversionComplete } from "@/lib/analytics"
 
 import { ToolContentLayout } from "./shared/tool-content-layout"
 
@@ -55,7 +55,6 @@ export function CropTool({ acceptedTypes, toolName = "Crop Tool" }: CropToolProp
     setFile(selectedFile)
     setResult(null)
     setError(null)
-    trackFileUpload(toolName, selectedFile.type, selectedFile.size / 1024)
 
     const url = URL.createObjectURL(selectedFile)
     setImageSrc(url)
@@ -116,8 +115,6 @@ export function CropTool({ acceptedTypes, toolName = "Crop Tool" }: CropToolProp
 
     setIsProcessing(true)
     setError(null)
-    const startTime = Date.now()
-    trackConvertStart(toolName, "crop", `${cropArea.width}x${cropArea.height}`)
 
     try {
       const processed = await cropImage(file, {
@@ -127,21 +124,19 @@ export function CropTool({ acceptedTypes, toolName = "Crop Tool" }: CropToolProp
         cropHeight: cropArea.height,
       })
       setResult(processed)
-      trackConvertComplete(toolName, Date.now() - startTime, processed.blob.size / 1024, true)
+      trackConversionComplete(getToolNameFromPath(), processed.blob.type)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to crop image")
-      trackConvertComplete(toolName, Date.now() - startTime, 0, false)
     } finally {
       setIsProcessing(false)
     }
-  }, [file, cropArea, toolName])
+  }, [file, cropArea])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name, file.type)
-    trackDownloadClick(toolName, file.type, result.blob.size / 1024)
     downloadBlob(result.blob, filename)
-  }, [result, file, toolName])
+  }, [result, file])
 
   const handleCropAnother = useCallback(() => {
     setResult(null)

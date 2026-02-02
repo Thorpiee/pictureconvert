@@ -9,7 +9,7 @@ import { downloadBlob, type ProcessingResult } from "@/lib/image-processor"
 import { decodeTiff } from "@/lib/tiff-utils"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
-import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick, trackConversionComplete } from "@/lib/analytics"
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
@@ -102,6 +102,7 @@ export function TiffConverterTool({ toolName = "TIFF Converter" }: { toolName?: 
     const filename = getOutputFilename(file.name)
     trackDownloadClick(toolName, "image/jpeg", result.size / 1024)
     downloadBlob(result.blob, filename)
+    trackConversionComplete(toolName, "image/jpeg")
   }, [result, file, toolName])
 
   const previewContent = (

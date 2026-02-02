@@ -6,7 +6,7 @@ import { CanvasPreview } from "@/components/tools/canvas-preview"
 import { Button } from "@/components/ui/button"
 import { Loader2, Download, RefreshCw, Info, ArrowRight, Settings2, AlertCircle } from "lucide-react"
 import { downloadBlob, type ProcessingResult, loadImage } from "@/lib/image-processor"
-import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick, trackConversionComplete } from "@/lib/analytics"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -131,6 +131,7 @@ export function SvgConverterTool({ toolName = "SVG Converter" }: { toolName?: st
     const filename = getOutputFilename(file.name)
     trackDownloadClick(toolName, "image/png", result.size / 1024)
     downloadBlob(result.blob, filename)
+    trackConversionComplete(toolName, "image/png")
   }, [result, file, toolName])
 
   // Cleanup

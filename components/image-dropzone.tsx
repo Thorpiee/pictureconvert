@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect, useId, useRef } from "react"
 import { Upload, X, FileImage, AlertCircle, Sparkles } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { getToolNameFromPath, trackEvent } from "@/lib/analytics"
 
 type ImageDropzoneProps = {
   acceptedTypes: string[]
@@ -49,11 +50,25 @@ export function ImageDropzone(props: ImageDropzoneProps) {
     if (props.multiple) {
       const validFiles = files.filter(validateFile)
       if (validFiles.length > 0) {
+        const toolName = getToolNameFromPath()
+        validFiles.forEach((file) => {
+          trackEvent("file_upload", {
+            tool_name: toolName,
+            file_type: file.type,
+            file_size_kb: Math.round(file.size / 1024),
+          })
+        })
         props.onImageSelect(validFiles)
       }
     } else {
       const file = files[0]
       if (file && validateFile(file)) {
+        const toolName = getToolNameFromPath()
+        trackEvent("file_upload", {
+          tool_name: toolName,
+          file_type: file.type,
+          file_size_kb: Math.round(file.size / 1024),
+        })
         props.onImageSelect(file)
       }
     }
@@ -76,11 +91,25 @@ export function ImageDropzone(props: ImageDropzoneProps) {
     if (props.multiple) {
       const validFiles = files.filter(validateFile)
       if (validFiles.length > 0) {
+        const toolName = getToolNameFromPath()
+        validFiles.forEach((file) => {
+          trackEvent("file_upload", {
+            tool_name: toolName,
+            file_type: file.type,
+            file_size_kb: Math.round(file.size / 1024),
+          })
+        })
         props.onImageSelect(validFiles)
       }
     } else {
       const file = files[0]
       if (file && validateFile(file)) {
+        const toolName = getToolNameFromPath()
+        trackEvent("file_upload", {
+          tool_name: toolName,
+          file_type: file.type,
+          file_size_kb: Math.round(file.size / 1024),
+        })
         props.onImageSelect(file)
       }
     }

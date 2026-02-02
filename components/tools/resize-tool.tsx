@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Loader2, Download, Link2, Link2Off } from "lucide-react"
 import { resizeImage, downloadBlob, getOutputFilename, ProcessingResult, loadImage } from "@/lib/image-processor"
 import { CanvasPreview } from "@/components/tools/canvas-preview"
-import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { getToolNameFromPath, trackConversionComplete } from "@/lib/analytics"
 
 interface ResizeToolProps {
   acceptedTypes: string[]
@@ -36,7 +36,6 @@ export function ResizeTool({ acceptedTypes, toolName = "Resize Tool" }: ResizeTo
     setImageSrc(url)
     setResult(null)
     setError(null)
-    trackFileUpload(toolName, selectedFile.type, selectedFile.size / 1024)
 
     try {
       const img = await loadImage(selectedFile)
@@ -98,8 +97,6 @@ export function ResizeTool({ acceptedTypes, toolName = "Resize Tool" }: ResizeTo
 
     setIsProcessing(true)
     setError(null)
-    const startTime = Date.now()
-    trackConvertStart(toolName, "resize", `${newWidth}x${newHeight}`)
 
     try {
       const processed = await resizeImage(file, {
@@ -110,21 +107,19 @@ export function ResizeTool({ acceptedTypes, toolName = "Resize Tool" }: ResizeTo
         backgroundColor: (!maintainAspectRatio && fitMode === "contain") ? backgroundColor : undefined,
       })
       setResult(processed)
-      trackConvertComplete(toolName, Date.now() - startTime, processed.blob.size / 1024, true)
+      trackConversionComplete(getToolNameFromPath(), processed.blob.type)
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to resize image")
-      trackConvertComplete(toolName, Date.now() - startTime, 0, false)
     } finally {
       setIsProcessing(false)
     }
-  }, [file, width, height, maintainAspectRatio, fitMode, backgroundColor, toolName])
+  }, [file, width, height, maintainAspectRatio, fitMode, backgroundColor])
 
   const handleDownload = useCallback(() => {
     if (!result || !file) return
     const filename = getOutputFilename(file.name, file.type)
-    trackDownloadClick(toolName, file.type, result.blob.size / 1024)
     downloadBlob(result.blob, filename)
-  }, [result, file, toolName])
+  }, [result, file])
 
   const previewContent = imageSrc ? (
     <CanvasPreview

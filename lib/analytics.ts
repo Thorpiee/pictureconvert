@@ -1,39 +1,50 @@
-import { sendGAEvent } from '@next/third-parties/google'
+type EventParams = Record<string, any>
 
-type EventParams = Record<string, string | number | boolean | undefined>
-
-export const GA_EVENTS = {
-    TOOL_VIEW: 'tool_view',
-    FILE_UPLOAD: 'file_upload',
-    CONVERT_START: 'convert_start',
-    CONVERT_COMPLETE: 'convert_complete',
-    DOWNLOAD_CLICK: 'download_click',
+function stableStringify(value: unknown): string {
+    if (value === null) return "null"
+    if (value === undefined) return "undefined"
+    if (typeof value !== "object") return JSON.stringify(value)
+    if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`
+    const obj = value as Record<string, unknown>
+    const keys = Object.keys(obj).sort()
+    return `{${keys.map((k) => `${JSON.stringify(k)}:${stableStringify(obj[k])}`).join(",")}}`
 }
 
-export function trackEvent(eventName: string, params?: EventParams) {
-    // Only track in production or if explicitly enabled
-    // but for this task we want to verify, so we'll allow it if GA ID is present
-    if (typeof window !== 'undefined' && window.gtag) {
-        sendGAEvent('event', eventName, params || {})
+const lastFiredAt = new Map<string, number>()
 
-        // Log to console in development for verification
-        if (process.env.NODE_ENV === 'development') {
-            console.log(`[GA4] ${eventName}`, params)
-        }
-    }
+export function trackEvent(
+    eventName: string,
+    params: EventParams = {}
+) {
+    if (typeof window === "undefined") return
+    if (!("gtag" in window)) return
+
+    const key = `${eventName}|${stableStringify(params)}`
+    const now = Date.now()
+    const last = lastFiredAt.get(key)
+    if (last && now - last < 1000) return
+    lastFiredAt.set(key, now)
+
+    // @ts-ignore
+    window.gtag("event", eventName, params)
 }
 
-export function trackToolView(toolName: string, toolCategory: string, path: string) {
-    trackEvent(GA_EVENTS.TOOL_VIEW, {
-        tool_name: toolName,
-        tool_category: toolCategory,
+export function getToolNameFromPath(pathname?: string) {
+    const path = pathname ?? (typeof window !== "undefined" ? window.location.pathname : "")
+    const firstSegment = path.split("/").filter(Boolean)[0] ?? ""
+    return firstSegment.replace(/-/g, "_")
+}
+
+export function trackToolView(toolName: string, path: string) {
+    trackEvent("tool_view", {
+        tool_name: toolName.replace(/-/g, "_"),
         page_path: path,
     })
 }
 
 export function trackFileUpload(toolName: string, fileType: string, fileSizeKb: number, fileCount: number = 1) {
-    trackEvent(GA_EVENTS.FILE_UPLOAD, {
-        tool_name: toolName,
+    trackEvent("file_upload", {
+        tool_name: toolName.replace(/-/g, "_"),
         file_type: fileType,
         file_size_kb: Math.round(fileSizeKb),
         file_count: fileCount,
@@ -41,29 +52,27 @@ export function trackFileUpload(toolName: string, fileType: string, fileSizeKb: 
 }
 
 export function trackConvertStart(toolName: string, operationType: string, targetFormat?: string, presetName?: string) {
-    trackEvent(GA_EVENTS.CONVERT_START, {
-        tool_name: toolName,
-        operation_type: operationType,
-        target_format: targetFormat,
-        preset_name: presetName,
-    })
+    return
 }
 
-export function trackConvertComplete(toolName: string, durationMs: number, outputSizeKb: number, success: boolean = true, errorMessage?: string) {
-    trackEvent(GA_EVENTS.CONVERT_COMPLETE, {
-        tool_name: toolName,
-        duration_ms: Math.round(durationMs),
-        output_size_kb: Math.round(outputSizeKb),
-        success,
-        error_message: errorMessage
-    })
+export function trackConvertComplete(
+    toolName: string,
+    durationMs: number,
+    outputSizeKb: number,
+    success: boolean = true,
+    errorMessage?: string
+) {
+    return
 }
 
 export function trackDownloadClick(toolName: string, outputFormat: string, outputSizeKb: number, fileCount: number = 1) {
-    trackEvent(GA_EVENTS.DOWNLOAD_CLICK, {
-        tool_name: toolName,
-        output_format: outputFormat,
-        output_size_kb: Math.round(outputSizeKb),
-        file_count: fileCount,
+    return
+}
+
+export function trackConversionComplete(toolName: string, outputFormat: string) {
+    const format = outputFormat.includes("/") ? outputFormat.split("/")[1] : outputFormat
+    trackEvent("conversion_complete", {
+        tool_name: toolName.replace(/-/g, "_"),
+        output_format: format === "jpeg" ? "jpg" : format,
     })
 }

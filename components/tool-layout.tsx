@@ -73,8 +73,8 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
   const pathname = usePathname()
 
   useEffect(() => {
-    trackToolView(tool.name, tool.category, pathname)
-  }, [tool.name, tool.category, pathname])
+    trackToolView(tool.slug, pathname)
+  }, [tool.slug, pathname])
 
   const relatedTools = tool.relatedTools
     .map(slug => getToolBySlug(slug))

@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/components/ui/use-toast"
 import { CanvasPreview } from "@/components/tools/canvas-preview"
-import { trackFileUpload, trackConvertStart, trackConvertComplete, trackDownloadClick } from "@/lib/analytics"
+import { trackConvertStart, trackConvertComplete, trackDownloadClick, trackConversionComplete } from "@/lib/analytics"
 import { downloadBlob, getOutputFilename } from "@/lib/image-processor"
 
 export function WebsiteOptimizerTool({ toolName = "Website Optimizer" }: { toolName?: string }) {
@@ -67,6 +67,7 @@ export function WebsiteOptimizerTool({ toolName = "Website Optimizer" }: { toolN
       suffix: "optimized"
     })
     trackDownloadClick(toolName, "image/webp", result.size / 1024)
+    trackConversionComplete(toolName, "image/webp")
     downloadBlob(result.blob, filename)
   }
 
@@ -185,10 +186,7 @@ export function WebsiteOptimizerTool({ toolName = "Website Optimizer" }: { toolN
   return (
     <ToolContentLayout
       file={file}
-      onImageSelect={(f) => {
-        handleImageSelect(f)
-        trackFileUpload(toolName, f.type, f.size / 1024)
-      }}
+      onImageSelect={handleImageSelect}
       onRemove={handleRemove}
       preview={previewContent}
       controls={controlsContent}
