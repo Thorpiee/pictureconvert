@@ -65,55 +65,53 @@ export function ToolCard({ tool, badges = [], index = 0 }: ToolCardProps) {
   const Icon = iconMap[tool.icon as keyof typeof iconMap]
 
   const cardContent = (
-    <Link href={`/${tool.slug}`}>
-      <div>
-        <Card className={cn(
-          "h-full cursor-pointer group transition-all duration-300",
-          "hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5",
-          "bg-card"
-        )}>
-          <CardHeader className="pb-3">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex items-center gap-3">
-                <div
+    <Link href={`/${tool.slug}`} className="block h-full">
+      <Card className={cn(
+        "h-full flex flex-col cursor-pointer group transition-all duration-300",
+        "hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5",
+        "bg-card"
+      )}>
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-3">
+              <div
+                className={cn(
+                  "flex h-11 w-11 items-center justify-center rounded-xl",
+                  "bg-primary/10 text-primary",
+                  "group-hover:bg-primary group-hover:text-primary-foreground",
+                  "transition-colors duration-300"
+                )}
+              >
+                <Icon className="h-5 w-5" />
+              </div>
+              <h3 className="font-semibold text-base leading-tight group-hover:text-primary transition-colors">
+                {tool.name}
+              </h3>
+            </div>
+          </div>
+        </CardHeader>
+        <div className="px-6 pb-4 flex-1 flex flex-col">
+          <p className="text-sm text-muted-foreground line-clamp-2 mb-3 h-10">
+            {tool.description}
+          </p>
+          {badges.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-auto">
+              {badges.map((badge, i) => (
+                <Badge
+                  key={i}
+                  variant={badge.variant}
                   className={cn(
-                    "flex h-11 w-11 items-center justify-center rounded-xl",
-                    "bg-primary/10 text-primary",
-                    "group-hover:bg-primary group-hover:text-primary-foreground",
-                    "transition-colors duration-300"
+                    "text-[10px] px-2 h-5 font-normal",
+                    badge.label === "Popular" && "bg-gradient-to-r from-pink-500 to-violet-500 text-white border-0"
                   )}
                 >
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h3 className="font-semibold text-base leading-tight group-hover:text-primary transition-colors">
-                  {tool.name}
-                </h3>
-              </div>
+                  {badge.label}
+                </Badge>
+              ))}
             </div>
-          </CardHeader>
-          <div className="px-6 pb-4">
-            <p className="text-sm text-muted-foreground line-clamp-2 mb-3 h-10">
-              {tool.description}
-            </p>
-            {badges.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {badges.map((badge, i) => (
-                  <Badge
-                    key={i}
-                    variant={badge.variant}
-                    className={cn(
-                      "text-[10px] px-2 h-5 font-normal",
-                      badge.label === "Popular" && "bg-gradient-to-r from-pink-500 to-violet-500 text-white border-0"
-                    )}
-                  >
-                    {badge.label}
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
-        </Card>
-      </div>
+          )}
+        </div>
+      </Card>
     </Link>
   )
 

@@ -143,9 +143,10 @@ export function ToolsPageClient() {
           {filteredTools.map((tool) => (
             <div
               key={tool.slug}
+              className="h-full"
             >
-              <Link href={`/${tool.slug}`}>
-                <Card className="h-full hover:bg-accent/50 transition-colors border-border/50 bg-background/50 backdrop-blur-sm">
+              <Link href={`/${tool.slug}`} className="block h-full">
+                <Card className="h-full flex flex-col hover:bg-accent/50 transition-colors border-border/50 bg-background/50 backdrop-blur-sm">
                   <CardHeader>
                     <div className="flex items-center justify-between mb-2">
                       <div className="p-2.5 bg-primary/10 rounded-xl text-primary">
@@ -160,7 +161,7 @@ export function ToolsPageClient() {
                       {tool.description}
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="mt-auto">
                     <div className="flex items-center text-sm text-primary font-medium">
                       Try Tool <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
                     </div>

@@ -76,9 +76,10 @@ const iconMap = {
 interface ToolLayoutProps {
   tool: ToolConfig
   children: React.ReactNode
+  extraContent?: React.ReactNode
 }
 
-export function ToolLayout({ tool, children }: ToolLayoutProps) {
+export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
   const pathname = usePathname()
 
   useEffect(() => {
@@ -257,87 +258,93 @@ export function ToolLayout({ tool, children }: ToolLayoutProps) {
 
         {/* SEO Content */}
         <div className="max-w-3xl mx-auto mt-12 space-y-12">
-          {/* Comparison Section */}
-          {tool.comparison && (
-            <section>
-              <h2 className="text-2xl font-bold text-foreground mb-6">{tool.comparison.title}</h2>
-              <div className="border rounded-xl overflow-hidden mb-6">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-muted/50">
-                      {tool.comparison.columns.map((col, i) => (
-                        <TableHead key={i} className={i === 0 ? "w-[150px] font-bold" : "font-bold"}>
-                          {col}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {tool.comparison.rows.map((row, i) => (
-                      <TableRow key={i}>
-                        {row.map((cell, j) => (
-                          <TableCell key={j} className={j === 0 ? "font-medium" : ""}>
-                            {cell}
-                          </TableCell>
+          {extraContent ? (
+            extraContent
+          ) : (
+            <>
+              {/* Comparison Section */}
+              {tool.comparison && (
+                <section>
+                  <h2 className="text-2xl font-bold text-foreground mb-6">{tool.comparison.title}</h2>
+                  <div className="border rounded-xl overflow-hidden mb-6">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="bg-muted/50">
+                          {tool.comparison.columns.map((col, i) => (
+                            <TableHead key={i} className={i === 0 ? "w-[150px] font-bold" : "font-bold"}>
+                              {col}
+                            </TableHead>
+                          ))}
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {tool.comparison.rows.map((row, i) => (
+                          <TableRow key={i}>
+                            {row.map((cell, j) => (
+                              <TableCell key={j} className={j === 0 ? "font-medium" : ""}>
+                                {cell}
+                              </TableCell>
+                            ))}
+                          </TableRow>
                         ))}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-              <p className="text-lg font-medium text-foreground border-l-4 border-primary pl-4 italic">
-                {tool.comparison.intentSentence}
-              </p>
-            </section>
+                      </TableBody>
+                    </Table>
+                  </div>
+                  <p className="text-lg font-medium text-foreground border-l-4 border-primary pl-4 italic">
+                    {tool.comparison.intentSentence}
+                  </p>
+                </section>
+              )}
+
+              {/* What It Does */}
+              <section>
+                <h2 className="text-2xl font-bold text-foreground mb-4">What This Tool Does</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  <TextWithLinks text={tool.whatItDoes} />
+                </p>
+              </section>
+
+              {/* When To Use */}
+              <section>
+                <h2 className="text-2xl font-bold text-foreground mb-4">When To Use It</h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  <TextWithLinks text={tool.whenToUse} />
+                </p>
+              </section>
+
+              {/* Tips */}
+              <section>
+                <h2 className="text-2xl font-bold text-foreground mb-4">Tips for Best Results</h2>
+                <ul className="space-y-3">
+                  {tool.tips.map((tip, index) => (
+                    <li key={index} className="flex items-start gap-3 text-muted-foreground">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium">
+                        {index + 1}
+                      </span>
+                      <span className="leading-relaxed">{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+
+              {/* FAQ */}
+              <section>
+                <h2 className="text-2xl font-bold text-foreground mb-6">Frequently Asked Questions</h2>
+                <Accordion type="single" collapsible className="w-full">
+                  {tool.faq.map((item, index) => (
+                    <AccordionItem key={index} value={`faq-${index}`}>
+                      <AccordionTrigger className="text-left font-medium">
+                        {item.question}
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground leading-relaxed">
+                        {item.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </section>
+            </>
           )}
-
-          {/* What It Does */}
-          <section>
-            <h2 className="text-2xl font-bold text-foreground mb-4">What This Tool Does</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              <TextWithLinks text={tool.whatItDoes} />
-            </p>
-          </section>
-
-          {/* When To Use */}
-          <section>
-            <h2 className="text-2xl font-bold text-foreground mb-4">When To Use It</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              <TextWithLinks text={tool.whenToUse} />
-            </p>
-          </section>
-
-          {/* Tips */}
-          <section>
-            <h2 className="text-2xl font-bold text-foreground mb-4">Tips for Best Results</h2>
-            <ul className="space-y-3">
-              {tool.tips.map((tip, index) => (
-                <li key={index} className="flex items-start gap-3 text-muted-foreground">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium">
-                    {index + 1}
-                  </span>
-                  <span className="leading-relaxed">{tip}</span>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          {/* FAQ */}
-          <section>
-            <h2 className="text-2xl font-bold text-foreground mb-6">Frequently Asked Questions</h2>
-            <Accordion type="single" collapsible className="w-full">
-              {tool.faq.map((item, index) => (
-                <AccordionItem key={index} value={`faq-${index}`}>
-                  <AccordionTrigger className="text-left font-medium">
-                    {item.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed">
-                    {item.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </section>
         </div>
 
         {/* Related Tools */}

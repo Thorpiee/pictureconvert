@@ -1,6 +1,6 @@
 import Link from "next/link"
-import NextImage from "next/image"
 import { Shield } from "lucide-react"
+import { Logo } from "@/components/logo"
 
 const toolLinks = [
   { href: "/jpg-to-png", label: "JPG to PNG" },
@@ -36,15 +36,8 @@ export function Footer() {
           {/* Brand */}
           <div className="col-span-2 lg:col-span-1 space-y-4">
             <Link href="/" className="flex items-center gap-2.5 w-fit">
-              <div className="relative flex items-center h-14 w-auto">
-                <NextImage
-                  src="/logo.png"
-                  alt="PictureConvert Logo"
-                  width={180}
-                  height={50}
-                  className="h-full w-auto object-contain"
-                  priority
-                />
+              <div className="relative flex items-center">
+                <Logo iconClassName="h-10 w-auto" />
               </div>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">

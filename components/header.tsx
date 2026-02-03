@@ -1,11 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import NextImage from "next/image"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Menu, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Logo } from "@/components/logo"
 import {
   Sheet,
   SheetContent,
@@ -13,6 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import { ModeToggle } from "@/components/mode-toggle"
 
 const navLinks = [
   { href: "/tools", label: "Tools" },
@@ -48,16 +49,9 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 group">
             <div
-              className="relative flex items-center h-14 w-auto hover:scale-105 active:scale-95 transition-transform"
+              className="relative flex items-center hover:scale-105 active:scale-95 transition-transform"
             >
-              <NextImage
-                src="/logo.png"
-                alt="PictureConvert Logo"
-                width={200}
-                height={56}
-                className="h-full w-auto object-contain"
-                priority
-              />
+              <Logo iconClassName="h-10 w-auto" />
             </div>
           </Link>
 
@@ -74,6 +68,7 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-3">
+            <ModeToggle />
             <Button asChild size="sm" className="hidden sm:flex group">
               <Link href="/tools">
                 Open Tools
@@ -88,6 +83,7 @@ export function Header() {
                   size="icon"
                   className="lg:hidden"
                   aria-label="Open menu"
+                  suppressHydrationWarning
                 >
                   <Menu className="h-5 w-5" />
                 </Button>
@@ -95,15 +91,7 @@ export function Header() {
               <SheetContent side="right" className="w-[300px] sm:w-[400px]">
                 <SheetHeader>
                   <SheetTitle className="text-left flex items-center gap-2">
-                    <div className="relative flex items-center h-12 w-auto">
-                      <NextImage
-                        src="/logo.png"
-                        alt="PictureConvert Logo"
-                        width={180}
-                        height={48}
-                        className="h-full w-auto object-contain"
-                      />
-                    </div>
+                    <Logo iconClassName="h-9 w-auto" />
                   </SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col gap-2 mt-8">

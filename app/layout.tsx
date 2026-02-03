@@ -74,13 +74,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body className={`font-sans antialiased min-h-screen flex flex-col`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          forcedTheme="dark"
+          defaultTheme="system"
+          enableSystem
           disableTransitionOnChange
         >
           <Header />
