@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import { GuidePageLayout } from "@/components/guide-page-layout"
 
 export const metadata: Metadata = {
-  title: "Best Image Format for Email (Gmail, Outlook, Apple Mail) | 2025 Guide",
+  title: "Best Image Format for Email (2025): Gmail & Outlook Guide",
   description: "Why are your images not loading in email? Learn the best image formats for email marketing. Compare JPG, PNG, and GIF compatibility across Gmail and Outlook.",
 }
 
@@ -106,7 +106,24 @@ export default function BestImageFormatForEmailPage() {
       heroExtra={heroExtra}
       faqs={faqs}
       variant="split"
+      schemaTitle="Best Image Format for Email (2025): Gmail & Outlook Guide"
+      schemaDescription="Why are your images not loading in email? Learn the best image formats for email marketing. Compare JPG, PNG, and GIF compatibility across Gmail and Outlook."
     >
+
+      {/* Quick Answer Section */}
+      <section className="mb-16 not-prose">
+        <div className="bg-primary/5 border border-primary/10 rounded-xl p-8">
+          <h2 className="text-2xl font-bold text-primary mb-4 flex items-center gap-2">
+            <Zap className="h-6 w-6" />
+            Quick Answer: What Should You Use?
+          </h2>
+          <p className="text-lg leading-relaxed text-foreground">
+            For <strong>photos</strong>, always use <strong>JPG</strong>. For <strong>logos and icons</strong>, use <strong>PNG</strong>. If you need animation, use <strong>GIF</strong>. Avoid WebP and SVG entirely as they are blocked by Gmail and Outlook. Keep all images under 1MB (optimally 200KB) and 600px wide (1200px for Retina).
+          </p>
+        </div>
+      </section>
+
+      {/* Context Section */}
       <section className="mb-16">
         <h2 className="text-3xl font-bold mb-8">Why Email is Different from the Web</h2>
         <div className="bg-muted/30 p-8 rounded-2xl border border-border/50">
@@ -127,11 +144,12 @@ export default function BestImageFormatForEmailPage() {
         </div>
       </section>
 
-      <section className="mb-20">
-        <h2 className="text-3xl font-bold mb-8">Best Formats: The Safe List</h2>
+      {/* Data/Benchmarks Section */}
+      <section className="mb-16">
+        <h2 className="text-3xl font-bold mb-8">Format Compatibility Data</h2>
         <p className="text-lg text-muted-foreground mb-8">Stick to these three formats to ensure 100% deliverability.</p>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
+        <div className="grid md:grid-cols-3 gap-6 mb-12 not-prose">
           {/* JPG */}
           <Card className="border-t-4 border-t-blue-500 shadow-sm">
             <CardHeader>
@@ -184,86 +202,92 @@ export default function BestImageFormatForEmailPage() {
         </div>
       </section>
 
-      <section className="mb-20">
-        <h2 className="text-3xl font-bold mb-8">Formats to Avoid in Email</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="border-red-100 bg-red-50 dark:bg-red-950/20 dark:border-red-900 shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-700 dark:text-red-400">
-                <X className="h-5 w-5" /> WebP
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-red-900 dark:text-red-200 leading-relaxed">
-                Supported by Apple Mail and some web clients, but fails in Outlook and Gmail on some devices.
-                Only use if you have a developer who can code a fallback.
-              </p>
-            </CardContent>
-          </Card>
+      {/* Factors Section */}
+      <section className="mb-16">
+        <h2 className="text-3xl font-bold mb-8">Factors That Affect Your Results</h2>
 
-          <Card className="border-red-100 bg-red-50 dark:bg-red-950/20 dark:border-red-900 shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-700 dark:text-red-400">
-                <X className="h-5 w-5" /> SVG
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-red-900 dark:text-red-200 leading-relaxed">
-                Security risks mean most email clients block SVG entirely. Never use SVG in email.
-                Convert your logos to <Link href="/svg-to-png" className="underline font-bold">PNG</Link>.
-              </p>
-            </CardContent>
-          </Card>
+        <div className="mb-12">
+          <h3 className="text-xl font-bold mb-6">1. Formats to Avoid</h3>
+          <div className="grid md:grid-cols-2 gap-6 not-prose">
+            <Card className="border-red-100 bg-red-50 dark:bg-red-950/20 dark:border-red-900 shadow-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-red-700 dark:text-red-400">
+                  <X className="h-5 w-5" /> WebP
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-red-900 dark:text-red-200 leading-relaxed">
+                  Supported by Apple Mail and some web clients, but fails in Outlook and Gmail on some devices.
+                  Only use if you have a developer who can code a fallback.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="border-red-100 bg-red-50 dark:bg-red-950/20 dark:border-red-900 shadow-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-red-700 dark:text-red-400">
+                  <X className="h-5 w-5" /> SVG
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-red-900 dark:text-red-200 leading-relaxed">
+                  Security risks mean most email clients block SVG entirely. Never use SVG in email.
+                  Convert your logos to <Link href="/svg-to-png" className="underline font-bold">PNG</Link>.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </section>
 
-      <section className="mb-20">
-        <h2 className="text-3xl font-bold mb-8">Best Practices for Retina Displays</h2>
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div>
-            <p className="text-lg leading-relaxed text-muted-foreground mb-6">
-              Most smartphones have "Retina" or high-density screens. A standard 600px wide image will look blurry on an iPhone.
-            </p>
-            <div className="bg-muted/50 p-6 rounded-xl border border-border">
-              <h4 className="font-bold mb-2 flex items-center gap-2"><Smartphone className="h-5 w-5 text-primary" /> The Trick</h4>
-              <p className="text-sm text-muted-foreground mb-4">
-                Create your image at <strong>2x size</strong> (e.g., 1200px wide) but set the width in the HTML to 600px.
+        <div>
+          <h3 className="text-xl font-bold mb-6">2. Best Practices for Retina Displays</h3>
+          <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <p className="text-lg leading-relaxed text-muted-foreground mb-6">
+                Most smartphones have "Retina" or high-density screens. A standard 600px wide image will look blurry on an iPhone.
               </p>
-              <pre className="bg-slate-950 text-slate-50 p-4 rounded-lg overflow-x-auto text-sm font-mono">
-                <code>{`<img src="photo-1200px.jpg" \n     width="600" \n     alt="Product Name">`}</code>
-              </pre>
+              <div className="bg-muted/50 p-6 rounded-xl border border-border not-prose">
+                <h4 className="font-bold mb-2 flex items-center gap-2"><Smartphone className="h-5 w-5 text-primary" /> The Trick</h4>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Create your image at <strong>2x size</strong> (e.g., 1200px wide) but set the width in the HTML to 600px.
+                </p>
+                <pre className="bg-slate-950 text-slate-50 p-4 rounded-lg overflow-x-auto text-sm font-mono">
+                  <code>{`<img src="photo-1200px.jpg" \n     width="600" \n     alt="Product Name">`}</code>
+                </pre>
+              </div>
+            </div>
+            <div className="bg-blue-50 dark:bg-blue-950/20 p-8 rounded-2xl border border-blue-100 dark:border-blue-900/50 not-prose">
+              <h3 className="text-xl font-bold mb-4">Accessibility: The Alt Text Rule</h3>
+              <p className="text-muted-foreground mb-6">
+                Many people have images blocked by default. If you send an email that is just one big image, they will see a blank box.
+              </p>
+              <ul className="space-y-3">
+                <li className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-green-600 mt-0.5" />
+                  <span>Always add <code>alt="Description"</code> to every image tag.</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-green-600 mt-0.5" />
+                  <span>Never hide key info (dates, codes) in images.</span>
+                </li>
+              </ul>
             </div>
           </div>
-          <div className="bg-blue-50 dark:bg-blue-950/20 p-8 rounded-2xl border border-blue-100 dark:border-blue-900/50">
-            <h3 className="text-xl font-bold mb-4">Accessibility: The Alt Text Rule</h3>
-            <p className="text-muted-foreground mb-6">
-              Many people have images blocked by default. If you send an email that is just one big image, they will see a blank box.
-            </p>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-600 mt-0.5" />
-                <span>Always add <code>alt="Description"</code> to every image tag.</span>
-              </li>
-              <li className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-600 mt-0.5" />
-                <span>Never hide key info (dates, codes) in images.</span>
-              </li>
-            </ul>
-          </div>
         </div>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-3xl font-bold mb-8">Final Recommendations Summary</h2>
-        <div className="bg-card border border-border rounded-xl shadow-sm p-8">
+      {/* Actionable Improvements Section */}
+      <section className="mb-16">
+        <h2 className="text-3xl font-bold mb-8">How to Optimize Your Email Images</h2>
+        <div className="bg-card border border-border rounded-xl shadow-sm p-8 not-prose">
           <ul className="grid md:grid-cols-2 gap-6">
             <li className="flex items-start gap-4">
               <div className="bg-primary/10 p-2 rounded-lg">
                 <ImageIcon className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <strong className="block text-lg">Photos</strong>
-                <span className="text-muted-foreground">JPG (60-80% quality).</span>
+                <strong className="block text-lg">1. Choose the Right Format</strong>
+                <span className="text-muted-foreground">Photos = JPG. Logos = PNG.</span>
               </div>
             </li>
             <li className="flex items-start gap-4">
@@ -271,8 +295,8 @@ export default function BestImageFormatForEmailPage() {
                 <Zap className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <strong className="block text-lg">Logos/Icons</strong>
-                <span className="text-muted-foreground">PNG-8 or PNG-24 (Compressed).</span>
+                <strong className="block text-lg">2. Compress Everything</strong>
+                <span className="text-muted-foreground">Aim for under 200KB per image to ensure fast loading on 4G/5G.</span>
               </div>
             </li>
             <li className="flex items-start gap-4">
@@ -280,8 +304,8 @@ export default function BestImageFormatForEmailPage() {
                 <Smartphone className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <strong className="block text-lg">Max Width</strong>
-                <span className="text-muted-foreground">600px - 640px (Upload 1200px for Retina).</span>
+                <strong className="block text-lg">3. Size for Retina</strong>
+                <span className="text-muted-foreground">Upload at 1200px width, but set HTML width="600".</span>
               </div>
             </li>
             <li className="flex items-start gap-4">
@@ -289,13 +313,37 @@ export default function BestImageFormatForEmailPage() {
                 <AlertTriangle className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <strong className="block text-lg">Max File Size</strong>
-                <span className="text-muted-foreground">Under 1MB (optimally under 200KB).</span>
+                <strong className="block text-lg">4. Add Alt Text</strong>
+                <span className="text-muted-foreground">Crucial for accessibility and when images are blocked.</span>
               </div>
             </li>
           </ul>
         </div>
       </section>
+
+      {/* Internal Links Section */}
+      <section className="mb-12 border-t border-border pt-12">
+        <h2 className="text-2xl font-bold mb-6">Related Guides & Tools</h2>
+        <div className="grid md:grid-cols-2 gap-4 not-prose">
+          <Link href="/compress-jpg" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">JPG Compressor</h3>
+            <p className="text-sm text-muted-foreground">Compress your JPGs for email without losing quality.</p>
+          </Link>
+          <Link href="/compress-png" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">PNG Compressor</h3>
+            <p className="text-sm text-muted-foreground">Shrink your PNG logos before sending.</p>
+          </Link>
+          <Link href="/guides/image-formats/png-vs-jpg" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">PNG vs JPG Guide</h3>
+            <p className="text-sm text-muted-foreground">Detailed comparison of the two main formats.</p>
+          </Link>
+          <Link href="/svg-to-png" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">SVG to PNG Converter</h3>
+            <p className="text-sm text-muted-foreground">Convert unsafe SVGs to email-safe PNGs.</p>
+          </Link>
+        </div>
+      </section>
+
     </GuidePageLayout>
   )
 }

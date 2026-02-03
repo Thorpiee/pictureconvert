@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import { GuidePageLayout } from "@/components/guide-page-layout"
 
 export const metadata: Metadata = {
-  title: "Best Image Format for Websites (2025 Guide) | WebP vs AVIF vs JPG",
+  title: "Best Image Format for Websites (2025): WebP vs AVIF vs JPG",
   description: "What is the best image format for websites? We compare WebP, AVIF, PNG, and JPG for speed, SEO, and quality. Boost your Core Web Vitals today.",
 }
 
@@ -103,204 +103,236 @@ export default function BestImageFormatForWebsitesPage() {
       heroExtra={heroExtra}
       variant="split"
       faqs={faqs}
+      schemaTitle="Best Image Format for Websites (2025): WebP vs AVIF vs JPG"
+      schemaDescription="What is the best image format for websites? We compare WebP, AVIF, PNG, and JPG for speed, SEO, and quality. Boost your Core Web Vitals today."
     >
       <div className="prose prose-lg prose-slate dark:prose-invert max-w-none">
 
-        <h2 className="text-3xl font-bold mb-8">Why Image Format Matters for Website Performance</h2>
-        <p className="text-lg leading-relaxed text-muted-foreground mb-8">
-          Images often account for over 50% of a web page's total file size. If you serve unoptimized images,
-          your website loads slowly. Slow websites frustrate users and get penalized by Google.
-        </p>
-        <p className="text-lg leading-relaxed text-muted-foreground mb-12">
-          Google's <strong>Core Web Vitals</strong> metrics, specifically <em>Largest Contentful Paint (LCP)</em>,
-          measure how fast your main content loads. Using modern image formats is one of Google's top recommendations
-          for improving LCP.
-        </p>
-
-        <h2 className="text-3xl font-bold mb-8">Image Formats Compared: The Big 5</h2>
-        <p className="text-lg leading-relaxed text-muted-foreground mb-8">
-          Not all formats are created equal. Here is how the major players stack up for web use.
-        </p>
-
-        {/* Comparison Table */}
-        <div className="not-prose mb-20 overflow-hidden rounded-xl border border-border shadow-sm">
-          <Table>
-            <TableHeader className="bg-muted/30">
-              <TableRow className="hover:bg-transparent">
-                <TableHead className="w-[150px] py-6 text-base font-bold">Format</TableHead>
-                <TableHead className="py-6 text-base font-bold">Best For</TableHead>
-                <TableHead className="py-6 text-base font-bold">Compression</TableHead>
-                <TableHead className="py-6 text-base font-bold text-center">Transparency</TableHead>
-                <TableHead className="py-6 text-base font-bold">Browser Support</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow className="h-20 bg-green-50/50 dark:bg-green-950/10 hover:bg-green-50 dark:hover:bg-green-950/20 transition-colors">
-                <TableCell className="font-bold text-lg">WebP</TableCell>
-                <TableCell>Everything (Photos & Graphics)</TableCell>
-                <TableCell className="text-green-600 font-bold">Excellent</TableCell>
-                <TableCell className="text-center"><div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 text-green-600"><Check className="h-5 w-5" /></div></TableCell>
-                <TableCell>97% (All Modern)</TableCell>
-              </TableRow>
-              <TableRow className="h-20 hover:bg-muted/30 transition-colors">
-                <TableCell className="font-bold text-lg">AVIF</TableCell>
-                <TableCell>Next-Gen Optimization</TableCell>
-                <TableCell className="text-green-600 font-bold">Superior</TableCell>
-                <TableCell className="text-center"><div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 text-green-600"><Check className="h-5 w-5" /></div></TableCell>
-                <TableCell>93% (Growing)</TableCell>
-              </TableRow>
-              <TableRow className="h-20 hover:bg-muted/30 transition-colors">
-                <TableCell className="font-bold text-lg text-muted-foreground">JPG/JPEG</TableCell>
-                <TableCell className="text-muted-foreground">Standard Photos</TableCell>
-                <TableCell className="text-yellow-600 font-medium">Good (Lossy)</TableCell>
-                <TableCell className="text-center"><div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500"><X className="h-5 w-5" /></div></TableCell>
-                <TableCell className="text-muted-foreground">100% (Universal)</TableCell>
-              </TableRow>
-              <TableRow className="h-20 hover:bg-muted/30 transition-colors">
-                <TableCell className="font-bold text-lg text-muted-foreground">PNG</TableCell>
-                <TableCell className="text-muted-foreground">High-Detail Graphics</TableCell>
-                <TableCell className="text-red-500 font-medium">Poor (Lossless)</TableCell>
-                <TableCell className="text-center"><div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 text-green-600"><Check className="h-5 w-5" /></div></TableCell>
-                <TableCell className="text-muted-foreground">100% (Universal)</TableCell>
-              </TableRow>
-              <TableRow className="h-20 hover:bg-muted/30 transition-colors">
-                <TableCell className="font-bold text-lg">SVG</TableCell>
-                <TableCell>Logos & Icons</TableCell>
-                <TableCell className="text-green-600 font-bold">Vector (Tiny)</TableCell>
-                <TableCell className="text-center"><div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 text-green-600"><Check className="h-5 w-5" /></div></TableCell>
-                <TableCell>100% (Universal)</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-
-        <h2 className="text-3xl font-bold mb-12">Best Format by Use Case</h2>
-
-        {/* Use Case Cards Grid */}
-        <div className="not-prose grid md:grid-cols-2 gap-8 mb-20">
-          {/* Card 1: Photos */}
-          <div className="group rounded-2xl border border-border bg-card p-8 shadow-sm transition-all hover:shadow-md">
-            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600">
-              <ImageIcon className="h-6 w-6" />
-            </div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-2xl font-bold">Photographs</h3>
-              <span className="rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-sm font-bold text-green-700 dark:text-green-400">
-                Winner: WebP
-              </span>
-            </div>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Photographs contain millions of colors and complex gradients. JPG was the standard for decades,
-              but <Link href="/jpg-to-webp" className="text-primary hover:underline font-medium">WebP</Link> offers the same quality at 25-35% smaller file sizes.
-            </p>
-            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground bg-muted/50 p-3 rounded-lg">
-              <Info className="h-4 w-4" />
-              <span>WordPress users: Use a plugin to serve WebP automatically.</span>
-            </div>
-          </div>
-
-          {/* Card 2: Logos */}
-          <div className="group rounded-2xl border border-border bg-card p-8 shadow-sm transition-all hover:shadow-md">
-            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-purple-50 dark:bg-purple-950/50 text-purple-600">
+        {/* Quick Answer Section */}
+        <section className="mb-16 not-prose">
+          <div className="bg-primary/5 border border-primary/10 rounded-xl p-8">
+            <h2 className="text-2xl font-bold text-primary mb-4 flex items-center gap-2">
               <Zap className="h-6 w-6" />
-            </div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-2xl font-bold">Icons & Logos</h3>
-              <span className="rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-sm font-bold text-green-700 dark:text-green-400">
-                Winner: SVG
-              </span>
-            </div>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Never use JPG or PNG for logos. SVGs are scalable vectors, meaning they look
-              sharp on any screen size with tiny file sizes.
-            </p>
-            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground bg-muted/50 p-3 rounded-lg">
-              <Info className="h-4 w-4" />
-              <span>Need a favicon? Use our <Link href="/png-to-ico" className="text-primary hover:underline">PNG to ICO converter</Link>.</span>
-            </div>
-          </div>
-
-          {/* Card 3: Screenshots */}
-          <div className="group rounded-2xl border border-border bg-card p-8 shadow-sm transition-all hover:shadow-md">
-            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 dark:bg-orange-950/50 text-orange-600">
-              <Monitor className="h-6 w-6" />
-            </div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-2xl font-bold">UI & Screenshots</h3>
-              <span className="rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-sm font-bold text-green-700 dark:text-green-400">
-                Winner: PNG / WebP
-              </span>
-            </div>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              Images with flat colors and text look blurry in JPG. PNG preserves sharp edges.
-              Always run them through a <Link href="/compress-png" className="text-primary hover:underline font-medium">PNG Compressor</Link>.
+              Quick Answer: What Should You Use?
+            </h2>
+            <p className="text-lg leading-relaxed text-foreground">
+              For <strong>95% of website images</strong> (photos, banners, product shots), use <strong>WebP</strong>. It offers the best balance of compression and compatibility. Use <strong>SVG</strong> for logos and icons. Only use <strong>PNG</strong> for screenshots or images requiring transparency that must be pixel-perfect.
             </p>
           </div>
+        </section>
 
-          {/* Card 4: Documents */}
-          <div className="group rounded-2xl border border-border bg-card p-8 shadow-sm transition-all hover:shadow-md">
-            <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600">
-              <FileText className="h-6 w-6" />
-            </div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-2xl font-bold">Documents</h3>
-              <span className="rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-sm font-bold text-green-700 dark:text-green-400">
-                Winner: PDF
-              </span>
-            </div>
-            <p className="text-muted-foreground leading-relaxed mb-6">
-              For text-heavy documents meant for reading or printing, PDF is the standard. It ensures fonts and layout stay consistent across all devices.
+        {/* Context Section */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold mb-6">Why Image Format Matters</h2>
+          <p className="text-lg leading-relaxed text-muted-foreground mb-6">
+            Images often account for over 50% of a web page's total file size. If you serve unoptimized images,
+            your website loads slowly. Slow websites frustrate users and get penalized by Google.
+          </p>
+          <div className="bg-muted/30 border border-border rounded-xl p-6 not-prose">
+            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">
+              <Monitor className="h-5 w-5 text-blue-600" />
+              Core Web Vitals Impact
+            </h3>
+            <p className="text-muted-foreground">
+              Google's metrics, specifically <strong>Largest Contentful Paint (LCP)</strong>, measure how fast your main content loads.
+              Using modern formats like WebP is a direct recommendation from PageSpeed Insights to improve your SEO score.
             </p>
           </div>
-        </div>
+        </section>
 
-        {/* Next Gen Section - Split Layout */}
-        <div className="grid md:grid-cols-2 gap-12 items-center mb-20">
-          <div>
-            <h2 className="text-3xl font-bold mb-6 mt-0">WebP vs AVIF: The Battle of Next-Gen Formats</h2>
-            <p className="text-lg leading-relaxed text-muted-foreground mb-6">
-              You might hear about AVIF, the newest kid on the block. Should you use it?
-            </p>
-            <div className="space-y-4 not-prose">
-              <div className="p-4 rounded-lg border border-border bg-background">
-                <h4 className="font-bold text-foreground mb-1">WebP</h4>
-                <p className="text-muted-foreground text-sm">The safe, modern standard. Supported by Safari, Chrome, Firefox, and Edge. Massive upgrade over JPG/PNG.</p>
+        {/* Data/Benchmarks Section */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold mb-8">Image Formats Compared: The Big 5</h2>
+          <div className="not-prose overflow-hidden rounded-xl border border-border shadow-sm">
+            <Table>
+              <TableHeader className="bg-muted/30">
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="w-[150px] py-4 text-base font-bold">Format</TableHead>
+                  <TableHead className="py-4 text-base font-bold">Best For</TableHead>
+                  <TableHead className="py-4 text-base font-bold">Compression</TableHead>
+                  <TableHead className="py-4 text-base font-bold text-center">Transparency</TableHead>
+                  <TableHead className="py-4 text-base font-bold">Browser Support</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow className="bg-green-50/50 dark:bg-green-950/10 hover:bg-green-50 dark:hover:bg-green-950/20 transition-colors">
+                  <TableCell className="font-bold text-lg">WebP</TableCell>
+                  <TableCell>Everything (Photos & Graphics)</TableCell>
+                  <TableCell className="text-green-600 font-bold">Excellent</TableCell>
+                  <TableCell className="text-center"><div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 text-green-600"><Check className="h-4 w-4" /></div></TableCell>
+                  <TableCell>97% (All Modern)</TableCell>
+                </TableRow>
+                <TableRow className="hover:bg-muted/30 transition-colors">
+                  <TableCell className="font-bold text-lg">AVIF</TableCell>
+                  <TableCell>Next-Gen Optimization</TableCell>
+                  <TableCell className="text-green-600 font-bold">Superior</TableCell>
+                  <TableCell className="text-center"><div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 text-green-600"><Check className="h-4 w-4" /></div></TableCell>
+                  <TableCell>93% (Growing)</TableCell>
+                </TableRow>
+                <TableRow className="hover:bg-muted/30 transition-colors">
+                  <TableCell className="font-bold text-lg text-muted-foreground">JPG/JPEG</TableCell>
+                  <TableCell className="text-muted-foreground">Standard Photos</TableCell>
+                  <TableCell className="text-yellow-600 font-medium">Good (Lossy)</TableCell>
+                  <TableCell className="text-center"><div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 text-red-500"><X className="h-4 w-4" /></div></TableCell>
+                  <TableCell className="text-muted-foreground">100% (Universal)</TableCell>
+                </TableRow>
+                <TableRow className="hover:bg-muted/30 transition-colors">
+                  <TableCell className="font-bold text-lg text-muted-foreground">PNG</TableCell>
+                  <TableCell className="text-muted-foreground">High-Detail Graphics</TableCell>
+                  <TableCell className="text-red-500 font-medium">Poor (Lossless)</TableCell>
+                  <TableCell className="text-center"><div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 text-green-600"><Check className="h-4 w-4" /></div></TableCell>
+                  <TableCell className="text-muted-foreground">100% (Universal)</TableCell>
+                </TableRow>
+                <TableRow className="hover:bg-muted/30 transition-colors">
+                  <TableCell className="font-bold text-lg">SVG</TableCell>
+                  <TableCell>Logos & Icons</TableCell>
+                  <TableCell className="text-green-600 font-bold">Vector (Tiny)</TableCell>
+                  <TableCell className="text-center"><div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-100 dark:bg-green-900 text-green-600"><Check className="h-4 w-4" /></div></TableCell>
+                  <TableCell>100% (Universal)</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        </section>
+
+        {/* Factors Section */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold mb-8">Factors That Affect Your Choice</h2>
+          <div className="not-prose grid md:grid-cols-2 gap-8">
+            {/* Card 1: Photos */}
+            <div className="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/50 text-blue-600">
+                    <ImageIcon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-xl font-bold">Photographs</h3>
+                </div>
+                <span className="rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-xs font-bold text-green-700 dark:text-green-400">
+                  Winner: WebP
+                </span>
               </div>
-              <div className="p-4 rounded-lg border border-border bg-background">
-                <h4 className="font-bold text-foreground mb-1">AVIF</h4>
-                <p className="text-muted-foreground text-sm">The bleeding edge. Better compression (20% smaller than WebP) but slower to encode and less support.</p>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                Photographs contain millions of colors. JPG was the standard, but <Link href="/jpg-to-webp" className="text-primary hover:underline font-medium">WebP</Link> offers the same quality at 30% smaller sizes.
+              </p>
+            </div>
+
+            {/* Card 2: Logos */}
+            <div className="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-50 dark:bg-purple-950/50 text-purple-600">
+                    <Zap className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-xl font-bold">Icons & Logos</h3>
+                </div>
+                <span className="rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-xs font-bold text-green-700 dark:text-green-400">
+                  Winner: SVG
+                </span>
+              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                Never use JPG or PNG for logos. SVGs are scalable vectors that look sharp on any screen size with tiny file sizes.
+              </p>
+            </div>
+
+            {/* Card 3: Screenshots */}
+            <div className="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-50 dark:bg-orange-950/50 text-orange-600">
+                    <Monitor className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-xl font-bold">UI & Screenshots</h3>
+                </div>
+                <span className="rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-xs font-bold text-green-700 dark:text-green-400">
+                  Winner: PNG / WebP
+                </span>
+              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                Images with flat colors and text look blurry in JPG. PNG preserves sharp edges. Always run them through a <Link href="/compress-png" className="text-primary hover:underline font-medium">PNG Compressor</Link>.
+              </p>
+            </div>
+
+            {/* Card 4: Documents */}
+            <div className="group rounded-2xl border border-border bg-card p-6 shadow-sm transition-all hover:shadow-md">
+              <div className="mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600">
+                    <FileText className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-xl font-bold">Documents</h3>
+                </div>
+                <span className="rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-xs font-bold text-green-700 dark:text-green-400">
+                  Winner: PDF
+                </span>
+              </div>
+              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                For text-heavy documents meant for reading or printing, PDF is the standard. It ensures fonts and layout stay consistent.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Actionable Improvements Section */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold mb-8">How to Improve Your Site (Action Plan)</h2>
+          <div className="grid md:grid-cols-2 gap-8 not-prose">
+            <div className="bg-muted/30 border border-border rounded-xl p-8">
+              <h3 className="text-xl font-bold mb-4">1. Audit Your Images</h3>
+              <p className="text-muted-foreground mb-4">
+                Open your website and check your largest images. If you see PNGs used for photos, or JPGs larger than 500KB, you have an easy win waiting.
+              </p>
+              <ul className="space-y-2 text-sm text-muted-foreground">
+                <li className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-green-600" /> Check "Network" tab in DevTools
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-green-600" /> Look for files &gt; 200KB
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-card border border-border rounded-xl p-8 shadow-sm">
+              <h3 className="text-xl font-bold mb-4">2. Convert to WebP</h3>
+              <p className="text-muted-foreground mb-6">
+                Use our free tools to convert your existing heavy images to optimized WebP.
+              </p>
+              <div className="grid gap-3">
+                <Link href="/jpg-to-webp" className="flex items-center justify-between p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors">
+                  <span className="font-medium">Convert JPG to WebP</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href="/png-to-webp" className="flex items-center justify-between p-3 rounded-lg bg-muted hover:bg-muted/80 transition-colors">
+                  <span className="font-medium">Convert PNG to WebP</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
               </div>
             </div>
           </div>
-          <div className="bg-muted/30 p-8 rounded-2xl border border-border/50">
-            <h3 className="text-xl font-bold mb-4 mt-0">Our Recommendation</h3>
-            <p className="text-lg text-muted-foreground mb-6">
-              Use <strong>WebP</strong> for now for maximum compatibility and ease of use.
-            </p>
-            <p className="text-base text-muted-foreground">
-              If you have an advanced setup, serve AVIF with a WebP fallback. For 99% of website owners, converting everything to WebP is the single most effective optimization you can make.
-            </p>
-          </div>
-        </div>
+        </section>
 
-        <h2 className="text-3xl font-bold mb-8">Common Mistakes to Avoid</h2>
-        <div className="grid md:grid-cols-3 gap-6 not-prose mb-20">
-          <div className="p-6 rounded-xl bg-red-50 dark:bg-red-950/10 border border-red-100 dark:border-red-900/20">
-            <span className="text-red-600 font-bold text-sm uppercase tracking-wide mb-2 block">Mistake #1</span>
-            <h4 className="font-bold text-lg mb-2">Using PNG for Photos</h4>
-            <p className="text-muted-foreground text-sm">This is the #1 speed killer. A photo saved as PNG might be 3MB. The same photo as WebP is 200KB.</p>
+        {/* Internal Links Section */}
+        <section className="mb-12 border-t border-border pt-12">
+          <h2 className="text-2xl font-bold mb-6">Related Guides & Tools</h2>
+          <div className="grid md:grid-cols-2 gap-4 not-prose">
+            <Link href="/guides/image-formats/png-vs-jpg" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+              <h3 className="font-semibold text-lg mb-1 text-primary">PNG vs JPG Guide</h3>
+              <p className="text-sm text-muted-foreground">Understand the difference between the two most common formats.</p>
+            </Link>
+            <Link href="/guides/image-formats/webp-vs-png" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+              <h3 className="font-semibold text-lg mb-1 text-primary">WebP vs PNG Guide</h3>
+              <p className="text-sm text-muted-foreground">Deep dive into why WebP is the superior choice for web.</p>
+            </Link>
+            <Link href="/website-optimizer" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+              <h3 className="font-semibold text-lg mb-1 text-primary">Website Image Optimizer</h3>
+              <p className="text-sm text-muted-foreground">Analyze your site and find unoptimized images.</p>
+            </Link>
+            <Link href="/compress-png" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+              <h3 className="font-semibold text-lg mb-1 text-primary">PNG Compressor</h3>
+              <p className="text-sm text-muted-foreground">Reduce PNG file size without losing quality.</p>
+            </Link>
           </div>
-          <div className="p-6 rounded-xl bg-orange-50 dark:bg-orange-950/10 border border-orange-100 dark:border-orange-900/20">
-            <span className="text-orange-600 font-bold text-sm uppercase tracking-wide mb-2 block">Mistake #2</span>
-            <h4 className="font-bold text-lg mb-2">Ignoring Compression</h4>
-            <p className="text-muted-foreground text-sm">Even the right format needs compression. Always process images through a <Link href="/smart-optimizer" className="underline decoration-orange-300">Smart Optimizer</Link>.</p>
-          </div>
-          <div className="p-6 rounded-xl bg-yellow-50 dark:bg-yellow-950/10 border border-yellow-100 dark:border-yellow-900/20">
-            <span className="text-yellow-600 font-bold text-sm uppercase tracking-wide mb-2 block">Mistake #3</span>
-            <h4 className="font-bold text-lg mb-2">Wrong Dimensions</h4>
-            <p className="text-muted-foreground text-sm">Don't upload a 4000px wide image if it will only display at 800px. Resize it first.</p>
-          </div>
-        </div>
+        </section>
 
       </div>
     </GuidePageLayout>

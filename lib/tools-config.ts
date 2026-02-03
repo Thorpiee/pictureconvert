@@ -3,6 +3,13 @@
 
 export type ToolCategory = "convert" | "compress" | "edit" | "privacy" | "social" | "guide"
 
+export interface ComparisonTable {
+  title: string
+  columns: string[]
+  rows: string[][]
+  intentSentence: string
+}
+
 export interface ToolConfig {
   slug: string
   name: string
@@ -17,6 +24,7 @@ export interface ToolConfig {
   whenToUse: string
   tips: string[]
   faq: { question: string; answer: string }[]
+  comparison?: ComparisonTable
   relatedTools: string[]
 }
 
@@ -26,7 +34,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "JPG to PNG Converter",
     shortName: "JPG to PNG",
     description: "Convert JPG images to PNG format with transparency support",
-    longDescription: "Transform your JPG/JPEG images into high-quality PNG files. PNG format supports transparency and lossless compression, making it perfect for graphics, logos, and images that need a transparent background.",
+    longDescription: "Convert JPG images to PNG instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "ArrowRightLeft",
     acceptedTypes: ["image/jpeg"],
@@ -43,13 +51,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Use PNG when you need to preserve exact colors and avoid compression artifacts"
     ],
     faq: [
-      { question: "Will converting to PNG improve my image quality?", answer: "Converting from JPG to PNG won't recover quality that was already lost during the original JPG compression. However, PNG will preserve the current decoded quality perfectly - no additional quality loss occurs. This means if you need to edit the image multiple times, PNG prevents the quality degradation that would happen with repeated JPG saves." },
-      { question: "Why is my PNG file larger than the original JPG?", answer: "PNG uses lossless compression while JPG uses lossy compression. JPG achieves smaller file sizes by discarding some image data, while PNG preserves every pixel exactly. This means PNG files are typically 2-5x larger but maintain perfect pixel fidelity. The trade-off is worth it when you need transparency or want to avoid further quality loss." },
-      { question: "Can I add transparency after converting?", answer: "The conversion itself doesn't add transparency - it preserves the image as-is. To add transparency, you'll need to use an image editor to remove the background. Once you have a transparent PNG, you can use it in designs, websites, or anywhere you need a transparent background." },
-      { question: "Is this conversion secure and private?", answer: "Yes! All processing happens entirely in your browser using client-side JavaScript. Your images are never uploaded to any server, ensuring complete privacy and security. The conversion happens instantly on your device." },
-      { question: "Does the tool preserve EXIF data and orientation?", answer: "Yes, the tool correctly handles EXIF orientation data, ensuring your image displays with the correct orientation. However, EXIF metadata (like GPS, camera settings) is typically not preserved in PNG format, which can be a privacy benefit." },
-      { question: "Can I convert multiple JPG files at once?", answer: "Yes! The tool supports batch conversion. Simply drag and drop multiple JPG files, and they'll all be converted to PNG format. Each file is processed individually to ensure quality." }
+      { question: "Is JPG or PNG better for images?", answer: "JPG is best for photos to keep file sizes small. PNG is better for graphics, screenshots, and logos because it supports transparency and doesn't lose quality when edited." },
+      { question: "Does converting JPG to PNG reduce quality?", answer: "No. PNG is a lossless format, so converting from JPG to PNG preserves the exact quality of your original image. However, it won't improve the quality if the original JPG was already compressed." },
+      { question: "Are my images uploaded to a server?", answer: "No. Your images are processed entirely within your browser. We never upload your files to any server, ensuring your photos remain 100% private and secure on your device." }
     ],
+    comparison: {
+      title: "JPG vs PNG — What’s the Difference?",
+      columns: ["Feature", "JPG", "PNG"],
+      rows: [
+        ["Best for", "Photos & Web", "Graphics & Editing"],
+        ["File size", "Small", "Large"],
+        ["Transparency", "No", "Yes"],
+        ["Compression", "Lossy", "Lossless"]
+      ],
+      intentSentence: "If you’re converting JPG to PNG, you’re usually trying to preserve quality or add transparency for editing."
+    },
     relatedTools: ["png-to-jpg", "compress-png", "resize-image", "crop-image", "remove-exif"]
   },
   "png-to-jpg": {
@@ -57,7 +73,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Convert PNG to JPG Online",
     shortName: "PNG to JPG",
     description: "Free online tool to convert PNG to JPG instantly. Compress images without losing quality. No signup required.",
-    longDescription: "Convert PNG to JPG online for free. Our fast converter reduces file size while maintaining image quality. Perfect for web optimization, social media, and email attachments. No installation needed.",
+    longDescription: "Convert PNG images to JPG instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "ArrowRightLeft",
     acceptedTypes: ["image/png"],
@@ -72,12 +88,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Process occurs locally in your browser for 100% privacy"
     ],
     faq: [
-      { question: "How do I convert PNG to JPG online for free?", answer: "Simply drag and drop your PNG file into the box above. The conversion starts automatically. You can then adjust the quality and download your new JPG file instantly. No email or signup is required." },
-      { question: "Is it safe to convert PNG to JPG online?", answer: "Yes, absolutely. Unlike other sites that upload your images to a server, our tool processes everything directly in your browser. Your photos never leave your device, ensuring 100% privacy and security." },
-      { question: "Does converting PNG to JPG reduce quality?", answer: "JPG is a lossy format, so there is technically some quality change. However, our smart conversion engine preserves visual fidelity so well that the difference is usually invisible to the human eye, while the file size drops dramatically." },
-      { question: "Can I convert transparent PNGs to JPG?", answer: "Yes, but since JPG doesn't support transparency, the transparent areas will be filled with white. If you need to keep transparency, consider converting to WebP instead." },
-      { question: "What is the best quality setting for web images?", answer: "We recommend a quality setting between 75% and 85%. This typically reduces file size by 70-90% while maintaining excellent visual quality for websites and social media." }
+      { question: "Is PNG or JPG better for photos?", answer: "JPG is usually better for photos because it produces much smaller file sizes while maintaining good visual quality. PNG is better for graphics, logos, or images that need transparency." },
+      { question: "Does converting PNG to JPG reduce quality?", answer: "Converting PNG to JPG can slightly reduce quality because JPG uses compression, but for most photos the difference is not noticeable. It’s mainly done to reduce file size." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "PNG vs JPG — What’s the Difference?",
+      columns: ["Feature", "PNG", "JPG"],
+      rows: [
+        ["Best for", "Graphics & Transparency", "Photos & Web"],
+        ["File size", "Large", "Small"],
+        ["Transparency", "Yes", "No"],
+        ["Compression", "Lossless", "Lossy"]
+      ],
+      intentSentence: "If you’re converting PNG to JPG, you’re usually trying to reduce file size for photos or web use."
+    },
     relatedTools: ["jpg-to-png", "compress-jpg", "resize-image", "crop-image", "remove-exif"]
   },
   "webp-to-png": {
@@ -85,7 +110,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Compress WebP to PNG",
     shortName: "WebP to PNG",
     description: "Convert WebP to PNG online. High-quality conversion with optimization options. Free, fast, and secure.",
-    longDescription: "Easily compress and convert WebP images to PNG format. Our tool ensures high-quality output while maintaining transparency. Perfect for compatibility with all devices.",
+    longDescription: "Convert WebP images to PNG instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "ArrowRightLeft",
     acceptedTypes: ["image/webp"],
@@ -100,12 +125,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "No quality is lost if you choose high-quality settings"
     ],
     faq: [
-      { question: "Why convert WebP to PNG?", answer: "WebP is great for the web, but PNG is the standard for editing and compatibility. Converting ensures your image works in Photoshop, Word, email signatures, and older browsers." },
-      { question: "Will the file size increase?", answer: "Usually, yes. WebP is highly compressed. PNG is lossless, so it captures all the data. However, our tool includes optimization features to keep the file size as small as possible." },
-      { question: "Is transparency preserved?", answer: "Yes, absolutely. Both WebP and PNG support transparency, and our converter maintains it perfectly." },
-      { question: "Is it free to use?", answer: "Yes, this tool is completely free and unlimited. You can convert as many images as you need." },
-      { question: "Is it secure?", answer: "Yes. Your images are processed in your browser and are never uploaded to our servers." }
+      { question: "Is WebP or PNG better for the web?", answer: "WebP is generally better for websites because it offers smaller file sizes. However, PNG is better for editing and compatibility since it works with all software and supports lossless transparency." },
+      { question: "Does converting WebP to PNG reduce quality?", answer: "No, converting WebP to PNG does not reduce quality. PNG is a lossless format, so it will perfectly preserve the visual details of your original WebP file, though the file size may increase." },
+      { question: "Are my images uploaded to a server?", answer: "No. The conversion happens locally in your web browser. Your files never leave your computer or phone, so you don't need to worry about privacy or data security." }
     ],
+    comparison: {
+      title: "WebP vs PNG — What’s the Difference?",
+      columns: ["Feature", "WebP", "PNG"],
+      rows: [
+        ["Best for", "Web Performance", "Compatibility & Editing"],
+        ["File size", "Smallest", "Large"],
+        ["Transparency", "Yes", "Yes"],
+        ["Support", "Modern Browsers", "Universal"]
+      ],
+      intentSentence: "If you’re converting WebP to PNG, you’re usually trying to ensure compatibility with software that doesn't support WebP."
+    },
     relatedTools: ["png-to-webp", "compress-png", "resize-image", "jpg-to-png", "crop-image"]
   },
   "png-to-webp": {
@@ -113,7 +147,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "PNG to WebP Converter",
     shortName: "PNG to WebP",
     description: "Convert PNG images to WebP for better compression",
-    longDescription: "Convert your PNG images to WebP format for significantly smaller file sizes while maintaining quality. WebP is ideal for web use, offering both lossy and lossless compression with transparency support.",
+    longDescription: "Convert PNG images to WebP instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "ArrowRightLeft",
     acceptedTypes: ["image/png"],
@@ -127,10 +161,9 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Consider providing PNG fallbacks for older browser support"
     ],
     faq: [
-      { question: "How much smaller will my WebP file be?", answer: "WebP files are typically 25-35% smaller than equivalent PNG files while maintaining similar visual quality." },
-      { question: "Is WebP widely supported?", answer: "Yes, all modern browsers (Chrome, Firefox, Safari, Edge) support WebP. Some older browsers may not." },
-      { question: "Does WebP support transparency?", answer: "Yes! WebP fully supports transparency (alpha channel), just like PNG." },
-      { question: "Should I use WebP for all my images?", answer: "WebP is great for web use. For maximum compatibility or print, PNG or JPG may be better choices." }
+      { question: "Is PNG or WebP better for websites?", answer: "WebP is superior for websites because it creates much smaller files (often 25-35% smaller) while maintaining transparency and quality. PNG is better if you need maximum compatibility with very old browsers." },
+      { question: "Does converting PNG to WebP reduce quality?", answer: "It depends on your settings. WebP supports both lossless and lossy compression. Our tool lets you choose, but even with slight compression, the visual difference is usually unnoticeable while saving significant space." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing is done client-side in your browser. Your PNG files stay on your device and are never transmitted to any external server or cloud storage." }
     ],
     relatedTools: ["webp-to-png", "compress-png", "jpg-to-webp", "website-optimizer", "resize-image"]
   },
@@ -139,7 +172,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "JPG to WebP Converter",
     shortName: "JPG to WebP",
     description: "Convert JPG images to WebP for modern web optimization",
-    longDescription: "Convert your JPG images to WebP format for better web performance. WebP offers superior compression, resulting in smaller file sizes that load faster while maintaining excellent visual quality.",
+    longDescription: "Convert JPG images to WebP instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "ArrowRightLeft",
     acceptedTypes: ["image/jpeg"],
@@ -153,11 +186,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Consider your audience's browser support when using WebP"
     ],
     faq: [
-      { question: "How much smaller will my WebP file be?", answer: "WebP files are typically 25-34% smaller than JPG files at equivalent visual quality." },
-      { question: "Is there quality loss in conversion?", answer: "Both JPG and WebP use lossy compression. You can adjust the quality setting to control the balance between size and quality." },
-      { question: "When should I use WebP over JPG?", answer: "Use WebP for web images where browser support isn't a concern. Use JPG for maximum compatibility or when sharing images." },
-      { question: "Do all browsers support WebP?", answer: "All modern browsers support WebP. Some very old browsers don't, but this is increasingly rare." }
+      { question: "Is JPG or WebP better for site speed?", answer: "WebP is significantly better for website speed. It can be 25-35% smaller than JPG for the same quality, which helps pages load faster and improves SEO scores." },
+      { question: "Does converting JPG to WebP reduce quality?", answer: "WebP is very efficient. You can usually reduce the file size significantly without any visible loss in quality. It uses advanced compression techniques that are superior to JPG." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing occurs on your device. We do not upload, store, or view your images. The conversion is instant and completely private." }
     ],
+    comparison: {
+      title: "JPG vs WebP — What’s the Difference?",
+      columns: ["Feature", "JPG", "WebP"],
+      rows: [
+        ["Best for", "Universal Compatibility", "Web Performance"],
+        ["File size", "Small", "Smallest"],
+        ["Transparency", "No", "Yes"],
+        ["Compression", "Lossy", "Lossy & Lossless"]
+      ],
+      intentSentence: "If you’re converting JPG to WebP, you’re usually trying to improve website loading speed."
+    },
     relatedTools: ["webp-to-jpg", "png-to-webp", "jpg-to-png", "compress-jpg", "resize-image"]
   },
   "heic-to-jpg": {
@@ -165,7 +208,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "HEIC to JPG Converter",
     shortName: "HEIC to JPG",
     description: "Convert iPhone HEIC photos to universally compatible JPG",
-    longDescription: "Convert HEIC images from your iPhone or iPad to the universally compatible JPG format. HEIC is Apple's efficient format, but JPG works everywhere - perfect for sharing, uploading, and editing.",
+    longDescription: "Convert HEIC images to JPG instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "FileImage",
     acceptedTypes: ["image/heic", "image/heif"],
@@ -182,13 +225,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "All processing happens in your browser - your photos never leave your device"
     ],
     faq: [
-      { question: "What is HEIC format and why does my iPhone use it?", answer: "HEIC (High Efficiency Image Container) is Apple's modern photo format introduced with iOS 11. It provides better compression than JPG (typically 50% smaller files) while maintaining similar or better quality. Apple uses it as the default to save storage space on iPhones. However, it has limited compatibility outside the Apple ecosystem." },
-      { question: "Why can't I open HEIC files on my Windows computer or upload them to websites?", answer: "HEIC requires specific software support that many platforms lack. Windows 10/11 can view HEIC files with a codec pack, but many websites, email clients, and image editing software don't support it. Converting to JPG ensures universal compatibility - JPG works on virtually every device, platform, and application." },
-      { question: "Is there quality loss when converting HEIC to JPG?", answer: "There's minimal quality loss when converting at high quality settings (90-95%). HEIC images are high-quality, and JPG preserves most of that quality. At 90% quality, the difference is typically imperceptible. The tool allows you to choose the quality setting to balance file size and quality based on your needs." },
-      { question: "Can I convert multiple HEIC files at once?", answer: "Currently, you can convert one HEIC file at a time for optimal quality and processing. For batch conversion, process each file separately. The conversion is fast, so processing multiple files doesn't take long." },
-      { question: "Will the converted JPG be larger or smaller than the original HEIC?", answer: "The converted JPG will typically be larger than the original HEIC file. HEIC uses more efficient compression, so a 2MB HEIC might become a 3-4MB JPG at high quality. However, JPG offers universal compatibility, which is often worth the larger file size." },
-      { question: "Is my privacy protected when converting HEIC files?", answer: "Yes! All conversion happens entirely in your browser. Your HEIC photos are never uploaded to any server - they stay on your device throughout the entire process. This ensures complete privacy and security for your personal photos." }
+      { question: "Is HEIC or JPG better for sharing?", answer: "JPG is much better for sharing because it works on every device, website, and app. HEIC is efficient for storage on iPhones but often cannot be opened on Windows, Android, or web browsers." },
+      { question: "Does converting HEIC to JPG reduce quality?", answer: "Converting HEIC to JPG can involve a tiny amount of quality loss since JPG is a compressed format. However, at high quality settings (which we use), the difference is virtually impossible to see with the naked eye." },
+      { question: "Are my images uploaded to a server?", answer: "No. Unlike many other converters, our tool processes your photos directly in your browser. Your personal iPhone photos never leave your device and are never uploaded to the cloud." }
     ],
+    comparison: {
+      title: "HEIC vs JPG — What’s the Difference?",
+      columns: ["Feature", "HEIC", "JPG"],
+      rows: [
+        ["Best for", "iPhone Storage", "Sharing & Compatibility"],
+        ["File size", "Smallest", "Small"],
+        ["Compatibility", "Apple Only", "Universal"],
+        ["Web Support", "No", "Yes"]
+      ],
+      intentSentence: "If you’re converting HEIC to JPG, you’re usually trying to share iPhone photos with non-Apple users or websites."
+    },
     relatedTools: ["jpg-to-png", "jpg-to-webp", "compress-jpg", "resize-image", "remove-exif"]
   },
   "avif-to-jpg": {
@@ -196,7 +247,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "AVIF to JPG Converter",
     shortName: "AVIF to JPG",
     description: "Convert AVIF images to JPG for broader compatibility",
-    longDescription: "Convert AVIF images to the universally compatible JPG format. AVIF offers excellent compression but limited support. JPG ensures your images work everywhere.",
+    longDescription: "Convert AVIF images to JPG instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "FileImage",
     acceptedTypes: ["image/avif"],
@@ -210,11 +261,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Some advanced AVIF features may not transfer to JPG"
     ],
     faq: [
-      { question: "What is AVIF format?", answer: "AVIF (AV1 Image File Format) is a modern image format offering superior compression. It's based on the AV1 video codec and provides excellent quality at small file sizes." },
-      { question: "Why doesn't AVIF work in my browser?", answer: "AVIF requires a modern browser with specific support. Chrome, Firefox, and Safari support it, but some older browsers don't." },
-      { question: "Is there quality loss?", answer: "Some quality may be lost as JPG uses lossy compression. However, at high quality settings, the difference is minimal." },
-      { question: "Will this work with all AVIF files?", answer: "Browser support for AVIF decoding varies. If conversion fails, your browser may not support the specific AVIF features used." }
+      { question: "Is AVIF or JPG better?", answer: "AVIF offers better compression and quality, but JPG is universally compatible. Use JPG if you need to ensure the image opens on every device." },
+      { question: "Does converting AVIF to JPG reduce quality?", answer: "Converting from AVIF (modern) to JPG (legacy) can introduce slight quality loss due to compression, but our high-quality settings minimize this." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "AVIF vs JPG — What’s the Difference?",
+      columns: ["Feature", "AVIF", "JPG"],
+      rows: [
+        ["Best for", "Modern Web", "Universal Sharing"],
+        ["File size", "Tiny", "Small"],
+        ["Compatibility", "New Browsers", "Everywhere"],
+        ["Compression", "Excellent", "Good"]
+      ],
+      intentSentence: "If you’re converting AVIF to JPG, you’re usually trying to open the image in software that doesn't support AVIF yet."
+    },
     relatedTools: ["jpg-to-webp", "compress-jpg", "resize-image", "heic-to-jpg", "best-image-format-for-web"]
   },
   "bmp-converter": {
@@ -222,7 +283,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "BMP to JPG/PNG Converter",
     shortName: "BMP Converter",
     description: "Convert BMP to modern formats like JPG and PNG",
-    longDescription: "Update your old BMP files to modern, web-friendly formats. Convert BMP to high-quality JPG for smaller file sizes or PNG for lossless quality with transparency support.",
+    longDescription: "Convert BMP images to JPG or PNG instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "Image",
     acceptedTypes: ["image/bmp"],
@@ -236,11 +297,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Quality settings apply when converting to JPG output"
     ],
     faq: [
-      { question: "Why convert BMP files?", answer: "BMP files are uncompressed and very large. Converting to JPG or PNG drastically reduces file size without significant quality loss." },
-      { question: "Which output format should I choose?", answer: "Use JPG for photos to save space. Use PNG for graphics, screenshots, or if you need to preserve exact pixel quality." },
-      { question: "Is transparency supported?", answer: "Standard BMPs don't support transparency. If you convert to PNG, you can add transparency later in an editor." },
-      { question: "How much space will I save?", answer: "A lot! JPGs can be 90% smaller than BMPs. Even PNGs are typically much smaller due to efficient compression." }
+      { question: "Is BMP or JPG better for the web?", answer: "JPG is much better for the web. BMP files are uncompressed and huge, causing slow page loads. JPGs are compressed and load instantly." },
+      { question: "Does converting BMP to JPG reduce quality?", answer: "Converting BMP to JPG involves compression, which can slightly reduce quality, but it makes the file size drastically smaller (often 90% less). Converting BMP to PNG is lossless." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "BMP vs JPG — What’s the Difference?",
+      columns: ["Feature", "BMP", "JPG"],
+      rows: [
+        ["Best for", "Raw Data", "Web & Sharing"],
+        ["File size", "Huge", "Small"],
+        ["Compression", "None", "High"],
+        ["Web Friendly", "No", "Yes"]
+      ],
+      intentSentence: "If you’re converting BMP to JPG, you’re usually trying to make the file small enough to share or upload."
+    },
     relatedTools: ["tiff-to-jpg", "png-to-jpg", "jpg-to-png", "compress-jpg", "resize-image"]
   },
   "tiff-to-jpg": {
@@ -248,7 +319,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "TIFF to JPG Converter",
     shortName: "TIFF to JPG",
     description: "Convert TIFF images to high-quality JPG format",
-    longDescription: "Convert professional TIFF images to standard JPG files. Perfect for making high-resolution scans and print assets web-ready while preserving image details.",
+    longDescription: "Convert TIFF images to JPG instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "Image",
     acceptedTypes: ["image/tiff"],
@@ -262,11 +333,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "The output JPG will be much smaller than the original TIFF"
     ],
     faq: [
-      { question: "Can it handle multi-page TIFFs?", answer: "Currently, the tool converts the first page of a multi-page TIFF file to a JPG image." },
-      { question: "Will I lose image quality?", answer: "TIFF is lossless, while JPG is lossy. However, we use high-quality settings (95%) to ensure the result looks virtually identical." },
-      { question: "Why is my TIFF file so big?", answer: "TIFFs store a lot of data for printing. Converting to JPG removes unnecessary print data, making the file much smaller for screen use." },
-      { question: "Is it secure?", answer: "Yes, the conversion happens entirely in your browser. Your large TIFF files are never uploaded to a server." }
+      { question: "Is TIFF or JPG better for printing?", answer: "TIFF is the standard for professional printing because it is uncompressed and holds all image data. JPG is better for emailing, sharing online, or storing simply because TIFF files are huge." },
+      { question: "Does converting TIFF to JPG reduce quality?", answer: "Yes, because TIFF is lossless and JPG is lossy. However, converting to a high-quality JPG reduces the file size massively while keeping the image looking nearly identical for viewing purposes." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "TIFF vs JPG — What’s the Difference?",
+      columns: ["Feature", "TIFF", "JPG"],
+      rows: [
+        ["Best for", "Printing & Archives", "Web & Sharing"],
+        ["File size", "Huge", "Small"],
+        ["Layers", "Yes", "No"],
+        ["Web Friendly", "No", "Yes"]
+      ],
+      intentSentence: "If you’re converting TIFF to JPG, you’re usually trying to preview print files or share them online."
+    },
     relatedTools: ["bmp-converter", "compress-jpg", "resize-image", "heic-to-jpg", "crop-image"]
   },
   "svg-to-png": {
@@ -274,7 +355,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "SVG to PNG Converter",
     shortName: "SVG to PNG",
     description: "Rasterize SVG vectors to high-res PNG images",
-    longDescription: "Convert scalable SVG vector graphics into portable PNG images. Set your desired resolution and choose between transparent or white backgrounds for the perfect output.",
+    longDescription: "Convert SVG images to PNG instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "Image",
     acceptedTypes: ["image/svg+xml"],
@@ -288,11 +369,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "The aspect ratio is preserved automatically"
     ],
     faq: [
-      { question: "What is rasterization?", answer: "It's the process of turning mathematical vector paths (SVG) into a grid of pixels (PNG). This makes the image usable in all standard image viewers." },
-      { question: "Can I choose the output size?", answer: "Yes! You can specify the width or height, and the tool will scale the vector to match perfectly without blurriness." },
-      { question: "Does it support transparency?", answer: "Yes, by default the background is transparent. You can optionally add a white background if needed." },
-      { question: "Will animations work?", answer: "No, this tool captures a static snapshot of the SVG. Animated SVGs will be converted to a static PNG." }
+      { question: "Is SVG or PNG better for logos?", answer: "SVG is best for web logos because it scales infinitely without blur. PNG is better for social media, email signatures, and documents where SVG isn't supported." },
+      { question: "Does converting SVG to PNG reduce quality?", answer: "Not if you choose the right size. SVG is vector-based, so you can export it to PNG at any resolution (even 4K) without pixelation. Just ensure you export at a large enough size." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "SVG vs PNG — What’s the Difference?",
+      columns: ["Feature", "SVG", "PNG"],
+      rows: [
+        ["Type", "Vector (Math)", "Raster (Pixels)"],
+        ["Scaling", "Infinite", "Pixelated"],
+        ["Best for", "Web Logos", "Social Media/Docs"],
+        ["File size", "Tiny (usually)", "Variable"]
+      ],
+      intentSentence: "If you’re converting SVG to PNG, you’re usually trying to use a logo in software that doesn't support vector files."
+    },
     relatedTools: ["png-to-ico", "resize-image", "base64-image-encoder", "compress-png", "png-to-webp"]
   },
   "png-to-ico": {
@@ -300,7 +391,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "PNG to ICO Favicon Generator",
     shortName: "Favicon Generator",
     description: "Create multi-size ICO favicons from PNG images",
-    longDescription: "The ultimate favicon generator. Convert a single PNG image into a standard .ico file containing multiple sizes (16x16, 32x32, 48x48, etc.) for full device compatibility.",
+    longDescription: "Convert PNG images to ICO instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "Image",
     acceptedTypes: ["image/png"],
@@ -314,11 +405,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Perfect for website favicons (favicon.ico)"
     ],
     faq: [
-      { question: "What sizes are included?", answer: "The generated ICO includes 16x16, 32x32, 48x48, 64x64, 128x128, and 256x256 sizes for maximum compatibility." },
-      { question: "Why do I need an ICO file?", answer: "Browsers look for favicon.ico to display in tabs and bookmarks. A multi-size ICO ensures it looks good on both low-res and retina screens." },
-      { question: "Can I use a non-square image?", answer: "Yes, but it will be centered and resized to fit a square. For best results, crop your image to a square first." },
-      { question: "Is the background preserved?", answer: "Yes, transparency in your PNG is preserved in the ICO file." }
+      { question: "Is PNG or ICO better for websites?", answer: "Modern browsers support PNG icons, but ICO is still required for maximum compatibility, especially for desktop shortcuts and older browsers. Our tool creates an ICO that works everywhere." },
+      { question: "Does converting PNG to ICO reduce quality?", answer: "ICO files support full color and transparency just like PNG. However, creating very small icons (like 16x16) from a large image requires resampling, which can lose detail. We use high-quality algorithms to keep icons crisp." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "PNG vs ICO — What’s the Difference?",
+      columns: ["Feature", "PNG", "ICO"],
+      rows: [
+        ["Best for", "Web Graphics", "Favicons"],
+        ["Sizes", "Single Resolution", "Multiple Resolutions"],
+        ["Browser Support", "Modern Only", "All Browsers"],
+        ["Transparency", "Yes", "Yes"]
+      ],
+      intentSentence: "If you’re converting PNG to ICO, you’re usually trying to create a compatible favicon for your website."
+    },
     relatedTools: ["svg-to-png", "resize-image", "base64-image-encoder", "compress-png", "crop-image"]
   },
   "webp-to-jpg": {
@@ -326,7 +427,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "WebP to JPG Converter",
     shortName: "WebP to JPG",
     description: "Convert WebP images to standard JPG format",
-    longDescription: "Make your WebP images universally compatible by converting them to JPG. Essential for using web images in legacy software or printing services.",
+    longDescription: "Convert WebP images to JPG instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "convert",
     icon: "ArrowRightLeft",
     acceptedTypes: ["image/webp"],
@@ -340,11 +441,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "File size may increase slightly as JPG is less efficient than WebP"
     ],
     faq: [
-      { question: "Why convert WebP to JPG?", answer: "Many older image viewers and editors don't support WebP. JPG works on virtually every device and software." },
-      { question: "What happens to transparent backgrounds?", answer: "JPG doesn't support transparency. We replace transparent areas with a white background automatically." },
-      { question: "Will I lose quality?", answer: "We use a high quality setting (95%) to minimize loss. However, converting from a compressed format like WebP to JPG is technically lossy." },
-      { question: "Can I convert back to WebP later?", answer: "Yes, you can use our JPG to WebP tool, but repeated conversions can degrade quality." }
+      { question: "Is WebP or JPG better for compatibility?", answer: "JPG is universally compatible with almost every image viewer, editor, and website. WebP is better for modern web performance but may not open in older software." },
+      { question: "Does converting WebP to JPG reduce quality?", answer: "Converting from WebP to JPG can involve a small amount of quality loss since both are compressed formats. However, we use high-quality settings so the difference is usually invisible." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "WebP vs JPG — What’s the Difference?",
+      columns: ["Feature", "WebP", "JPG"],
+      rows: [
+        ["Best for", "Modern Web", "Universal Compatibility"],
+        ["File size", "Smallest", "Small"],
+        ["Transparency", "Yes", "No"],
+        ["Support", "New Browsers", "Everywhere"]
+      ],
+      intentSentence: "If you’re converting WebP to JPG, you’re usually trying to ensure the image opens in older software or for printing."
+    },
     relatedTools: ["jpg-to-webp", "webp-to-png", "compress-jpg", "resize-image", "png-to-jpg"]
   },
   "base64-image-encoder": {
@@ -352,7 +463,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Base64 Image Encoder / Decoder",
     shortName: "Base64 Tool",
     description: "Convert images to Base64 strings and vice versa",
-    longDescription: "A developer-focused tool to convert images into Base64 strings for use in CSS/HTML, or decode Base64 strings back into image files. Supports Data URI formatting.",
+    longDescription: "Convert images to Base64 strings instantly in your browser. No uploads, no tracking, developer ready.",
     category: "convert",
     icon: "Code",
     acceptedTypes: ["image/png", "image/jpeg", "image/webp", "image/svg+xml"],
@@ -366,11 +477,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Shows character count and file size estimates"
     ],
     faq: [
-      { question: "What is Base64?", answer: "Base64 is a way to represent binary data (like images) as text. This allows images to be embedded directly in code." },
-      { question: "Should I use this for all images?", answer: "No. Base64 increases file size by ~33%. Only use it for very small images (like icons) to avoid slowing down your page." },
-      { question: "What formats are supported?", answer: "The encoder accepts JPG, PNG, WebP, and SVG. The decoder works with any valid image Base64 string." },
-      { question: "Is the output ready for CSS?", answer: "Yes, the output is a Data URI (e.g., data:image/png;base64,...) ready to be pasted into 'background-image' or 'src' attributes." }
+      { question: "What is Base64?", answer: "Base64 is a way to represent binary data (like images) as text. This allows images to be embedded directly in code (HTML/CSS) without needing a separate file request." },
+      { question: "Should I use this for all images?", answer: "No. Base64 increases file size by ~33%. Only use it for very small images (like icons or placeholders) to avoid slowing down your page load time." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Base64 vs Image File — What’s the Difference?",
+      columns: ["Feature", "Base64 String", "Image File"],
+      rows: [
+        ["Format", "Text String", "Binary File"],
+        ["Requests", "Zero (Embedded)", "One per Image"],
+        ["File Size", "Larger (~33%)", "Standard"],
+        ["Best for", "Tiny Icons", "Photos & Graphics"]
+      ],
+      intentSentence: "If you’re converting to Base64, you’re usually trying to embed an image directly into code to reduce HTTP requests."
+    },
     relatedTools: ["svg-to-png", "png-to-ico", "resize-image", "compress-png", "compress-jpg"]
   },
   "compress-jpg": {
@@ -378,7 +499,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Compress JPG",
     shortName: "Compress JPG",
     description: "Reduce JPG file size while maintaining visual quality",
-    longDescription: "Compress your JPG images to reduce file size without noticeable quality loss. Perfect for web uploads, email attachments, and saving storage space.",
+    longDescription: "Compress JPG images instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "compress",
     icon: "Minimize2",
     acceptedTypes: ["image/jpeg"],
@@ -395,13 +516,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Compare the file sizes before and after to see your savings - often 50-70% reduction is achievable"
     ],
     faq: [
-      { question: "How much can I reduce the file size with JPG compression?", answer: "Typically 40-80% reduction is possible, depending on the original image quality and the compression setting you choose. High-quality, uncompressed original images compress the most. For example, a 5MB high-quality photo might compress to 1-2MB at 80% quality, while an already compressed 500KB image might only reduce to 400KB." },
-      { question: "Will compression affect my image quality?", answer: "Some quality loss occurs with JPG compression, but at 70-85% quality settings, it's often imperceptible to the human eye, especially for photographs. The tool provides a preview so you can see exactly how the compression affects your specific image before downloading. Higher quality settings (85-95%) preserve more detail, while lower settings (60-70%) prioritize file size." },
-      { question: "What quality setting should I use for JPG compression?", answer: "80% is an excellent starting point for most uses - it provides significant file size reduction with minimal visible quality loss. Use 90%+ for important images, professional photography, or print. Use 60-70% for thumbnails, previews, or when maximum compression is needed. The preview feature helps you find the perfect balance for your specific image." },
-      { question: "Can I compress the same image multiple times?", answer: "Yes, but each compression cycle adds more quality loss. It's always better to start from the original, uncompressed image when possible. If you must compress multiple times, use higher quality settings (85%+) to minimize cumulative quality degradation. For best results, keep your original file and compress it once to your target size." },
-      { question: "Is the compression secure and private?", answer: "Yes! All compression happens entirely in your browser. Your images are never uploaded to any server, ensuring complete privacy and security. The compression is instant and works offline once the page is loaded." },
-      { question: "Why is my compressed file not much smaller?", answer: "If your original JPG is already heavily compressed (low quality), there's less room for further compression. High-resolution, high-quality originals compress the most. Also, images with lots of detail, noise, or fine textures compress less than smooth, simple images. Try a slightly lower quality setting if you need more compression." }
+      { question: "How much can I reduce the file size?", answer: "Typically 40-80% reduction is possible. A 5MB photo might become 1MB. It depends on the original image quality and the settings you choose." },
+      { question: "Will compression affect my image quality?", answer: "At 70-80% quality, the difference is usually invisible to the human eye. We provide a preview so you can see the result before downloading." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Compressed vs Original JPG",
+      columns: ["Feature", "Compressed", "Original"],
+      rows: [
+        ["File Size", "Small (Optimized)", "Large"],
+        ["Visual Quality", "Good (Web Ready)", "Maximum"],
+        ["Loading Speed", "Fast", "Slow"],
+        ["Sharing", "Easy", "Difficult"]
+      ],
+      intentSentence: "If you’re compressing a JPG, you’re usually trying to save storage space or make it load faster online."
+    },
     relatedTools: ["compress-png", "jpg-to-webp", "resize-image", "smart-optimizer", "crop-image"]
   },
   "compress-png": {
@@ -409,7 +538,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Compress PNG",
     shortName: "Compress PNG",
     description: "Reduce PNG file size while preserving transparency",
-    longDescription: "Compress your PNG images to reduce file size while maintaining transparency and quality. Ideal for web graphics, logos, and images where you need smaller files without losing transparency.",
+    longDescription: "Compress PNG images instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "compress",
     icon: "Minimize2",
     acceptedTypes: ["image/png"],
@@ -423,11 +552,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Some PNGs with many colors may not compress significantly"
     ],
     faq: [
-      { question: "Is transparency preserved?", answer: "Yes! PNG compression in this tool maintains full transparency support." },
-      { question: "How much compression can I expect?", answer: "Typically 20-50% for graphics. Photos in PNG format may see less compression." },
-      { question: "Is PNG compression lossless?", answer: "This tool uses quality-based compression which may reduce some quality. For true lossless, use PNG optimization tools." },
-      { question: "When should I use PNG vs JPG?", answer: "Use PNG when you need transparency or have graphics/text. Use JPG for photographs where smaller size matters more." }
+      { question: "Is transparency preserved?", answer: "Yes! Our PNG compression maintains full transparency (alpha channel), so your logos and graphics will look perfect on any background." },
+      { question: "How much compression can I expect?", answer: "Typically 20-50% for graphics. Photos in PNG format may see less compression; for photos, we recommend converting to JPG." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Compressed vs Original PNG",
+      columns: ["Feature", "Compressed", "Original"],
+      rows: [
+        ["File Size", "Reduced", "Large"],
+        ["Transparency", "Preserved", "Preserved"],
+        ["Quality", "Optimized", "Lossless"],
+        ["Web Ready", "Yes", "No"]
+      ],
+      intentSentence: "If you’re compressing a PNG, you’re usually trying to reduce file size without losing transparency."
+    },
     relatedTools: ["compress-jpg", "png-to-webp", "resize-image", "website-optimizer", "png-to-jpg"]
   },
   "resize-image": {
@@ -435,7 +574,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Resize Image",
     shortName: "Resize Image",
     description: "Change image dimensions while maintaining aspect ratio",
-    longDescription: "Resize your images to specific dimensions. Whether you need to make images smaller for web use or larger for printing, this tool handles all common image formats with aspect ratio preservation.",
+    longDescription: "Resize images instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "edit",
     icon: "Maximize2",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -449,11 +588,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "For web use, smaller dimensions mean faster loading times"
     ],
     faq: [
-      { question: "Will resizing affect image quality?", answer: "Reducing size generally maintains quality. Enlarging can cause blurriness as the tool must create new pixels." },
-      { question: "What does 'maintain aspect ratio' do?", answer: "It keeps the image proportions. When you change width, height adjusts automatically (and vice versa) to prevent stretching." },
-      { question: "What's the maximum size I can resize to?", answer: "There's no hard limit, but very large sizes may affect browser performance and image quality when enlarging." },
-      { question: "Can I resize to exact dimensions?", answer: "Yes! Disable 'maintain aspect ratio' to set exact width and height, though this may stretch or squash the image." }
+      { question: "Will resizing affect image quality?", answer: "Reducing size generally maintains quality perfectly. Enlarging (upscaling) can cause blurriness as the tool must create new pixels." },
+      { question: "What does 'maintain aspect ratio' do?", answer: "It keeps the image proportions locked. When you change width, height adjusts automatically (and vice versa) to prevent stretching." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Resized vs Original Image",
+      columns: ["Feature", "Resized", "Original"],
+      rows: [
+        ["Dimensions", "Custom (e.g. 800x600)", "Original"],
+        ["File Size", "Smaller", "Original"],
+        ["Aspect Ratio", "Maintained", "Original"],
+        ["Focus", "Entire Image", "Entire Image"]
+      ],
+      intentSentence: "If you’re resizing an image, you’re usually trying to fit it into a specific layout or reduce its dimensions."
+    },
     relatedTools: ["crop-image", "aspect-ratio-converter", "resize-image-to-exact-pixels", "compress-jpg", "compress-png"]
   },
   "crop-image": {
@@ -461,7 +610,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Crop Image",
     shortName: "Crop Image",
     description: "Crop images to remove unwanted areas or fit specific ratios",
-    longDescription: "Crop your images to focus on what matters. Remove unwanted areas, fit specific aspect ratios for social media, or create perfectly framed compositions.",
+    longDescription: "Crop images instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "edit",
     icon: "Crop",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -475,11 +624,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Square crops (1:1) work great for profile pictures"
     ],
     faq: [
-      { question: "What aspect ratios are available?", answer: "Common ratios include 1:1 (square), 4:3, 16:9, 9:16 (stories), and free-form for custom crops." },
-      { question: "Can I undo a crop?", answer: "Once downloaded, the crop is permanent. Keep your original file if you might need different crops later." },
-      { question: "Does cropping reduce quality?", answer: "Cropping removes pixels but doesn't compress the remaining image. Quality of the kept area is preserved." },
-      { question: "Can I crop to exact pixel dimensions?", answer: "You can crop to aspect ratios, then use the resize tool for exact pixel dimensions." }
+      { question: "What aspect ratios are available?", answer: "We support common ratios like 1:1 (square), 4:3, 16:9, 9:16 (stories), and free-form for custom crops." },
+      { question: "Does cropping reduce quality?", answer: "Cropping removes pixels but doesn't compress the remaining image. The quality of the area you keep is preserved exactly." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Cropped vs Full Image",
+      columns: ["Feature", "Cropped", "Full Image"],
+      rows: [
+        ["Composition", "Focused", "Wide"],
+        ["Content", "Selected Area", "Everything"],
+        ["Dimensions", "Reduced", "Original"],
+        ["Distractions", "Removed", "Present"]
+      ],
+      intentSentence: "If you’re cropping an image, you’re usually trying to improve composition or remove unwanted background."
+    },
     relatedTools: ["resize-image", "aspect-ratio-converter", "compress-jpg", "remove-exif", "instagram-image-resizer"]
   },
   "remove-exif": {
@@ -487,7 +646,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Remove EXIF Data",
     shortName: "Remove EXIF",
     description: "Strip metadata from images for privacy protection",
-    longDescription: "Remove EXIF metadata from your images to protect your privacy. EXIF data can include your location, camera settings, date/time, and other personal information you may not want to share.",
+    longDescription: "Remove EXIF data from images instantly in your browser. No uploads, no tracking, completely private.",
     category: "privacy",
     icon: "ShieldOff",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -501,11 +660,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Some platforms strip EXIF automatically, but many don't"
     ],
     faq: [
-      { question: "What information is in EXIF data?", answer: "EXIF can include: GPS location, date/time, camera model, lens info, exposure settings, software used, and sometimes even your name." },
-      { question: "Why should I remove EXIF data?", answer: "To protect privacy. Location data can reveal where you live or work. Other data can be used for tracking or profiling." },
-      { question: "Does removing EXIF affect image quality?", answer: "No, EXIF removal doesn't change the actual image pixels. Your photo will look identical." },
-      { question: "Is EXIF data always present?", answer: "Most camera and phone photos have EXIF. Screenshots and graphics typically don't. The tool will show what metadata is found." }
+      { question: "What information is in EXIF data?", answer: "EXIF data contains hidden details like GPS location, camera model, date/time, and settings. Removing it protects your privacy when sharing photos online." },
+      { question: "Does removing EXIF reduce quality?", answer: "No. Removing EXIF metadata only deletes the hidden text information. It does not change or compress the actual image pixels." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Clean vs Original Image",
+      columns: ["Feature", "Clean Image", "Original"],
+      rows: [
+        ["Metadata", "Removed", "Present"],
+        ["GPS Location", "Hidden", "Visible"],
+        ["Privacy", "Protected", "Exposed"],
+        ["Visual Quality", "Identical", "Identical"]
+      ],
+      intentSentence: "If you’re removing EXIF data, you’re usually trying to protect your privacy before sharing photos online."
+    },
     relatedTools: ["compress-jpg", "compress-png", "resize-image", "crop-image", "jpg-to-png"]
   },
   "smart-optimizer": {
@@ -513,7 +682,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Smart Image Optimizer",
     shortName: "Smart Optimizer",
     description: "Iteratively compresses images to a target file size (KB)",
-    longDescription: "Intelligently compresses your images to reach a specific target file size (KB) while maintaining the highest possible quality. Perfect for meeting strict upload requirements.",
+    longDescription: "Optimize images to specific file sizes instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "compress",
     icon: "Gauge",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -527,11 +696,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Lower target sizes will result in lower image quality"
     ],
     faq: [
-      { question: "How does it work?", answer: "It uses a binary search algorithm to try different compression levels until it finds the highest quality that fits your size target." },
-      { question: "Will it always reach the target size?", answer: "It will try its best. If an image cannot be compressed to the target size even at lowest quality, it will provide the smallest possible result." },
-      { question: "Does it resize the image?", answer: "No, this tool only adjusts compression quality. Use the Resize tool if you need to change dimensions." },
-      { question: "Is it secure?", answer: "Yes, all processing happens in your browser. Your images are never uploaded." }
+      { question: "How does Smart Optimization work?", answer: "The tool intelligently adjusts compression levels to reach your target file size (e.g. 50KB) while maintaining the highest possible visual quality." },
+      { question: "Does optimizing reduce quality?", answer: "Compression always involves some trade-off, but our smart algorithm ensures the difference is usually invisible to the human eye." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Smart Optimized vs Standard",
+      columns: ["Feature", "Smart Optimized", "Standard"],
+      rows: [
+        ["File Size", "Targeted (e.g. 50KB)", "Random"],
+        ["Efficiency", "Maximum", "Variable"],
+        ["Compliance", "Guaranteed", "Guesswork"],
+        ["Quality", "Balanced", "Original"]
+      ],
+      intentSentence: "If you’re using Smart Optimizer, you’re usually trying to meet a specific file size limit for an upload form."
+    },
     relatedTools: ["compress-jpg", "bulk-compressor", "website-optimizer", "resize-image", "compress-png"]
   },
   "instagram-image-resizer": {
@@ -539,7 +718,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Instagram Image Resizer",
     shortName: "Instagram",
     description: "Resize and crop images for Instagram Posts, Stories, and Reels",
-    longDescription: "The best tool to resize, crop, and optimize images for Instagram. Supports all formats: Square (1:1), Portrait (4:5), Landscape (1.91:1), and Story (9:16). Ensures your photos look sharp and professional.",
+    longDescription: "Resize images for Instagram instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "social",
     icon: "Instagram",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -553,11 +732,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "We apply high-quality sharpening automatically to prevent blurriness"
     ],
     faq: [
-      { question: "What is the best size for Instagram posts?", answer: "For posts, 1080x1350 (4:5) is best as it takes up the most vertical space. 1080x1080 (1:1) is also standard." },
-      { question: "What size should Instagram Stories be?", answer: "Instagram Stories and Reels should be 1080x1920 pixels (9:16 aspect ratio)." },
-      { question: "Does this tool reduce quality?", answer: "No, it optimizes the image to prevent Instagram's servers from aggressively compressing it, often resulting in BETTER quality." },
-      { question: "Can I resize for profile pictures?", answer: "Yes, use the Square (1:1) preset. Instagram profile pictures are circular, so keep important details in the center." }
+      { question: "What is the best aspect ratio for Instagram?", answer: "For posts, 1080x1350 (4:5) fills the most screen space. For Stories and Reels, use 1080x1920 (9:16) for a full-screen experience." },
+      { question: "Does resizing for Instagram reduce quality?", answer: "No. Resizing to the exact recommended dimensions prevents Instagram from applying aggressive compression, resulting in sharper images." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Instagram Ready vs Original",
+      columns: ["Feature", "Instagram Ready", "Original"],
+      rows: [
+        ["Aspect Ratio", "4:5 / 9:16", "Random"],
+        ["Cropping", "Perfect Fit", "Awkward Cut"],
+        ["Clarity", "Optimized", "Soft"],
+        ["Compression", "Platform Safe", "Aggressive"]
+      ],
+      intentSentence: "If you’re resizing for Instagram, you’re usually trying to avoid auto-cropping or blurry uploads."
+    },
     relatedTools: ["tiktok-image-resizer", "crop-image", "smart-optimizer"]
   },
   "tiktok-image-resizer": {
@@ -565,7 +754,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "TikTok Image Resizer",
     shortName: "TikTok",
     description: "Create perfect TikTok video covers and photo mode slides",
-    longDescription: "Resize images for TikTok Video Covers, Profile Pictures, and Photo Mode. Ensures your content looks professional and isn't cut off by the UI overlay.",
+    longDescription: "Resize images for TikTok instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "social",
     icon: "Music2",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -579,11 +768,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Profile pictures should be 1:1 square (min 200x200)"
     ],
     faq: [
-      { question: "What size is a TikTok video cover?", answer: "1080x1920 pixels (9:16 aspect ratio) is the standard size for TikTok covers." },
-      { question: "Can I resize for Photo Mode?", answer: "Yes! Use the 9:16 Vertical preset. This ensures your photos take up the full screen in TikTok's photo carousel." },
-      { question: "Why is my profile picture blurry?", answer: "Make sure your source image is at least 200x200 pixels. Our tool helps you crop it to a perfect square first." },
-      { question: "Where is the 'safe zone'?", answer: "The center of the screen. The bottom and right sides are often covered by the caption and like/share buttons." }
+      { question: "What is the correct size for TikTok covers?", answer: "1080x1920 pixels (9:16) is the standard for TikTok videos and photo slides. This fills the entire phone screen without black bars." },
+      { question: "Does resizing for TikTok reduce quality?", answer: "No. We optimize your images for TikTok's specific requirements, ensuring they look crisp and clear when posted." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "TikTok Ready vs Standard",
+      columns: ["Feature", "TikTok Ready", "Standard"],
+      rows: [
+        ["Aspect Ratio", "9:16 (Vertical)", "Random"],
+        ["Screen Fill", "Full Screen", "Black Bars"],
+        ["Engagement", "Higher", "Lower"],
+        ["Text Safety", "Safe Zone", "Risk of Cutoff"]
+      ],
+      intentSentence: "If you’re resizing for TikTok, you’re usually trying to make a full-screen video cover or photo slide."
+    },
     relatedTools: ["instagram-image-resizer", "youtube-thumbnail-resizer"]
   },
   "youtube-thumbnail-resizer": {
@@ -591,7 +790,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "YouTube Thumbnail Resizer",
     shortName: "YouTube",
     description: "Make your YouTube thumbnails pop in HD",
-    longDescription: "Resize and format images for YouTube Thumbnails (1280x720). Ensures your thumbnail meets the 2MB limit and looks crisp on all devices.",
+    longDescription: "Resize images for YouTube instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "social",
     icon: "Youtube",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -605,11 +804,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "We automatically optimize file size to stay under the 2MB limit"
     ],
     faq: [
-      { question: "What is the best size for YouTube thumbnails?", answer: "1280x720 pixels is the standard HD size recommended by YouTube." },
-      { question: "Why is my thumbnail rejected?", answer: "It might be larger than 2MB. Our tool automatically compresses it to fit within this limit." },
-      { question: "Should I use JPG or PNG?", answer: "JPG is usually better for keeping file size down, but PNG is good for graphics. We support both." },
-      { question: "Can I resize for channel art?", answer: "Yes, use the 'Channel Art' preset (2560x1440) to ensure your banner looks good on TV, desktop, and mobile." }
+      { question: "What is the standard YouTube thumbnail size?", answer: "1280x720 pixels (16:9) is the ideal size for HD thumbnails. It ensures your image looks great on all devices from phones to TVs." },
+      { question: "Does resizing reduce image quality?", answer: "No. We resize using high-quality algorithms and optimize the file size to meet YouTube's 2MB limit without sacrificing clarity." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "YouTube Ready vs Standard",
+      columns: ["Feature", "YouTube Ready", "Standard"],
+      rows: [
+        ["Dimensions", "1280x720 (HD)", "Random"],
+        ["Aspect Ratio", "16:9", "Variable"],
+        ["File Size", "< 2MB (Guaranteed)", "Unknown"],
+        ["Visibility", "High Contrast", "Low"]
+      ],
+      intentSentence: "If you’re resizing for YouTube, you’re usually trying to meet the strict 2MB limit and 16:9 ratio."
+    },
     relatedTools: ["instagram-image-resizer", "twitter-image-resizer", "linkedin-image-resizer", "tiktok-image-resizer", "smart-optimizer"]
   },
   "twitter-image-resizer": {
@@ -617,7 +826,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "X (Twitter) Image Resizer",
     shortName: "X / Twitter",
     description: "Optimize images for X/Twitter posts and headers",
-    longDescription: "Format images for X (Twitter) posts, headers, and profile pictures. Avoids awkward cropping in the timeline and ensures your profile looks professional.",
+    longDescription: "Resize images for X (Twitter) instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "social",
     icon: "Twitter",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -631,11 +840,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Tall images (3:4) now work better on mobile, but 16:9 is safest for desktop"
     ],
     faq: [
-      { question: "Does Twitter crop images?", answer: "It used to strictly crop to 16:9, but now supports taller images on mobile. However, 16:9 is still the safest bet for consistent display across all devices." },
-      { question: "What is the best size for a header?", answer: "1500x500 pixels. Note that parts of the top and bottom may be cropped on different screen sizes." },
-      { question: "Can I upload PNGs?", answer: "Yes, PNGs are supported and great for graphics. For photos, JPG is recommended for smaller file sizes." },
-      { question: "What is the max file size?", answer: "Twitter supports up to 5MB for photos on mobile and 15MB on web. We optimize your image to stay well within these limits." }
+      { question: "What is the best image size for X / Twitter?", answer: "For in-stream photos, 1600x900 (16:9) works best. For headers, use 1500x500. This ensures your images display correctly without awkward cropping." },
+      { question: "Does resizing for Twitter reduce quality?", answer: "No. We optimize your images to look sharp on Twitter while keeping file sizes efficient for fast loading." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "X (Twitter) Ready vs Standard",
+      columns: ["Feature", "X Ready", "Standard"],
+      rows: [
+        ["Preview", "Full Image", "Cropped"],
+        ["Aspect Ratio", "16:9", "Random"],
+        ["Loading", "Instant", "Slow"],
+        ["Engagement", "Optimized", "Lower"]
+      ],
+      intentSentence: "If you’re resizing for X/Twitter, you’re usually trying to stop the platform from cropping your image awkwardly."
+    },
     relatedTools: ["linkedin-image-resizer", "instagram-image-resizer", "youtube-thumbnail-resizer", "tiktok-image-resizer", "aspect-ratio-converter"]
   },
   "linkedin-image-resizer": {
@@ -643,7 +862,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "LinkedIn Image Resizer",
     shortName: "LinkedIn",
     description: "Professional image sizing for LinkedIn posts and banners",
-    longDescription: "Resize images for LinkedIn posts, articles, and personal/company banners. Maintain a professional look with correct dimensions and avoid blurry or cropped images.",
+    longDescription: "Resize images for LinkedIn instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "social",
     icon: "Linkedin",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -657,11 +876,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Square images (1200x1200) are becoming popular for engagement"
     ],
     faq: [
-      { question: "What is the best size for a LinkedIn post?", answer: "1200x627 pixels is standard for link shares. For image-only posts, 1200x1200 (Square) or 1080x1350 (Portrait) works well." },
-      { question: "Why is my banner blurry?", answer: "Banners are often stretched. Ensure you upload at least 1584x396 for personal profiles to maintain quality." },
-      { question: "Can I use this for my profile picture?", answer: "Yes, use the Profile Picture preset (400x400) to get a perfect square ready for upload." },
-      { question: "Does LinkedIn compress images?", answer: "Yes, heavily. Our tool optimizes the image before upload to minimize the quality loss from LinkedIn's compression." }
+      { question: "What size should LinkedIn posts be?", answer: "For shared links, 1200x627 is standard. For image posts, 1080x1080 (square) or 1080x1350 (portrait) often perform better in the feed." },
+      { question: "Does resizing for LinkedIn reduce quality?", answer: "No. Resizing ensures your professional images meet LinkedIn's specifications, preventing them from being blurred or cropped automatically." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "LinkedIn Ready vs Standard",
+      columns: ["Feature", "LinkedIn Ready", "Standard"],
+      rows: [
+        ["Dimensions", "Platform Specific", "Random"],
+        ["Professionalism", "Polished", "Unpolished"],
+        ["Cropping", "Exact Fit", "Auto-Cropped"],
+        ["File Type", "Optimized JPG", "Various"]
+      ],
+      intentSentence: "If you’re resizing for LinkedIn, you’re usually trying to look professional with perfectly fitted images."
+    },
     relatedTools: ["twitter-image-resizer", "instagram-image-resizer", "youtube-thumbnail-resizer", "tiktok-image-resizer", "resize-image-to-exact-pixels"]
   },
   "aspect-ratio-converter": {
@@ -669,7 +898,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Aspect Ratio Converter",
     shortName: "Ratio Convert",
     description: "Change image aspect ratio (16:9, 1:1, 4:5) without distortion",
-    longDescription: "Easily convert images to any standard aspect ratio like 16:9, 4:3, or 1:1. Choose between 'Cover' mode to crop and fill the frame, or 'Contain' mode to add background bars (letterboxing) and preserve the entire image.",
+    longDescription: "Change image aspect ratios instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "edit",
     icon: "Ratio",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -683,11 +912,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "We automatically center the image for the best composition"
     ],
     faq: [
-      { question: "What is aspect ratio?", answer: "Aspect ratio is the ratio of the width to the height of an image. For example, 16:9 means for every 16 units of width, there are 9 units of height." },
-      { question: "Will my image be stretched?", answer: "No. We never stretch your images. We either crop them ('Cover') or add background bars ('Contain') to fit the new ratio." },
-      { question: "What color are the background bars?", answer: "In 'Contain' mode, you can choose between white, black, or transparent (for PNG/WebP) backgrounds." },
-      { question: "Can I use custom ratios?", answer: "This tool focuses on standard presets. For custom dimensions, use the Exact Pixel Resizer." }
+      { question: "Is Cover or Contain mode better?", answer: "Use 'Cover' if you want to fill the entire frame without borders, even if it crops some content. Use 'Contain' if you must show the entire image and don't mind background bars." },
+      { question: "Does changing aspect ratio reduce quality?", answer: "No. The tool simply crops or adds borders to your image. It does not compress or degrade the actual pixel quality of your photo." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Correct Ratio vs Original",
+      columns: ["Feature", "Correct Ratio", "Original"],
+      rows: [
+        ["Shape", "Specific (e.g. 16:9)", "Original"],
+        ["Composition", "Adjusted", "Original"],
+        ["Use Case", "Social / TV", "General"],
+        ["Distortion", "None", "Potential"]
+      ],
+      intentSentence: "If you’re changing aspect ratio, you’re usually trying to fit an image into a specific frame or screen."
+    },
     relatedTools: ["resize-image-to-exact-pixels", "crop-image", "resize-image", "instagram-image-resizer", "twitter-image-resizer"]
   },
   "resize-image-to-exact-pixels": {
@@ -695,7 +934,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Exact Pixel Resizer",
     shortName: "Pixel Resize",
     description: "Resize image to specific width and height (e.g. 1920x1080)",
-    longDescription: "Force an image to an exact pixel size (e.g., 1200x628). Perfect for strict submission requirements like ad banners, government forms, or specific website headers. Includes options to crop, letterbox, or stretch.",
+    longDescription: "Resize images to exact pixels instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "edit",
     icon: "Maximize",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -709,11 +948,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Use high quality settings to prevent pixelation when resizing up"
     ],
     faq: [
-      { question: "Will my image look distorted?", answer: "Only if you choose 'Stretch' mode. 'Cover' mode crops the image to fit, and 'Contain' mode adds background bars to preserve proportions." },
-      { question: "What if I don't know the exact pixels?", answer: "If you just need a standard shape (like square), try the Aspect Ratio Converter instead." },
-      { question: "Does this change the file size (MB)?", answer: "Yes, changing dimensions affects file size. Smaller dimensions usually mean a smaller file size." },
-      { question: "Can I change the DPI?", answer: "This tool changes pixel dimensions (screen resolution). DPI is a print setting and doesn't affect how the image looks on screens." }
+      { question: "Is Cover or Stretch mode better?", answer: "'Cover' is usually better because it fills the dimensions without distorting your image. 'Stretch' forces the image to fit, which often makes it look squashed or stretched." },
+      { question: "Does resizing to exact pixels reduce quality?", answer: "Downscaling (making smaller) usually maintains quality. Upscaling (making larger) can cause blurriness as the computer has to invent new pixels." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Exact Size vs Approximate",
+      columns: ["Feature", "Exact Pixels", "Approximate"],
+      rows: [
+        ["Width/Height", "Precise", "Rough"],
+        ["Compliance", "100%", "Variable"],
+        ["Distortion", "Controlled", "Risk"],
+        ["Usage", "Ads/Forms", "General"]
+      ],
+      intentSentence: "If you’re resizing to exact pixels, you’re usually trying to meet a strict technical requirement."
+    },
     relatedTools: ["aspect-ratio-converter", "resize-image", "crop-image", "smart-optimizer", "linkedin-image-resizer"]
   },
   "website-optimizer": {
@@ -721,7 +970,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Website Image Optimizer",
     shortName: "Web Optimizer",
     description: "Auto-convert to WebP, resize, and generate HTML snippets",
-    longDescription: "The all-in-one tool for web developers. Upload an image to automatically convert it to WebP, resize it for web standards, and get a ready-to-use <img> snippet.",
+    longDescription: "Optimize images for websites instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "compress",
     icon: "Layout",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp", "image/avif"],
@@ -735,11 +984,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Helps improve your Core Web Vitals scores"
     ],
     faq: [
-      { question: "Why WebP?", answer: "WebP offers superior compression and quality for the web compared to JPG and PNG." },
-      { question: "What does the code snippet do?", answer: "It provides a standard HTML <img> tag with width, height, and alt attributes ready for your project." },
-      { question: "Can I use this for background images?", answer: "Yes, just use the downloaded image file in your CSS." },
-      { question: "Is it better than manual optimization?", answer: "It's faster and follows best practices automatically." }
+      { question: "Is WebP or JPG better for my website?", answer: "WebP is superior for websites. It offers smaller file sizes for the same quality, which makes your pages load faster and improves SEO." },
+      { question: "Does optimizing for web reduce quality?", answer: "It can slightly reduce quality to save space, but our optimizer finds the perfect balance where the visual difference is unnoticeable." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Web Optimized vs Raw Image",
+      columns: ["Feature", "Web Optimized", "Raw Image"],
+      rows: [
+        ["Format", "WebP / AVIF", "JPG / PNG"],
+        ["File Size", "Tiny", "Huge"],
+        ["Loading Speed", "Instant", "Slow"],
+        ["SEO Score", "Improved", "Neutral"]
+      ],
+      intentSentence: "If you’re optimizing for a website, you’re usually trying to improve page load speed and Core Web Vitals."
+    },
     relatedTools: ["smart-optimizer", "bulk-compressor", "best-image-format-for-web", "jpg-to-webp", "png-to-webp"]
   },
   "bulk-compressor": {
@@ -747,7 +1006,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Bulk Image Compression",
     shortName: "Bulk Compress",
     description: "Compress multiple images at once locally",
-    longDescription: "Batch compress up to 30 images simultaneously right in your browser. Download all optimized images as a single ZIP file. Fast, free, and private.",
+    longDescription: "Compress multiple images instantly in your browser. No uploads, no tracking, no quality loss.",
     category: "compress",
     icon: "Layers",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
@@ -761,11 +1020,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "No data is uploaded - it's all local"
     ],
     faq: [
-      { question: "How many images can I process?", answer: "We recommend up to 30 images at a time for optimal browser performance." },
-      { question: "Is it slower than single image tools?", answer: "It might take a moment to process the batch, but it's much faster than doing them one by one." },
-      { question: "Do you keep my photos?", answer: "No. Your photos never leave your computer. All processing is client-side." },
-      { question: "Can I mix different formats?", answer: "Yes, you can upload JPGs, PNGs, and WebPs together in the same batch." }
+      { question: "Is bulk compression as good as single image mode?", answer: "Yes. It uses the same advanced compression engine. The only difference is that it processes multiple files in a queue." },
+      { question: "Does compressing multiple images reduce quality?", answer: "Compression always involves a trade-off, but our smart algorithm reduces file size significantly with minimal impact on visual quality." },
+      { question: "Are my images uploaded to a server?", answer: "No. All image conversions happen directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Bulk vs Single Processing",
+      columns: ["Feature", "Bulk Mode", "Single Mode"],
+      rows: [
+        ["Speed", "Fast (Parallel)", "Slow"],
+        ["Workflow", "One Click", "Repetitive"],
+        ["Consistency", "Uniform", "Variable"],
+        ["Efficiency", "High", "Low"]
+      ],
+      intentSentence: "If you’re using Bulk Compressor, you’re usually trying to save time processing many images at once."
+    },
     relatedTools: ["smart-optimizer", "website-optimizer", "compress-jpg", "compress-png", "bulk-compressor"]
   },
   "best-image-format-for-web": {
@@ -773,7 +1042,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "Best Image Format for Web",
     shortName: "Format Guide",
     description: "Find the best image format for your website (JPG vs PNG vs WebP vs AVIF).",
-    longDescription: "Not sure which image format to use? Our interactive guide helps you choose the best format (WebP, JPG, PNG, or AVIF) for your specific needs to maximize performance and quality.",
+    longDescription: "Compare image formats instantly in your browser. No uploads, no tracking, expert advice.",
     category: "guide",
     icon: "Compass",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp", "image/avif"],
@@ -790,9 +1059,19 @@ export const toolsConfig: Record<string, ToolConfig> = {
     faq: [
       { question: "What is the best image format for websites?", answer: "For most cases, WebP is currently the best balance of quality, file size, and compatibility. AVIF is better for compression but has slightly less browser support." },
       { question: "When should I use JPG?", answer: "Use JPG for photographs when you need to support very old browsers or systems that don't handle WebP." },
-      { question: "Is PNG good for photos?", answer: "Generally no. PNG files are much larger than JPG/WebP for photographs. Only use PNG for graphics with few colors or when you need transparency." },
-      { question: "What about AVIF?", answer: "AVIF is the newest and most efficient format. It's great if you can provide a fallback (like JPG) for the few browsers that don't support it yet." }
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "WebP vs JPG vs PNG — Comparison",
+      columns: ["Feature", "WebP", "JPG", "PNG"],
+      rows: [
+        ["File Size", "Smallest", "Small", "Large"],
+        ["Quality", "High", "Good", "Lossless"],
+        ["Transparency", "Yes", "No", "Yes"],
+        ["Compatibility", "Modern", "Universal", "Universal"]
+      ],
+      intentSentence: "If you’re comparing formats, you’re usually trying to find the best balance of quality and speed for your website."
+    },
     relatedTools: ["website-optimizer", "jpg-to-webp", "png-to-webp", "avif-to-jpg", "exif-viewer"]
   },
   "exif-viewer": {
@@ -800,7 +1079,7 @@ export const toolsConfig: Record<string, ToolConfig> = {
     name: "EXIF Viewer Online",
     shortName: "EXIF Viewer",
     description: "View EXIF data from images online. See camera settings, GPS location, and metadata instantly. Files never leave your device.",
-    longDescription: "A free, private, and instant EXIF viewer. Upload any photo to see hidden metadata including camera model, settings (ISO, Aperture), location (GPS), and date taken. All processing happens in your browser - your photos are never uploaded to any server.",
+    longDescription: "View EXIF metadata instantly in your browser. No uploads, no tracking, completely private.",
     category: "privacy",
     icon: "Info",
     acceptedTypes: ["image/jpeg", "image/png", "image/webp", "image/heic"],
@@ -814,11 +1093,21 @@ export const toolsConfig: Record<string, ToolConfig> = {
       "Use our EXIF Remover tool if you want to delete this data"
     ],
     faq: [
-      { question: "Does this EXIF viewer upload my images?", answer: "No. All processing is done 100% locally in your web browser. Your images never leave your device." },
-      { question: "Why doesn't my image show EXIF data?", answer: "Not all images have EXIF data. It might have been stripped by social media platforms (like Facebook or Instagram) or the image might be a screenshot." },
-      { question: "Can I remove EXIF data after viewing it?", answer: "Yes! Use our 'Remove EXIF' tool to strip all metadata for privacy." },
-      { question: "What kind of data can I see?", answer: "You can see Camera Model, Date/Time, ISO, Aperture, Shutter Speed, GPS Coordinates, Software used, and more." }
+      { question: "Is EXIF data visible to others when I share images?", answer: "Yes, if you share the original file. Social media often strips it, but email and file transfers preserve it. This tool lets you see what's hidden." },
+      { question: "Does viewing EXIF data alter my image?", answer: "No. Viewing the metadata is a read-only operation. It does not change your image file or quality in any way." },
+      { question: "Are my images uploaded to a server?", answer: "No. All processing happens directly in your browser. Files never leave your device and are not uploaded or stored on any server." }
     ],
+    comparison: {
+      title: "Hidden vs Visible Metadata — What's the Difference?",
+      columns: ["Feature", "Standard View", "EXIF View"],
+      rows: [
+        ["Visible Info", "Pixels (The Image)", "Camera Settings & GPS"],
+        ["Privacy Risk", "Low", "High (Location Data)"],
+        ["Technical Details", "None", "ISO, Shutter, Model"],
+        ["Edit History", "Invisible", "Often Visible"]
+      ],
+      intentSentence: "If you're viewing EXIF data, you're usually trying to check camera settings or verify what personal information is hidden in the file."
+    },
     relatedTools: ["remove-exif", "best-image-format-for-web", "compress-jpg", "heic-to-jpg", "jpg-to-png"]
   }
 }
@@ -829,7 +1118,6 @@ export const toolCategories: { id: ToolCategory; name: string; description: stri
   { id: "compress", name: "Compress", description: "Reduce file sizes" },
   { id: "edit", name: "Edit", description: "Modify images" },
   { id: "privacy", name: "Privacy", description: "Protect your data" },
-  { id: "guide", name: "Guides", description: "Interactive wizards" },
 ]
 
 export function getToolsByCategory(category: ToolCategory): ToolConfig[] {
@@ -837,7 +1125,7 @@ export function getToolsByCategory(category: ToolCategory): ToolConfig[] {
 }
 
 export function getAllTools(): ToolConfig[] {
-  return Object.values(toolsConfig)
+  return Object.values(toolsConfig).filter(tool => tool.category !== "guide")
 }
 
 export function getToolBySlug(slug: string): ToolConfig | undefined {

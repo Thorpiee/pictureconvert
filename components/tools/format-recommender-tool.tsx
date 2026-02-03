@@ -35,8 +35,8 @@ export function FormatRecommenderTool() {
         description: "WebP is the modern replacement for GIF. It supports animation with much smaller file sizes and higher quality (supports millions of colors vs GIF's 256).",
         pros: ["Much smaller than GIF", "Supports full colors", "Variable transparency"],
         cons: ["Slightly less supported than GIF (but works in all modern browsers)"],
-        toolSlug: "gif-to-webp", // We might not have this, default to generic
-        toolName: "Convert to WebP"
+        toolSlug: "website-optimizer", // We might not have this, default to generic
+        toolName: "Optimize for Web"
       }
     }
 
@@ -203,14 +203,14 @@ export function FormatRecommenderTool() {
           <Button variant="outline" onClick={() => setStep(step - 1)}>Back</Button>
         )}
         {step === 4 && (
-           <Button variant="outline" onClick={handleReset} className="gap-2">
-             <RefreshCw className="w-4 h-4" /> Start Over
-           </Button>
+          <Button variant="outline" onClick={handleReset} className="gap-2">
+            <RefreshCw className="w-4 h-4" /> Start Over
+          </Button>
         )}
-        
+
         {step < 3 && (
-          <Button 
-            onClick={() => setStep(step + 1)} 
+          <Button
+            onClick={() => setStep(step + 1)}
             disabled={(step === 1 && !imageType) || (step === 2 && !transparency)}
             className="ml-auto"
           >
@@ -218,8 +218,8 @@ export function FormatRecommenderTool() {
           </Button>
         )}
         {step === 3 && (
-          <Button 
-            onClick={() => setStep(4)} 
+          <Button
+            onClick={() => setStep(4)}
             disabled={!animation}
             className="ml-auto"
           >

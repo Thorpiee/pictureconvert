@@ -4,7 +4,7 @@ import { Shield } from "lucide-react"
 
 const toolLinks = [
   { href: "/jpg-to-png", label: "JPG to PNG" },
-  { href: "/png-to-jpg", label: "PNG to JPG" },
+  { href: "/png-to-jpg", label: "PNG to JPG Converter" },
   { href: "/webp-to-png", label: "WebP to PNG" },
   { href: "/png-to-webp", label: "PNG to WebP" },
   { href: "/compress-jpg", label: "Compress JPG" },

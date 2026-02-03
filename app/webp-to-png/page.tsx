@@ -21,23 +21,6 @@ export default function WebpToPngPage() {
         acceptedTypes={tool!.acceptedTypes}
         outputType={tool!.outputType}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": tool!.faq.map((item) => ({
-              "@type": "Question",
-              "name": item.question,
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": item.answer,
-              },
-            })),
-          }),
-        }}
-      />
     </ToolLayout>
   )
 }

@@ -19,23 +19,6 @@ export default function SmartOptimizerPage() {
   return (
     <ToolLayout tool={tool!}>
       <SmartOptimizerTool toolName={tool!.name} />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": tool!.faq.map((item) => ({
-              "@type": "Question",
-              "name": item.question,
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": item.answer,
-              },
-            })),
-          }),
-        }}
-      />
     </ToolLayout>
   )
 }

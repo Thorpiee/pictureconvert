@@ -19,23 +19,6 @@ export default function CompressPngPage() {
   return (
     <ToolLayout tool={tool!}>
       <CompressorTool acceptedTypes={tool!.acceptedTypes} toolName={tool!.name} />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": tool!.faq.map((item) => ({
-              "@type": "Question",
-              "name": item.question,
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": item.answer,
-              },
-            })),
-          }),
-        }}
-      />
     </ToolLayout>
   )
 }

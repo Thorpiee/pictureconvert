@@ -129,7 +129,7 @@ export default function HomePage() {
               Our Tools
             </h2>
             <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-balance">
-              Convert, compress, resize, and edit your images with our collection of powerful browser-based tools.
+              <Link href="/png-to-jpg" className="text-foreground underline underline-offset-4 decoration-muted-foreground/50 hover:decoration-primary transition-colors">Convert PNG to JPG</Link>, compress, resize, and edit your images with our collection of powerful browser-based tools.
             </p>
           </div>
 

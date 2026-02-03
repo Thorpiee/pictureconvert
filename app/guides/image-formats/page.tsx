@@ -9,6 +9,18 @@ export const metadata: Metadata = {
 
 const guides: GuideItem[] = [
   {
+    title: "WebP vs PNG: Which Image Format Is Better?",
+    description: "Compare WebP vs PNG for web performance, quality, and compatibility. Learn which format is best for your site and how to convert with PictureConvert tools.",
+    href: "/guides/image-formats/webp-vs-png",
+    icon: FileImage,
+  },
+  {
+    title: "PNG vs JPG: What's the Difference and Which Should You Use?",
+    description: "Compare PNG vs JPG formats. Learn file size differences, quality, transparency, and when to use each for web and graphics.",
+    href: "/guides/image-formats/png-vs-jpg",
+    icon: FileImage,
+  },
+  {
     title: "Best Image Format for Websites",
     description: "Boost your Core Web Vitals with the right next-gen formats. Compare WebP, AVIF, PNG, and JPG for speed and quality.",
     href: "/guides/image-formats/best-image-format-for-websites",

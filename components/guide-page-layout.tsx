@@ -10,6 +10,10 @@ export interface GuidePageLayoutProps {
   children: React.ReactNode
   faqs?: { question: string; answer: string }[]
   variant?: 'split' | 'centered' // Split for Instagram, Centered for Websites
+  publishedDate?: string
+  author?: string
+  schemaTitle?: string
+  schemaDescription?: string
 }
 
 export function GuidePageLayout({
@@ -19,8 +23,15 @@ export function GuidePageLayout({
   heroExtra,
   children,
   faqs,
-  variant = 'centered'
+  variant = 'centered',
+  publishedDate = "2025-01-01",
+  author = "PictureConvert Team",
+  schemaTitle,
+  schemaDescription
 }: GuidePageLayoutProps) {
+  const articleTitle = schemaTitle || (typeof title === 'string' ? title : "Guide");
+  const articleDescription = schemaDescription || (typeof subtitle === 'string' ? subtitle : "Guide description");
+
   return (
     <article className="min-h-screen bg-background text-foreground pb-20">
       <div className="container mx-auto px-4 md:px-6 pt-12 max-w-6xl">
@@ -48,30 +59,30 @@ export function GuidePageLayout({
         {variant === 'split' ? (
           <header className="grid md:grid-cols-2 gap-12 items-center mb-20">
             <div className="space-y-6">
-               <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-balance leading-[1.15]">
-                 {title}
-               </h1>
-               <div className="text-xl text-muted-foreground leading-relaxed text-balance max-w-xl font-light">
-                 {subtitle}
-               </div>
+              <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-balance leading-[1.15]">
+                {title}
+              </h1>
+              <div className="text-xl text-muted-foreground leading-relaxed text-balance max-w-xl font-light">
+                {subtitle}
+              </div>
             </div>
             {heroExtra && (
               <div className="relative">
-                 {heroExtra}
+                {heroExtra}
               </div>
             )}
           </header>
         ) : (
           <header className="max-w-4xl mb-16 md:mb-24">
-             <div className="space-y-6">
-                <h1 className="text-4xl md:text-6xl font-extrabold mb-8 tracking-tight text-balance leading-[1.15]">
-                  {title}
-                </h1>
-                <div className="text-xl md:text-2xl text-muted-foreground leading-relaxed text-balance max-w-3xl font-light">
-                  {subtitle}
-                </div>
-             </div>
-             {heroExtra && <div className="mt-12">{heroExtra}</div>}
+            <div className="space-y-6">
+              <h1 className="text-4xl md:text-6xl font-extrabold mb-8 tracking-tight text-balance leading-[1.15]">
+                {title}
+              </h1>
+              <div className="text-xl md:text-2xl text-muted-foreground leading-relaxed text-balance max-w-3xl font-light">
+                {subtitle}
+              </div>
+            </div>
+            {heroExtra && <div className="mt-12">{heroExtra}</div>}
           </header>
         )}
 
@@ -101,8 +112,25 @@ export function GuidePageLayout({
             </Accordion>
           </section>
         )}
-        
+
         {/* JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Article",
+              "headline": articleTitle,
+              "description": articleDescription,
+              "author": {
+                "@type": "Organization",
+                "name": author,
+              },
+              "datePublished": publishedDate,
+              "dateModified": new Date().toISOString().split('T')[0],
+            }),
+          }}
+        />
         {faqs && (
           <script
             type="application/ld+json"

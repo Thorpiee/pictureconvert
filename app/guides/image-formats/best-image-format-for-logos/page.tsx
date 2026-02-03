@@ -1,6 +1,6 @@
 import Link from "next/link"
 import { Metadata } from "next"
-import { Check, X, PenTool, Monitor, Printer, Smartphone, FileText, ArrowRight, Image as ImageIcon } from "lucide-react"
+import { Check, X, PenTool, Monitor, Printer, Smartphone, FileText, ArrowRight, Image as ImageIcon, Layers, Maximize2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
@@ -93,7 +93,7 @@ export default function BestImageFormatForLogosPage() {
   return (
     <GuidePageLayout
       title={
-        <>Best Image Format for Logos <span className="text-primary block text-2xl md:text-3xl font-bold mt-2 opacity-90">SVG vs PNG vs PDF</span></>
+        <>Best Image Format for Logos <span className="text-primary block text-2xl md:text-3xl font-bold mt-2 opacity-90">SVG vs PNG vs PDF (2025 Guide)</span></>
       }
       subtitle={
         <>
@@ -106,248 +106,264 @@ export default function BestImageFormatForLogosPage() {
       faqs={faqs}
       variant="split"
     >
-      <section className="mb-16">
-        <h2 className="text-3xl font-bold mb-8">Why Logos Are Unique</h2>
-        <div className="bg-muted/30 p-8 rounded-2xl border border-border/50">
-          <p className="text-lg leading-relaxed text-muted-foreground mb-0">
-            Unlike a photograph, a logo is made of simple shapes, sharp lines, and solid colors.
-            Standard photo formats (like JPG) are designed to blur pixels slightly to smooth out gradients in photos.
-            When you apply this to a logo, you get "fuzziness" or "artifacts" around the text.
+      {/* 2. Quick Answer Section */}
+      <section className="mb-16 not-prose">
+        <div className="bg-primary/5 border border-primary/10 rounded-xl p-8">
+          <h2 className="text-2xl font-bold text-primary mb-4 flex items-center gap-2">
+            <Check className="h-6 w-6" />
+            Quick Answer: What Should You Use?
+          </h2>
+          <p className="text-lg leading-relaxed text-foreground mb-4">
+            For <strong>Websites</strong> (headers, footers), always use <strong>SVG</strong>. It's scalable, tiny, and sharp on all screens.
+          </p>
+          <p className="text-lg leading-relaxed text-foreground mb-4">
+            For <strong>Social Media</strong> (profile pics), use <strong>PNG</strong>. It supports transparency and doesn't have the compression artifacts of JPG.
+          </p>
+          <p className="text-lg leading-relaxed text-foreground">
+            For <strong>Print</strong> (business cards, banners), use <strong>EPS or PDF</strong>. These are vector formats that can be scaled infinitely without losing quality.
           </p>
         </div>
       </section>
 
+      {/* 3. Context Section */}
       <section className="mb-20">
-        <h2 className="text-3xl font-bold mb-8">Vector vs. Raster: The Most Important Concept</h2>
-        <div className="grid md:grid-cols-2 gap-8">
-          <Card className="border-green-200 bg-green-50 dark:bg-green-950/20 dark:border-green-900 shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-green-700 dark:text-green-400">
-                <PenTool className="h-6 w-6" /> Vector (The Hero)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                Made of math (points and lines). Can be scaled to the size of the moon and stay sharp.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3 bg-white dark:bg-black/20 p-3 rounded-lg border border-green-100 dark:border-green-900/50">
-                  <Check className="h-5 w-5 text-green-600 shrink-0" />
-                  <span>Formats: <strong>SVG, EPS, AI, PDF</strong></span>
-                </li>
-                <li className="flex items-center gap-3 bg-white dark:bg-black/20 p-3 rounded-lg border border-green-100 dark:border-green-900/50">
-                  <Check className="h-5 w-5 text-green-600 shrink-0" />
-                  <span>Best for: <strong>Master file, Web, Print</strong></span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border shadow-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ImageIcon className="h-6 w-6" /> Raster (The Sidekick)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-6 leading-relaxed">
-                Made of pixels (little squares). If you zoom in, it gets blocky/pixelated.
-              </p>
-              <ul className="space-y-3">
-                <li className="flex items-center gap-3 bg-muted/50 p-3 rounded-lg border border-border/50">
-                  <Check className="h-5 w-5 text-muted-foreground shrink-0" />
-                  <span>Formats: <strong>PNG, JPG, WebP</strong></span>
-                </li>
-                <li className="flex items-center gap-3 bg-muted/50 p-3 rounded-lg border border-border/50">
-                  <Check className="h-5 w-5 text-muted-foreground shrink-0" />
-                  <span>Best for: <strong>Social Media, Email</strong></span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      <section className="mb-20">
-        <h2 className="text-3xl font-bold mb-8">Best Formats by Use Case</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Use Case 1 */}
-          <Card className="border-l-4 border-l-blue-500 shadow-sm">
-            <CardContent className="pt-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="bg-blue-100 dark:bg-blue-900/30 p-3 rounded-xl text-blue-600">
-                  <Monitor className="h-6 w-6" />
-                </div>
-                <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-sm font-bold">
-                  Winner: SVG
-                </span>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Websites (Header, Footer)</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                SVG is code, not an image. It is incredibly lightweight (often under 2KB) and looks perfect on 4K monitors and mobile phones alike.
-              </p>
-              <div className="text-sm bg-muted p-3 rounded border border-border/50">
-                <strong>Fallback:</strong> Use a <Link href="/compress-png" className="text-primary hover:underline">Compressed PNG</Link> with transparent background.
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Use Case 2 */}
-          <Card className="border-l-4 border-l-purple-500 shadow-sm">
-            <CardContent className="pt-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="bg-purple-100 dark:bg-purple-900/30 p-3 rounded-xl text-purple-600">
-                  <Smartphone className="h-6 w-6" />
-                </div>
-                <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-sm font-bold">
-                  Winner: PNG
-                </span>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Social Media Profiles</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                Most platforms convert uploads to JPG. Upload a high-quality <strong>PNG</strong> to ensure the best starting quality.
-              </p>
-              <div className="text-sm bg-muted p-3 rounded border border-border/50">
-                <strong>Tip:</strong> Put your logo on a white/colored circle background yourself to control Dark Mode looks.
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Use Case 3 */}
-          <Card className="border-l-4 border-l-orange-500 shadow-sm">
-            <CardContent className="pt-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="bg-orange-100 dark:bg-orange-900/30 p-3 rounded-xl text-orange-600">
-                  <Printer className="h-6 w-6" />
-                </div>
-                <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-sm font-bold">
-                  Winner: EPS / PDF
-                </span>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Print (Cards, Brochures)</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                Printers need vector data. Send them an EPS or a vector PDF to allow infinite scaling without pixelation.
-              </p>
-              <div className="text-sm bg-muted p-3 rounded border border-border/50">
-                <strong>Warning:</strong> Never send a JPG logo to a printer. It will look blurry.
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Use Case 4 */}
-          <Card className="border-l-4 border-l-slate-500 shadow-sm">
-            <CardContent className="pt-6">
-              <div className="flex items-start justify-between mb-4">
-                <div className="bg-slate-100 dark:bg-slate-800 p-3 rounded-xl text-slate-600">
-                  <FileText className="h-6 w-6" />
-                </div>
-                <span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-sm font-bold">
-                  Winner: PNG
-                </span>
-              </div>
-              <h3 className="text-xl font-bold mb-2">Microsoft Office (Word/PPT)</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                Office apps often struggle with SVGs. A high-res PNG with transparent background is the safest bet.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      <section className="mb-20">
-        <h2 className="text-3xl font-bold mb-8">The Transparency Issue</h2>
-        <div className="bg-card border border-border rounded-xl overflow-hidden shadow-sm">
-          <div className="p-8 border-b border-border bg-muted/10">
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              Does your logo look like it's inside a white box? That's because you used a format that doesn't support transparency.
-            </p>
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+            <Monitor className="h-6 w-6" />
           </div>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-muted/30">
-                <TableRow>
-                  <TableHead className="w-[150px] font-bold">Format</TableHead>
-                  <TableHead className="font-bold">Transparency?</TableHead>
-                  <TableHead className="font-bold">Verdict</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow className="h-16 hover:bg-red-50/50 dark:hover:bg-red-950/10">
-                  <TableCell className="font-bold text-lg">JPG</TableCell>
-                  <TableCell className="text-red-500 font-bold flex items-center gap-2"><X className="h-5 w-5" /> No</TableCell>
-                  <TableCell className="text-muted-foreground">Never use for logos</TableCell>
-                </TableRow>
-                <TableRow className="h-16 hover:bg-green-50/50 dark:hover:bg-green-950/10">
-                  <TableCell className="font-bold text-lg">PNG</TableCell>
-                  <TableCell className="text-green-600 font-bold flex items-center gap-2"><Check className="h-5 w-5" /> Yes</TableCell>
-                  <TableCell className="font-medium">Excellent for Social/Web</TableCell>
-                </TableRow>
-                <TableRow className="h-16 hover:bg-green-50/50 dark:hover:bg-green-950/10">
-                  <TableCell className="font-bold text-lg">SVG</TableCell>
-                  <TableCell className="text-green-600 font-bold flex items-center gap-2"><Check className="h-5 w-5" /> Yes</TableCell>
-                  <TableCell className="font-medium">Best for Website Layouts</TableCell>
-                </TableRow>
-                <TableRow className="h-16 hover:bg-green-50/50 dark:hover:bg-green-950/10">
-                  <TableCell className="font-bold text-lg">WebP</TableCell>
-                  <TableCell className="text-green-600 font-bold flex items-center gap-2"><Check className="h-5 w-5" /> Yes</TableCell>
-                  <TableCell className="font-medium">Good Modern Alternative</TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
+          <h2 className="text-3xl font-bold m-0">Why It Matters</h2>
+        </div>
+        <div className="prose dark:prose-invert max-w-none">
+          <p className="text-xl text-muted-foreground leading-relaxed">
+            Unlike a photograph, a logo is made of simple shapes, sharp lines, and solid colors. Standard photo formats (like JPG) are designed to blur pixels slightly to smooth out gradients in photos.
+          </p>
+          <p className="text-lg leading-relaxed">
+            When you apply this photo compression to a logo, you get "fuzziness" or "artifacts" around the text. This makes your brand look cheap and unprofessional, especially on high-resolution Retina displays.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-8 mt-8 not-prose">
+            <Card className="bg-destructive/5 border-destructive/20">
+              <CardHeader>
+                <CardTitle className="text-destructive flex items-center gap-2">
+                  <X className="h-5 w-5" />
+                  The "Amateur" Approach (JPG)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">Saving a logo as a standard JPG.</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2 text-destructive"><X className="h-4 w-4" /> No transparency (white box background)</li>
+                  <li className="flex items-center gap-2 text-destructive"><X className="h-4 w-4" /> Fuzzy text edges (artifacts)</li>
+                  <li className="flex items-center gap-2 text-destructive"><X className="h-4 w-4" /> Blurry when zoomed in</li>
+                </ul>
+              </CardContent>
+            </Card>
+            <Card className="bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-900">
+              <CardHeader>
+                <CardTitle className="text-green-700 dark:text-green-400 flex items-center gap-2">
+                  <Check className="h-5 w-5" />
+                  The "Pro" Approach (SVG/PNG)
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">Using Vector (SVG) or Lossless (PNG).</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2 text-green-700 dark:text-green-400"><Check className="h-4 w-4" /> Perfect transparency</li>
+                  <li className="flex items-center gap-2 text-green-700 dark:text-green-400"><Check className="h-4 w-4" /> Crisp, sharp edges</li>
+                  <li className="flex items-center gap-2 text-green-700 dark:text-green-400"><Check className="h-4 w-4" /> Infinite scaling (SVG only)</li>
+                </ul>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
-      <section className="mb-8">
-        <h2 className="text-3xl font-bold mb-8">What to Ask Your Designer For</h2>
-        <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
-          <div className="flex flex-col md:flex-row gap-8 items-start">
-            <div className="flex-1">
-              <h4 className="text-2xl font-bold mb-4">The Logo Deliverables Checklist</h4>
-              <p className="text-muted-foreground mb-6">
-                If you are getting a logo designed, ensure your contract states you will receive the following files.
-                If you only get a JPG, you have been ripped off.
+      {/* 4. Data / Benchmarks Section */}
+      <section className="mb-24">
+        <h2 className="text-3xl font-bold mb-8">Format Comparison Table</h2>
+        <div className="rounded-xl border border-border overflow-hidden shadow-sm bg-card not-prose">
+          <Table>
+            <TableHeader className="bg-muted/50">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="w-[150px] text-lg font-bold py-5">Format</TableHead>
+                <TableHead className="text-lg font-bold py-5">Type</TableHead>
+                <TableHead className="text-lg font-bold py-5">Scalability</TableHead>
+                <TableHead className="text-lg font-bold py-5">Transparency</TableHead>
+                <TableHead className="text-lg font-bold py-5">Best For</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow className="group hover:bg-muted/30 transition-colors">
+                <TableCell className="font-bold text-lg py-6 text-primary">SVG</TableCell>
+                <TableCell className="text-lg py-6 text-muted-foreground">Vector</TableCell>
+                <TableCell className="text-lg py-6 font-bold text-green-600">Infinite</TableCell>
+                <TableCell className="text-lg py-6 text-green-600">Yes</TableCell>
+                <TableCell className="text-lg py-6 font-medium">Websites, Icons</TableCell>
+              </TableRow>
+              <TableRow className="group hover:bg-muted/30 transition-colors">
+                <TableCell className="font-bold text-lg py-6 text-primary">PNG</TableCell>
+                <TableCell className="text-lg py-6 text-muted-foreground">Raster</TableCell>
+                <TableCell className="text-lg py-6 text-amber-600">Limited</TableCell>
+                <TableCell className="text-lg py-6 text-green-600">Yes</TableCell>
+                <TableCell className="text-lg py-6 font-medium">Social Media, Email</TableCell>
+              </TableRow>
+              <TableRow className="group hover:bg-muted/30 transition-colors">
+                <TableCell className="font-bold text-lg py-6 text-primary">PDF/EPS</TableCell>
+                <TableCell className="text-lg py-6 text-muted-foreground">Vector</TableCell>
+                <TableCell className="text-lg py-6 font-bold text-green-600">Infinite</TableCell>
+                <TableCell className="text-lg py-6 text-green-600">Yes</TableCell>
+                <TableCell className="text-lg py-6 font-medium">Professional Print</TableCell>
+              </TableRow>
+              <TableRow className="group hover:bg-muted/30 transition-colors bg-destructive/5">
+                <TableCell className="font-bold text-lg py-6 text-destructive">JPG</TableCell>
+                <TableCell className="text-lg py-6 text-muted-foreground">Raster</TableCell>
+                <TableCell className="text-lg py-6 text-destructive">Poor</TableCell>
+                <TableCell className="text-lg py-6 text-destructive">No</TableCell>
+                <TableCell className="text-lg py-6 font-medium">Photos Only (Avoid for Logos)</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+      </section>
+
+      {/* 5. Factors That Affect Results */}
+      <section className="mb-24">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg text-amber-600 dark:text-amber-400">
+            <Layers className="h-6 w-6" />
+          </div>
+          <h2 className="text-3xl font-bold m-0">Key Factors to Consider</h2>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6 not-prose">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Maximize2 className="h-5 w-5 text-primary" />
+                Scalability (Vector vs Raster)
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                <strong>Vector files (SVG, EPS, AI)</strong> use math to draw lines. You can print them on a business card or a billboard, and they will look identical. <strong>Raster files (PNG, JPG)</strong> use pixels. If you enlarge them, they become blocky and blurry.
               </p>
-              <ul className="grid gap-3">
-                <li className="flex items-center gap-3 bg-white dark:bg-black/40 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
-                  <div className="bg-green-100 dark:bg-green-900/30 p-1 rounded-full">
-                    <Check className="h-4 w-4 text-green-600" />
-                  </div>
-                  <span><strong>Master Vector File:</strong> .AI or .EPS (For future edits and print)</span>
-                </li>
-                <li className="flex items-center gap-3 bg-white dark:bg-black/40 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
-                  <div className="bg-green-100 dark:bg-green-900/30 p-1 rounded-full">
-                    <Check className="h-4 w-4 text-green-600" />
-                  </div>
-                  <span><strong>Web Vector:</strong> .SVG (For your website header)</span>
-                </li>
-                <li className="flex items-center gap-3 bg-white dark:bg-black/40 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
-                  <div className="bg-green-100 dark:bg-green-900/30 p-1 rounded-full">
-                    <Check className="h-4 w-4 text-green-600" />
-                  </div>
-                  <span><strong>High-Res Raster:</strong> .PNG with transparent background</span>
-                </li>
-                <li className="flex items-center gap-3 bg-white dark:bg-black/40 p-3 rounded-lg border border-slate-200 dark:border-slate-800">
-                  <div className="bg-green-100 dark:bg-green-900/30 p-1 rounded-full">
-                    <Check className="h-4 w-4 text-green-600" />
-                  </div>
-                  <span><strong>Social Versions:</strong> Square JPGs/PNGs optimized for profile pics</span>
-                </li>
-              </ul>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Layers className="h-5 w-5 text-primary" />
+                Background Transparency
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Your logo often needs to sit on top of other things (colored headers, photos, dark mode). <strong>JPG does not support transparency</strong>—it will always have a white box around it. <strong>PNG and SVG</strong> allow the background to show through.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <PenTool className="h-5 w-5 text-primary" />
+                Editability
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                A "Master File" (usually AI or EPS) allows a designer to change colors, move elements, or adjust text later. A flattened file like a JPG or PNG cannot be easily edited without recreating the logo from scratch.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Monitor className="h-5 w-5 text-primary" />
+                File Size & Performance
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                For websites, SVGs are often incredibly small (1-5KB) because they are just text code. A high-res PNG might be 100KB+. Using SVG ensures your website loads faster, improving your SEO and user experience.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* 6. Actionable Improvements */}
+      <section className="mb-24">
+        <h2 className="text-3xl font-bold mb-8">How to Get the Right Logo Format</h2>
+        <div className="bg-muted/30 rounded-2xl p-8 border border-border">
+          <div className="space-y-8">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">1</div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Ask Your Designer for the "Source File"</h3>
+                <p className="text-muted-foreground mb-3">
+                  If you hired a designer, they owe you the source file. Ask for the <strong>.AI (Adobe Illustrator)</strong>, <strong>.EPS</strong>, or <strong>.SVG</strong> file. This is your "Master Key."
+                </p>
+              </div>
             </div>
 
-            <div className="w-full md:w-auto flex flex-col gap-4">
-              <div className="bg-white dark:bg-black/40 p-6 rounded-xl border border-slate-200 dark:border-slate-800 text-center md:text-left md:w-64">
-                <h5 className="font-bold mb-2">Need to convert?</h5>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Have a PNG but need a different format?
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">2</div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Create Web Versions</h3>
+                <p className="text-muted-foreground mb-3">
+                  Use the source file to export an <strong>SVG</strong> for your website header. If you can't use SVG, export a <strong>PNG</strong> at 2x resolution (Retina) with a transparent background.
                 </p>
-                <Link href="/" className="inline-flex w-full justify-center items-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md font-medium text-sm transition-colors">
-                  Open Converter
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">3</div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Create Social Media Versions</h3>
+                <p className="text-muted-foreground mb-3">
+                  Export a <strong>PNG</strong> file. Avoid JPG unless the platform absolutely requires it (like Instagram posts), but even then, start with a high-quality source.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-border">
+              <h4 className="font-bold mb-4">Need to fix a logo?</h4>
+              <div className="flex flex-wrap gap-4">
+                <Link href="/svg-to-png" className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8">
+                  Convert SVG to PNG
+                </Link>
+                <Link href="/png-to-ico" className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ring-offset-background border border-input hover:bg-accent hover:text-accent-foreground h-11 px-8">
+                  Make a Favicon (ICO)
                 </Link>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* 7. Internal Links Section */}
+      <section className="mb-12 border-t border-border pt-12">
+        <h2 className="text-2xl font-bold mb-6">Related Guides & Tools</h2>
+        <div className="grid md:grid-cols-2 gap-4 not-prose">
+          <Link href="/png-to-ico" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">PNG to ICO Converter</h3>
+            <p className="text-sm text-muted-foreground">Create a favicon for your website from your logo.</p>
+          </Link>
+          <Link href="/compress-png" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">PNG Compressor</h3>
+            <p className="text-sm text-muted-foreground">Shrink your PNG logos so they load faster.</p>
+          </Link>
+          <Link href="/guides/image-formats/png-vs-jpg" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">PNG vs JPG Guide</h3>
+            <p className="text-sm text-muted-foreground">Why PNG is better for graphics and logos.</p>
+          </Link>
+          <Link href="/guides/image-formats/best-image-format-for-websites" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">Best Format for Websites</h3>
+            <p className="text-sm text-muted-foreground">Comprehensive guide to web images.</p>
+          </Link>
         </div>
       </section>
     </GuidePageLayout>

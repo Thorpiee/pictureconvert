@@ -9,7 +9,11 @@ import {
   AlertTriangle,
   ArrowRight,
   Layers,
-  Crop
+  Crop,
+  Zap,
+  Info,
+  Settings,
+  Monitor
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -111,64 +115,85 @@ export default function BestImageFormatForInstagramPage() {
       faqs={faqs}
       variant="split"
     >
-      {/* Section 1: The Problem (Split Layout) */}
-      <section className="mb-24">
-        <div className="grid md:grid-cols-12 gap-12">
-          <div className="md:col-span-5">
-            <h2 className="text-3xl font-bold mb-6">Why Your Photos Look Blurry</h2>
-            <div className="prose dark:prose-invert max-w-none text-muted-foreground text-lg leading-relaxed">
-              <p className="mb-4">
-                Instagram has over 1 billion users. To keep the app fast, they use an <strong>aggressive compression algorithm</strong>.
-              </p>
-              <p>
-                The golden rule is simple: If you don't resize your image, Instagram will do it for you. And their resizer is built for speed, not quality.
-              </p>
-            </div>
+      {/* 2. Quick Answer Section */}
+      <section className="mb-16 not-prose">
+        <div className="bg-primary/5 border border-primary/10 rounded-xl p-8">
+          <h2 className="text-2xl font-bold text-primary mb-4 flex items-center gap-2">
+            <Zap className="h-6 w-6" />
+            Quick Answer: What Should You Use?
+          </h2>
+          <p className="text-lg leading-relaxed text-foreground mb-4">
+            For <strong>Instagram posts</strong>, always upload <strong>JPG</strong> images resized to exactly <strong>1080 pixels wide</strong> with a <strong>4:5 aspect ratio</strong> (1080x1350).
+          </p>
+          <p className="text-lg leading-relaxed text-foreground">
+            While Instagram accepts PNGs, it converts them to JPGs during upload, often causing color shifts and artifacting. By uploading a high-quality JPG yourself, you control the compression rather than letting Instagram's algorithm decide for you.
+          </p>
+        </div>
+      </section>
+
+      {/* 3. Context Section */}
+      <section className="mb-20">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+            <Info className="h-6 w-6" />
           </div>
-          <div className="md:col-span-7">
-            <Card className="bg-destructive/5 border-destructive/20 h-full">
+          <h2 className="text-3xl font-bold m-0">Why It Matters for Creators</h2>
+        </div>
+        <div className="prose dark:prose-invert max-w-none">
+          <p className="text-xl text-muted-foreground leading-relaxed">
+            Instagram processes over 95 million photos every single day. To keep the app fast for billions of users, they use an incredibly aggressive compression algorithm.
+          </p>
+          <p className="text-lg leading-relaxed">
+            If you upload a massive 20MB file from your professional camera, Instagram sees it as "wasteful" and crushes it down to a few hundred kilobytes. This process destroys fine details, creates "muddy" pixels, and introduces banding in gradients (like skies or studio backdrops).
+          </p>
+          <div className="grid md:grid-cols-2 gap-8 mt-8 not-prose">
+            <Card className="bg-destructive/5 border-destructive/20">
               <CardHeader>
                 <CardTitle className="text-destructive flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5" />
-                  The Compression Trap
+                  The "Let Instagram Handle It" Approach
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid sm:grid-cols-2 gap-6">
-                  <div>
-                    <h4 className="font-bold mb-2">The Wrong Way</h4>
-                    <p className="text-sm text-muted-foreground mb-3">Uploading a huge 4000px wide image directly from your camera.</p>
-                    <div className="text-destructive font-bold text-sm">Result: Instagram crushes it → Blurry details.</div>
-                  </div>
-                  <div>
-                    <h4 className="font-bold mb-2 text-green-600">The Right Way</h4>
-                    <p className="text-sm text-muted-foreground mb-3">Resizing to exactly 1080px wide before upload.</p>
-                    <div className="text-green-600 font-bold text-sm">Result: Instagram accepts it → Sharp details.</div>
-                  </div>
-                </div>
+                <p className="text-muted-foreground mb-4">Uploading a 4000px wide PNG directly.</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2 text-destructive"><X className="h-4 w-4" /> Massive file size compression</li>
+                  <li className="flex items-center gap-2 text-destructive"><X className="h-4 w-4" /> Loss of sharpness</li>
+                  <li className="flex items-center gap-2 text-destructive"><X className="h-4 w-4" /> Unpredictable color shifts</li>
+                </ul>
+              </CardContent>
+            </Card>
+            <Card className="bg-green-50 dark:bg-green-900/10 border-green-200 dark:border-green-900">
+              <CardHeader>
+                <CardTitle className="text-green-700 dark:text-green-400 flex items-center gap-2">
+                  <Check className="h-5 w-5" />
+                  The "Optimized" Approach
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground mb-4">Uploading a 1080px wide JPG.</p>
+                <ul className="space-y-2 text-sm">
+                  <li className="flex items-center gap-2 text-green-700 dark:text-green-400"><Check className="h-4 w-4" /> Minimal server-side processing</li>
+                  <li className="flex items-center gap-2 text-green-700 dark:text-green-400"><Check className="h-4 w-4" /> 1:1 pixel mapping on most phones</li>
+                  <li className="flex items-center gap-2 text-green-700 dark:text-green-400"><Check className="h-4 w-4" /> Consistent colors</li>
+                </ul>
               </CardContent>
             </Card>
           </div>
         </div>
       </section>
 
-      {/* Section 2: Best Formats Table */}
+      {/* 4. Data / Benchmarks Section */}
       <section className="mb-24">
-        <div className="mb-10">
-          <h2 className="text-3xl font-bold mb-4">Best Sizes by Post Type</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl">
-            Different parts of Instagram require different dimensions. Use this definitive breakdown.
-          </p>
-        </div>
-
-        <div className="rounded-xl border border-border overflow-hidden shadow-sm bg-card">
+        <h2 className="text-3xl font-bold mb-8">Best Sizes by Post Type</h2>
+        <div className="rounded-xl border border-border overflow-hidden shadow-sm bg-card not-prose">
           <Table>
             <TableHeader className="bg-muted/50">
               <TableRow className="hover:bg-transparent">
                 <TableHead className="w-[200px] text-lg font-bold py-5">Post Type</TableHead>
                 <TableHead className="text-lg font-bold py-5">Aspect Ratio</TableHead>
-                <TableHead className="text-lg font-bold py-5">Size (Px)</TableHead>
-                <TableHead className="text-lg font-bold py-5">Verdict</TableHead>
+                <TableHead className="text-lg font-bold py-5">Exact Size (Px)</TableHead>
+                <TableHead className="text-lg font-bold py-5">Why Use It</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -178,17 +203,16 @@ export default function BestImageFormatForInstagramPage() {
                     <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg text-blue-600 dark:text-blue-400">
                       <Maximize2 className="h-5 w-5" />
                     </div>
-                    Portrait
+                    Portrait Post
                   </div>
                 </TableCell>
                 <TableCell className="text-lg py-6 font-mono text-muted-foreground">4:5</TableCell>
                 <TableCell className="text-lg py-6 font-mono font-bold text-green-600">1080 x 1350</TableCell>
                 <TableCell className="text-lg py-6 text-muted-foreground">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 mb-1">
-                    Recommended
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 mb-2">
+                    Highly Recommended
                   </span>
-                  <br />
-                  Max screen space = More attention.
+                  <div className="text-sm">Takes up the most vertical screen space in the feed, increasing engagement.</div>
                 </TableCell>
               </TableRow>
 
@@ -204,7 +228,7 @@ export default function BestImageFormatForInstagramPage() {
                 <TableCell className="text-lg py-6 font-mono text-muted-foreground">9:16</TableCell>
                 <TableCell className="text-lg py-6 font-mono font-bold text-green-600">1080 x 1920</TableCell>
                 <TableCell className="text-lg py-6 text-muted-foreground">
-                  Essential for full-screen video content.
+                  <div className="text-sm">Essential for full-screen immersive content. Anything smaller will have black bars added.</div>
                 </TableCell>
               </TableRow>
 
@@ -214,13 +238,13 @@ export default function BestImageFormatForInstagramPage() {
                     <div className="bg-gray-100 dark:bg-gray-800 p-2 rounded-lg text-gray-600 dark:text-gray-400">
                       <Crop className="h-5 w-5" />
                     </div>
-                    Square
+                    Square Post
                   </div>
                 </TableCell>
                 <TableCell className="text-lg py-6 font-mono text-muted-foreground">1:1</TableCell>
                 <TableCell className="text-lg py-6 font-mono">1080 x 1080</TableCell>
                 <TableCell className="text-lg py-6 text-muted-foreground">
-                  Classic, but takes up less space than portrait.
+                  <div className="text-sm">The classic format. Good, but you lose valuable vertical screen real estate compared to 4:5.</div>
                 </TableCell>
               </TableRow>
 
@@ -236,11 +260,10 @@ export default function BestImageFormatForInstagramPage() {
                 <TableCell className="text-lg py-6 font-mono text-muted-foreground">1.91:1</TableCell>
                 <TableCell className="text-lg py-6 font-mono text-muted-foreground">1080 x 566</TableCell>
                 <TableCell className="text-lg py-6 text-muted-foreground">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 mb-1">
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 mb-2">
                     Avoid
                   </span>
-                  <br />
-                  Looks tiny on mobile screens.
+                  <div className="text-sm">Looks tiny on mobile screens. Easy to scroll past without noticing.</div>
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -248,104 +271,129 @@ export default function BestImageFormatForInstagramPage() {
         </div>
       </section>
 
-      {/* Section 3: PNG vs JPG (Comparison Cards) */}
+      {/* 5. Factors That Affect Results */}
       <section className="mb-24">
-        <div className="text-center mb-12 max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold mb-4">PNG vs JPG: The Verdict</h2>
-          <p className="text-xl text-muted-foreground">
-            Many creators think PNG is better because it's "lossless". On Instagram, that's often a trap.
-          </p>
+        <div className="flex items-center gap-3 mb-8">
+          <div className="p-2 bg-amber-100 dark:bg-amber-900/30 rounded-lg text-amber-600 dark:text-amber-400">
+            <Settings className="h-6 w-6" />
+          </div>
+          <h2 className="text-3xl font-bold m-0">Factors That Affect Quality</h2>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {/* JPG Card */}
-          <Card className="border-green-200 dark:border-green-900 bg-green-50/30 dark:bg-green-900/10">
+        <div className="grid md:grid-cols-3 gap-6 not-prose">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between text-green-700 dark:text-green-400">
-                <span>JPG (JPEG)</span>
-                <Check className="h-6 w-6" />
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Maximize2 className="h-5 w-5 text-primary" />
+                Resolution Limits
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="font-bold text-lg">The Safe Choice</p>
-              <p className="text-muted-foreground">
-                You control the compression. Export at 85-100% quality, and Instagram will likely keep it as is.
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Instagram's maximum width is 1080 pixels. If you upload a 4000 pixel image, it doesn't look "better"—it forces the server to downscale it. This automated downscaling is often rougher than doing it yourself in Photoshop or our free tool.
               </p>
-              <div className="py-2 px-4 bg-green-100 dark:bg-green-900/30 rounded text-green-800 dark:text-green-300 font-bold text-center mt-4">
-                Recommended for Photos
-              </div>
             </CardContent>
           </Card>
 
-          {/* PNG Card */}
-          <Card className="border-red-200 dark:border-red-900 bg-red-50/30 dark:bg-red-900/10">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex items-center justify-between text-red-700 dark:text-red-400">
-                <span>PNG</span>
-                <X className="h-6 w-6" />
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Monitor className="h-5 w-5 text-primary" />
+                Color Profiles
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="font-bold text-lg">The Risky Choice</p>
-              <p className="text-muted-foreground">
-                Files are often too large (5MB+). Instagram's server aggressively crushes them to ~100KB, causing banding and color shifts.
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Browsers and apps operate in <strong>sRGB</strong>. If you export your photos in AdobeRGB or ProPhoto RGB (common for print), your colors will look washed out or gray when posted to Instagram. Always convert to sRGB before saving.
               </p>
-              <div className="py-2 px-4 bg-red-100 dark:bg-red-900/30 rounded text-red-800 dark:text-red-300 font-bold text-center mt-4">
-                Avoid for Photos
-              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Layers className="h-5 w-5 text-primary" />
+                File Type Conversion
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                While PNG is lossless, Instagram converts it to JPG upon upload to save space. This conversion happens on their end, giving you zero control over the quality setting. Uploading a JPG ensures what you see is what you get.
+              </p>
             </CardContent>
           </Card>
         </div>
       </section>
 
-      {/* Section 4: Final Checklist & CTA */}
-      <section className="mb-24 bg-muted/30 rounded-3xl p-8 md:p-16 border border-border/50">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Final Export Checklist</h2>
-            <p className="text-lg text-muted-foreground mb-8">
-              Before you hit upload, double-check these four settings in Lightroom, Photoshop, or Canva.
-            </p>
-
-            <div className="space-y-4">
-              {[
-                { label: "Format", value: "JPG (JPEG)", desc: "Avoid PNG for photos" },
-                { label: "Width", value: "1080px Exact", desc: "Don't upload 4000px files" },
-                { label: "Aspect Ratio", value: "4:5 (1350px tall)", desc: "For feed posts" },
-                { label: "Color Profile", value: "sRGB", desc: "Prevents dull colors" },
-              ].map((item, i) => (
-                <div key={i} className="flex items-start gap-4 p-4 bg-background rounded-xl border border-border shadow-sm">
-                  <div className="bg-primary/10 p-2 rounded-full text-primary mt-1">
-                    <Check className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <div className="font-bold text-lg">{item.value}</div>
-                    <div className="text-sm text-muted-foreground">{item.label} • {item.desc}</div>
-                  </div>
-                </div>
-              ))}
+      {/* 6. Actionable Improvements */}
+      <section className="mb-24">
+        <h2 className="text-3xl font-bold mb-8">How to Fix Your Instagram Photos</h2>
+        <div className="bg-muted/30 rounded-2xl p-8 border border-border">
+          <div className="space-y-8">
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">1</div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Crop to 4:5 Aspect Ratio</h3>
+                <p className="text-muted-foreground mb-3">
+                  Don't post landscape photos if you can avoid it. Crop your image to a vertical 4:5 ratio (or 8:10) to maximize screen real estate.
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div className="text-center space-y-8">
-            <div className="bg-background p-8 rounded-2xl border border-border shadow-lg max-w-sm mx-auto">
-              <Layers className="h-16 w-16 text-primary mx-auto mb-6" />
-              <h3 className="text-2xl font-bold mb-4">Fix Your Photos Now</h3>
-              <p className="text-muted-foreground mb-8">
-                Don't worry about the math. Our free tool resizes, crops, and converts your images to these exact Instagram standards automatically.
-              </p>
-              <Link href="/instagram-image-resizer">
-                <div className="inline-flex items-center justify-center rounded-lg text-lg font-bold ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-primary text-primary-foreground hover:bg-primary/90 h-14 px-8 w-full shadow-lg shadow-primary/20">
-                  Open Instagram Resizer
-                </div>
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">2</div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Resize to 1080px Width</h3>
+                <p className="text-muted-foreground mb-3">
+                  Resize your image so the width is exactly 1080 pixels. The height should be 1350 pixels for a 4:5 crop.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-4">
+              <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">3</div>
+              <div>
+                <h3 className="text-xl font-bold mb-2">Convert to sRGB & Save as JPG</h3>
+                <p className="text-muted-foreground mb-3">
+                  Ensure your color profile is set to sRGB. Save the file as a JPG with 85-100% quality.
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-border">
+              <h4 className="font-bold mb-4">Don't want to do this manually?</h4>
+              <Link href="/instagram-image-resizer" className="inline-flex items-center justify-center rounded-lg text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-11 px-8">
+                Use Our Free Instagram Resizer
               </Link>
-              <p className="text-xs text-muted-foreground mt-4">
-                100% Free • No Signup Required
-              </p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* 7. Internal Links Section */}
+      <section className="mb-12 border-t border-border pt-12">
+        <h2 className="text-2xl font-bold mb-6">Related Guides & Tools</h2>
+        <div className="grid md:grid-cols-2 gap-4 not-prose">
+          <Link href="/instagram-image-resizer" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">Instagram Image Resizer</h3>
+            <p className="text-sm text-muted-foreground">Automatically crop and resize your photos for Instagram.</p>
+          </Link>
+          <Link href="/compress-jpg" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">JPG Compressor</h3>
+            <p className="text-sm text-muted-foreground">Reduce JPG file size without losing quality.</p>
+          </Link>
+          <Link href="/guides/image-formats/png-vs-jpg" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">PNG vs JPG Guide</h3>
+            <p className="text-sm text-muted-foreground">Deep dive into when to use each format.</p>
+          </Link>
+          <Link href="/guides/image-formats/best-image-format-for-websites" className="block p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all">
+            <h3 className="font-semibold text-lg mb-1 text-primary">Best Format for Websites</h3>
+            <p className="text-sm text-muted-foreground">How to optimize images for your own website.</p>
+          </Link>
+        </div>
+      </section>
+
     </GuidePageLayout>
   )
 }
+
