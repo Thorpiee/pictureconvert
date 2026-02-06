@@ -43,12 +43,9 @@ for (const filePath of textFiles) {
   })
 }
 
-const allowedWww = wwwHits.filter((h) => h.rel === "next.config.mjs")
-const disallowedWww = wwwHits.filter((h) => h.rel !== "next.config.mjs")
-
-if (disallowedWww.length > 0) {
+if (wwwHits.length > 0) {
   fail("Disallowed www.pictureconvert.com references found:")
-  for (const hit of disallowedWww) {
+  for (const hit of wwwHits) {
     fail(`- ${hit.rel}:${hit.line} ${hit.text}`)
   }
 }
@@ -75,15 +72,6 @@ const robotsPath = path.join(repoRoot, "app", "robots.ts")
 const robotsText = readText(robotsPath)
 if (!/const baseUrl = ['"]https:\/\/pictureconvert\.com['"]/.test(robotsText)) {
   fail("app/robots.ts must use baseUrl https://pictureconvert.com")
-}
-
-const nextConfigPath = path.join(repoRoot, "next.config.mjs")
-const nextConfigText = readText(nextConfigPath)
-if (!nextConfigText.includes('value: "www.pictureconvert.com"')) {
-  fail('next.config.mjs must include a host redirect matcher for "www.pictureconvert.com"')
-}
-if (!nextConfigText.includes('destination: "https://pictureconvert.com/:path*"')) {
-  fail('next.config.mjs must redirect to "https://pictureconvert.com/:path*"')
 }
 
 if (process.exitCode === 1) process.exit(1)
