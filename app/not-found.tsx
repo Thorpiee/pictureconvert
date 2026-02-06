@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { FileQuestion, Home, ArrowRight } from "lucide-react"
-import { SITE_URL } from "@/lib/site-url"
 
 export default function NotFound() {
   return (
@@ -15,13 +14,13 @@ export default function NotFound() {
       </p>
       <div className="flex flex-col sm:flex-row gap-4">
         <Button asChild>
-          <Link href={SITE_URL}>
+          <Link href="/">
             <Home className="mr-2 h-4 w-4" />
             Go Home
           </Link>
         </Button>
         <Button asChild variant="outline">
-          <Link href={`${SITE_URL}/tools`}>
+          <Link href="/tools">
             Browse Tools
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>

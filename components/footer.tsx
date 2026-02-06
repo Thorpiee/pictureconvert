@@ -1,32 +1,31 @@
 import Link from "next/link"
 import { Shield } from "lucide-react"
 import { Logo } from "@/components/logo"
-import { SITE_URL } from "@/lib/site-url"
 
 const toolLinks = [
-  { href: `${SITE_URL}/jpg-to-png`, label: "JPG to PNG" },
-  { href: `${SITE_URL}/png-to-jpg`, label: "PNG to JPG Converter" },
-  { href: `${SITE_URL}/webp-to-png`, label: "WebP to PNG" },
-  { href: `${SITE_URL}/png-to-webp`, label: "PNG to WebP" },
-  { href: `${SITE_URL}/compress-jpg`, label: "Compress JPG" },
-  { href: `${SITE_URL}/compress-png`, label: "Compress PNG" },
+  { href: "/jpg-to-png", label: "JPG to PNG" },
+  { href: "/png-to-jpg", label: "PNG to JPG Converter" },
+  { href: "/webp-to-png", label: "WebP to PNG" },
+  { href: "/png-to-webp", label: "PNG to WebP" },
+  { href: "/compress-jpg", label: "Compress JPG" },
+  { href: "/compress-png", label: "Compress PNG" },
 ]
 
 const moreTools = [
-  { href: `${SITE_URL}/jpg-to-webp`, label: "JPG to WebP" },
-  { href: `${SITE_URL}/heic-to-jpg`, label: "HEIC to JPG" },
-  { href: `${SITE_URL}/avif-to-jpg`, label: "AVIF to JPG" },
-  { href: `${SITE_URL}/resize-image`, label: "Resize Image" },
-  { href: `${SITE_URL}/crop-image`, label: "Crop Image" },
-  { href: `${SITE_URL}/remove-exif`, label: "Remove EXIF" },
+  { href: "/jpg-to-webp", label: "JPG to WebP" },
+  { href: "/heic-to-jpg", label: "HEIC to JPG" },
+  { href: "/avif-to-jpg", label: "AVIF to JPG" },
+  { href: "/resize-image", label: "Resize Image" },
+  { href: "/crop-image", label: "Crop Image" },
+  { href: "/remove-exif", label: "Remove EXIF" },
 ]
 
 const companyLinks = [
-  { href: `${SITE_URL}/about`, label: "About" },
-  { href: `${SITE_URL}/guides`, label: "Guides" },
-  { href: `${SITE_URL}/privacy`, label: "Privacy Policy" },
-  { href: `${SITE_URL}/terms`, label: "Terms of Service" },
-  { href: `${SITE_URL}/contact`, label: "Contact" },
+  { href: "/about", label: "About" },
+  { href: "/guides", label: "Guides" },
+  { href: "/privacy", label: "Privacy Policy" },
+  { href: "/terms", label: "Terms of Service" },
+  { href: "/contact", label: "Contact" },
 ]
 
 export function Footer() {
@@ -36,7 +35,7 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:grid-cols-5">
           {/* Brand */}
           <div className="col-span-2 lg:col-span-1 space-y-4">
-            <Link href={SITE_URL} className="flex items-center gap-2.5 w-fit">
+            <Link href="/" className="flex items-center gap-2.5 w-fit">
               <div className="relative flex items-center">
                 <Logo iconClassName="h-10 w-auto" />
               </div>
@@ -101,7 +100,7 @@ export function Footer() {
               ))}
               <li>
                 <Link
-                  href={`${SITE_URL}/tools`}
+                  href="/tools"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   All Tools

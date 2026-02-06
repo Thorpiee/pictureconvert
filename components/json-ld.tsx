@@ -1,10 +1,12 @@
+import { SITE_URL } from "@/lib/site-url"
+
 export function JsonLd() {
     const softwareSchema = {
         "@context": "https://schema.org",
         "@type": "SoftwareApplication",
-        "@id": "https://pictureconvert.com/#software",
+        "@id": `${SITE_URL}/#software`,
         "name": "PictureConvert",
-        "url": "https://pictureconvert.com",
+        "url": SITE_URL,
         "applicationCategory": "MultimediaApplication",
         "operatingSystem": "Windows, macOS, Android, iOS, Linux",
         "offers": {
@@ -22,19 +24,19 @@ export function JsonLd() {
         ],
         "publisher": {
             "@type": "Organization",
-            "@id": "https://pictureconvert.com/#organization"
+            "@id": `${SITE_URL}/#organization`
         }
     }
 
     const organizationSchema = {
         "@context": "https://schema.org",
         "@type": "Organization",
-        "@id": "https://pictureconvert.com/#organization",
+        "@id": `${SITE_URL}/#organization`,
         "name": "PictureConvert",
-        "url": "https://pictureconvert.com",
+        "url": SITE_URL,
         "logo": {
             "@type": "ImageObject",
-            "url": "https://pictureconvert.com/android-chrome-512x512.png"
+            "url": `${SITE_URL}/android-chrome-512x512.png`
         },
         "description": "Secure, privacy-first online image tools for converting, compressing, and editing images locally in your browser."
     }

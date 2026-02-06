@@ -93,7 +93,7 @@ function TextWithLinks({ text }: { text: string }) {
           return (
             <Link
               key={index}
-              href={`${SITE_URL}${match[2]}`}
+              href={match[2]}
               className="text-primary hover:underline font-medium"
             >
               {match[1]}
@@ -124,14 +124,14 @@ export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
   const breadcrumbContent = (
     <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
       <li>
-        <Link href={SITE_URL} className="hover:text-foreground transition-colors flex items-center gap-1">
+        <Link href="/" className="hover:text-foreground transition-colors flex items-center gap-1">
           <Home className="h-3.5 w-3.5" />
           Home
         </Link>
       </li>
       <li><ChevronRight className="h-3.5 w-3.5" /></li>
       <li>
-        <Link href={`${SITE_URL}/tools`} className="hover:text-foreground transition-colors">
+        <Link href="/tools" className="hover:text-foreground transition-colors">
           Tools
         </Link>
       </li>
@@ -148,19 +148,19 @@ export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://pictureconvert.com"
+        "item": SITE_URL
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Tools",
-        "item": "https://pictureconvert.com/tools"
+        "item": `${SITE_URL}/tools`
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": tool.name,
-        "item": `https://pictureconvert.com/${tool.slug}`
+        "item": `${SITE_URL}/${tool.slug}`
       }
     ]
   }
@@ -355,7 +355,7 @@ export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
               const RelatedIcon = iconMap[relatedTool.icon as keyof typeof iconMap]
               return (
                 <div key={relatedTool.slug}>
-                  <Link href={`${SITE_URL}/${relatedTool.slug}`}>
+                  <Link href={`/${relatedTool.slug}`}>
                     <Card className="h-full hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer group">
                       <CardHeader className="pb-3">
                         <div className="flex items-center gap-3">

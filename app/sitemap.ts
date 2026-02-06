@@ -1,10 +1,11 @@
 import { MetadataRoute } from 'next'
 import { getAllTools } from '@/lib/tools-config'
+import { SITE_URL } from '@/lib/site-url'
 
 export const dynamic = "force-static";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://pictureconvert.com'
+  const baseUrl = SITE_URL
   const tools = getAllTools()
 
   const guidePages = [

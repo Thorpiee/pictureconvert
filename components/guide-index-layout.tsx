@@ -2,7 +2,6 @@ import Link from "next/link"
 import { LucideIcon, ArrowRight } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { SITE_URL } from "@/lib/site-url"
 
 export interface GuideItem {
   title: string
@@ -41,7 +40,7 @@ export function GuideIndexLayout({
             <li key={index} className="flex items-center gap-2">
               {index > 0 && <span className="text-muted-foreground/50">/</span>}
               {crumb.href ? (
-                <Link href={`${SITE_URL}${crumb.href}`} className="hover:text-primary transition-colors">
+                <Link href={crumb.href} className="hover:text-primary transition-colors">
                   {crumb.label}
                 </Link>
               ) : (
@@ -65,7 +64,7 @@ export function GuideIndexLayout({
       {/* 2. Card Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
         {items.map((item) => (
-          <Link key={item.href} href={`${SITE_URL}${item.href}`} className="group h-full block">
+          <Link key={item.href} href={item.href} className="group h-full block">
             <Card className="h-full hover:shadow-xl transition-all duration-300 border-border hover:border-primary/50 bg-card">
               <CardHeader>
                 <div className="mb-6 h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">

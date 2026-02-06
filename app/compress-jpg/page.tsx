@@ -5,15 +5,6 @@ import { ToolLayout } from "@/components/tool-layout"
 import { CompressorTool } from "@/components/tools/compressor-tool"
 import { getToolBySlug } from "@/lib/tools-config"
 import { notFound } from "next/navigation"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Check, X } from "lucide-react"
 
 const tool = getToolBySlug("compress-jpg")
 
@@ -28,121 +19,66 @@ export default function CompressJpgPage() {
 
   const content = (
     <>
-      <section>
-        <h2 className="text-2xl font-bold text-foreground mb-4">What is JPG Compression?</h2>
-        <p className="text-muted-foreground mb-4">
-          JPG compression is a technique used to reduce the file size of JPEG images without significantly degrading their visual quality.
-          It works by selectively discarding data that the human eye is less likely to notice, a process known as "lossy" compression.
-        </p>
-        <p className="text-muted-foreground mb-4">
-          By compressing your JPG files, you can make them load much faster on websites, send them easily via email, and save storage space
-          on your devices, all while keeping the image looking sharp and professional.
-        </p>
-      </section>
+      <section aria-label="Guide Content" className="space-y-10">
+        <section>
+          <h2 className="text-2xl font-bold text-foreground mb-4">What This Tool Does</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            This tool compresses JPG images to reduce file size while keeping the picture visually close to the original. JPG is already a
+            compressed photo format, but camera exports and “high quality” saves can still be heavier than they need to be for websites,
+            emails, and messaging apps.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            A good JPG compressor lets you choose a quality level so you can hit practical limits (like upload caps) without introducing
+            obvious artifacts. The best results come from compressing once, then reusing the compressed output rather than repeatedly
+            re-saving the same image.
+          </p>
+        </section>
 
-      <section>
-        <h2 className="text-2xl font-bold text-foreground mb-4">When should you compress a JPG?</h2>
-        <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-          <li><strong>Web Optimization:</strong> Uncompressed photos are the #1 cause of slow websites. Compressing them boosts SEO and user experience.</li>
-          <li><strong>Emailing Photos:</strong> Reduce file sizes to bypass attachment limits (e.g., 25MB) when sending high-resolution photos.</li>
-          <li><strong>Saving Disk Space:</strong> Shrink your photo library to store more memories without buying extra cloud storage.</li>
-          <li><strong>Mobile Data:</strong> Smaller images consume less data, making your content more accessible to users on mobile networks.</li>
-        </ul>
-      </section>
+        <section>
+          <h2 className="text-2xl font-bold text-foreground mb-4">When to Use It</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            Compress a JPG when a page feels slow because of large photos, when an upload form has a strict size limit, or when you’re
+            sending images over email/mobile and want faster downloads. If you’re publishing a gallery or product images, compressing helps
+            reduce bandwidth and improves load performance.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            If your JPG is also oversized in dimensions (for example, 6000px wide for a 1200px layout), resize first using Resize Image, then compress. That usually produces a
+            much smaller file with fewer artifacts.
+          </p>
+        </section>
 
-      <section>
-        <h2 className="text-2xl font-bold text-foreground mb-4">How to compress JPG online</h2>
-        <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
-          <li><strong>Upload JPG:</strong> Select or drag and drop your JPEG image into the compressor tool.</li>
-          <li><strong>Select Quality:</strong> Use the slider to balance size vs. quality (e.g., 80% is a great sweet spot).</li>
-          <li><strong>Compress:</strong> The tool instantly processes the image to reduce its file size.</li>
-          <li><strong>Download:</strong> Save your optimized, lightweight JPG file.</li>
-        </ol>
-      </section>
+        <section>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Format Tips</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            JPG is best for photos and gradients. PNG is better for sharp UI assets and transparency, but it can be much larger. If your end
+            goal is “smallest possible for the web,” converting JPG to WebP can beat JPG compression in many cases—use JPG to WebP after you’ve confirmed the image is final.
+          </p>
+        </section>
 
-      <section>
-        <h2 className="text-2xl font-bold text-foreground mb-4">Original vs Compressed (Quick comparison)</h2>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Feature</TableHead>
-                <TableHead>Original JPG</TableHead>
-                <TableHead>Compressed JPG</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">File Size</TableCell>
-                <TableCell>Heavy (e.g., 5MB)</TableCell>
-                <TableCell className="text-green-600 font-bold">Light (e.g., 500KB)</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Visual Quality</TableCell>
-                <TableCell>Maximum</TableCell>
-                <TableCell>Nearly Identical</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Load Time</TableCell>
-                <TableCell>Slow</TableCell>
-                <TableCell className="text-green-600 font-bold">Instant</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">SEO Score</TableCell>
-                <TableCell>Poor</TableCell>
-                <TableCell className="text-green-600 font-bold">Excellent</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-      </section>
+        <section>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Common Issues</h2>
+          <ul className="space-y-3 text-muted-foreground">
+            <li><strong>Quality loss:</strong> Over-compressing can cause blockiness, banding in gradients, and smeared fine detail.</li>
+            <li><strong>Double compression:</strong> Compressing an already-compressed JPG can compound artifacts; try a lighter setting.</li>
+            <li><strong>File size not shrinking much:</strong> Some images are already optimized; resize dimensions for bigger wins.</li>
+            <li><strong>Metadata:</strong> JPGs may retain EXIF data; remove it before sharing if privacy matters.</li>
+            <li><strong>Color shifts:</strong> Different apps handle profiles differently—compare in the same browser/viewer.</li>
+          </ul>
+          <ul className="mt-4 space-y-3 text-muted-foreground">
+            <li><strong>Q:</strong> What quality should I pick? <strong>A:</strong> Start around “high” and step down until artifacts are noticeable, then back up one step.</li>
+            <li><strong>Q:</strong> Should I compress before or after resizing? <strong>A:</strong> Resize first, then compress for best results.</li>
+          </ul>
+        </section>
 
-      <section>
-        <h2 className="text-2xl font-bold text-foreground mb-4">Is it safe to compress images online?</h2>
-        <p className="text-muted-foreground mb-4">
-          Yes, your security is our priority. PictureConvert uses client-side technology, which means the compression process happens
-          entirely within your web browser.
-        </p>
-        <p className="text-muted-foreground">
-          We do not upload your photos to any external server. Your images stay on your device throughout the entire process,
-          ensuring complete privacy for your personal data.
-        </p>
-      </section>
-
-      <section className="border-t pt-8 mt-12">
-        <h2 className="text-2xl font-bold text-foreground mb-6">Related Tools & Guides</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Related Tools</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/compress-png" className="text-primary hover:underline flex items-center gap-2">
-                  <span className="text-muted-foreground">→</span> Compress PNG Images
-                </Link>
-              </li>
-              <li>
-                <Link href="/bulk-compressor" className="text-primary hover:underline flex items-center gap-2">
-                  <span className="text-muted-foreground">→</span> Bulk Image Compressor
-                </Link>
-              </li>
-              <li>
-                <Link href="/resize-image" className="text-primary hover:underline flex items-center gap-2">
-                  <span className="text-muted-foreground">→</span> Resize Image
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Helpful Guides</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/guides/image-formats/png-vs-jpg" className="text-primary hover:underline flex items-center gap-2">
-                  <span className="text-muted-foreground">→</span> PNG vs JPG Guide
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <section>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Related Tools</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            If your images are the wrong dimensions, use <Link href="/resize-image" className="text-primary hover:underline font-medium">Resize Image</Link> first.
+            For a modern web format, try <Link href="/jpg-to-webp" className="text-primary hover:underline font-medium">JPG to WebP</Link>.
+            If you’re compressing many files, use <Link href="/bulk-compressor" className="text-primary hover:underline font-medium">Bulk Image Compressor</Link>,
+            and if you’re optimizing PNG assets instead, use <Link href="/compress-png" className="text-primary hover:underline font-medium">Compress PNG</Link>.
+          </p>
+        </section>
       </section>
     </>
   )

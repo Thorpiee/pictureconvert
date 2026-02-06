@@ -1,7 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { SITE_URL } from "@/lib/site-url"
 
 export interface GuidePageLayoutProps {
   title: React.ReactNode
@@ -44,7 +43,7 @@ export function GuidePageLayout({
                 {i > 0 && <li>/</li>}
                 <li>
                   {crumb.href ? (
-                    <Link href={`${SITE_URL}${crumb.href}`} className="hover:text-primary transition-colors">
+                    <Link href={crumb.href} className="hover:text-primary transition-colors">
                       {crumb.label}
                     </Link>
                   ) : (

@@ -135,7 +135,7 @@ export default function AboutPage() {
               Try our free image tools today - no sign-up required.
             </p>
             <Button asChild size="lg">
-              <Link href={`${SITE_URL}/tools`}>
+              <Link href="/tools">
                 Browse All Tools
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

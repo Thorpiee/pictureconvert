@@ -7,7 +7,6 @@ import { getAllTools, toolCategories, type ToolConfig } from "@/lib/tools-config
 import { Shield, Zap, Lock, Upload, Settings, Download, ArrowRight, Smartphone, Globe, Sparkles, CheckCircle2 } from "lucide-react"
 import { HeroSection } from "@/components/hero-section"
 import { ToolCard } from "@/components/tool-card"
-import { SITE_URL } from "@/lib/site-url"
 
 const features = [
   {
@@ -130,7 +129,7 @@ export default function HomePage() {
               Our Tools
             </h2>
             <p className="mt-4 text-muted-foreground text-lg max-w-2xl mx-auto text-balance">
-              <Link href={`${SITE_URL}/png-to-jpg`} className="text-foreground underline underline-offset-4 decoration-muted-foreground/50 hover:decoration-primary transition-colors">Convert PNG to JPG</Link>, compress, resize, and edit your images with our collection of powerful browser-based tools.
+              <Link href="/png-to-jpg" className="text-foreground underline underline-offset-4 decoration-muted-foreground/50 hover:decoration-primary transition-colors">Convert PNG to JPG</Link>, compress, resize, and edit your images with our collection of powerful browser-based tools.
             </p>
           </div>
 
@@ -194,7 +193,7 @@ export default function HomePage() {
 
           <div className="mt-16 text-center">
             <Button asChild variant="outline" size="lg" className="bg-transparent group">
-              <Link href={`${SITE_URL}/tools`}>
+              <Link href="/tools">
                 View All Tools
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
               </Link>
@@ -371,7 +370,7 @@ export default function HomePage() {
             Join thousands of users who trust PictureConvert for fast, private, and free image processing.
           </p>
           <Button asChild size="lg" className="h-12 px-8 text-lg shadow-lg shadow-primary/20 group">
-            <Link href={`${SITE_URL}/tools`}>
+            <Link href="/tools">
               Start Converting Now
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-0.5" />
             </Link>

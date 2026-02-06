@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Host canonicalization is handled by Vercel Domains (primary domain). Do not add host redirects in app code to avoid loops.
   typescript: {
     ignoreBuildErrors: true,
   },

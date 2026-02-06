@@ -20,9 +20,9 @@ export const metadata: Metadata = {
   keywords: ['image converter', 'image compressor', 'jpg to png', 'png to jpg', 'webp converter', 'heic to jpg', 'resize image', 'crop image', 'remove exif'],
   authors: [{ name: 'PictureConvert' }],
   creator: 'PictureConvert',
-  metadataBase: new URL('https://pictureconvert.com'),
+  metadataBase: new URL(SITE_URL),
   alternates: {
-    canonical: '/',
+    canonical: SITE_URL,
   },
   openGraph: {
     type: 'website',

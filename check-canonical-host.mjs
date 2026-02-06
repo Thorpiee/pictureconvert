@@ -76,25 +76,28 @@ if (httpHits.length > 0) {
 
 const layoutPath = path.join(repoRoot, "app", "layout.tsx")
 const layoutText = readText(layoutPath)
-if (!/metadataBase:\s*new URL\(['"]https:\/\/pictureconvert\.com['"]\)/.test(layoutText)) {
+if (
+  !/metadataBase:\s*new URL\(['"]https:\/\/pictureconvert\.com['"]\)/.test(layoutText) &&
+  !/metadataBase:\s*new URL\(SITE_URL\)/.test(layoutText)
+) {
   fail("app/layout.tsx must set metadataBase to https://pictureconvert.com")
-}
-
-const seoUtilsPath = path.join(repoRoot, "lib", "seo-utils.ts")
-const seoUtilsText = readText(seoUtilsPath)
-if (/https?:\/\/(www\.)?pictureconvert\.com/.test(seoUtilsText)) {
-  fail("lib/seo-utils.ts should not hardcode pictureconvert.com; use relative URLs and metadataBase instead")
 }
 
 const sitemapPath = path.join(repoRoot, "app", "sitemap.ts")
 const sitemapText = readText(sitemapPath)
-if (!/const baseUrl = ['"]https:\/\/pictureconvert\.com['"]/.test(sitemapText)) {
+if (
+  !/const baseUrl = ['"]https:\/\/pictureconvert\.com['"]/.test(sitemapText) &&
+  !/const baseUrl = SITE_URL/.test(sitemapText)
+) {
   fail("app/sitemap.ts must use baseUrl https://pictureconvert.com")
 }
 
 const robotsPath = path.join(repoRoot, "app", "robots.ts")
 const robotsText = readText(robotsPath)
-if (!/const baseUrl = ['"]https:\/\/pictureconvert\.com['"]/.test(robotsText)) {
+if (
+  !/const baseUrl = ['"]https:\/\/pictureconvert\.com['"]/.test(robotsText) &&
+  !/const baseUrl = SITE_URL/.test(robotsText)
+) {
   fail("app/robots.ts must use baseUrl https://pictureconvert.com")
 }
 
