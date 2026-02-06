@@ -64,10 +64,6 @@ export default function WebpToPngPage() {
             <li><strong>Metadata:</strong> Some images include metadata; remove it before sharing if privacy matters.</li>
             <li><strong>Color shifts:</strong> Different color profiles can look slightly different in different viewers; compare before/after in the same app.</li>
           </ul>
-          <ul className="mt-4 space-y-3 text-muted-foreground">
-            <li><strong>Q:</strong> Should I publish PNG or WebP on my website? <strong>A:</strong> Usually WebP for speed; PNG for assets that need perfect edges or transparency.</li>
-            <li><strong>Q:</strong> How do I change the dimensions after converting? <strong>A:</strong> Use Resize Image.</li>
-          </ul>
         </section>
 
         <section>

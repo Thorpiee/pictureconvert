@@ -104,7 +104,7 @@ export default function BestImageFormatForEmailPage() {
       }
       breadcrumbs={breadcrumbs}
       heroExtra={heroExtra}
-      faqs={faqs}
+      faqItems={faqs}
       variant="split"
       schemaTitle="Best Image Format for Email (2025): Gmail & Outlook Guide"
       schemaDescription="Why are your images not loading in email? Learn the best image formats for email marketing. Compare JPG, PNG, and GIF compatibility across Gmail and Outlook."

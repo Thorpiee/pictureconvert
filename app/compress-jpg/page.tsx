@@ -64,10 +64,6 @@ export default function CompressJpgPage() {
             <li><strong>Metadata:</strong> JPGs may retain EXIF data; remove it before sharing if privacy matters.</li>
             <li><strong>Color shifts:</strong> Different apps handle profiles differently—compare in the same browser/viewer.</li>
           </ul>
-          <ul className="mt-4 space-y-3 text-muted-foreground">
-            <li><strong>Q:</strong> What quality should I pick? <strong>A:</strong> Start around “high” and step down until artifacts are noticeable, then back up one step.</li>
-            <li><strong>Q:</strong> Should I compress before or after resizing? <strong>A:</strong> Resize first, then compress for best results.</li>
-          </ul>
         </section>
 
         <section>

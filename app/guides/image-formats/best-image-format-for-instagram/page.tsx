@@ -111,8 +111,8 @@ export default function BestImageFormatForInstagramPage() {
       }
       subtitle="Stop your photos from looking blurry. We reveal the exact settings, formats, and dimensions to keep your Instagram posts crystal clear."
       breadcrumbs={breadcrumbs}
+      faqItems={faqs}
       heroExtra={heroExtra}
-      faqs={faqs}
       variant="split"
     >
       {/* 2. Quick Answer Section */}

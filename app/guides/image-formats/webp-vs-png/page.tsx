@@ -89,12 +89,12 @@ export default function WebpVsPngPage() {
       title="WebP vs PNG: Which Image Format Is Better?"
       subtitle="Choosing the right image format is critical for website speed, quality, and compatibility. This guide compares WebP and PNG so you can make the best decision for your project."
       breadcrumbs={breadcrumbs}
-      faqs={faqs}
+      faqItems={faqs}
       heroExtra={heroExtra}
       variant="split"
     >
       <div className="prose prose-lg dark:prose-invert max-w-none">
-        
+
         {/* 2. Quick Answer / TL;DR */}
         <section className="not-prose mb-16">
           <div className="bg-muted/30 border border-border rounded-xl p-8">
@@ -139,7 +139,7 @@ export default function WebpVsPngPage() {
             In the world of web performance, <strong>every kilobyte counts</strong>. Large images are the primary reason for slow websites.
           </p>
           <p className="text-lg leading-relaxed">
-            Google's Core Web Vitals metrics penalize slow sites. Using modern formats like WebP is one of the easiest ways to improve your Largest Contentful Paint (LCP) score. 
+            Google's Core Web Vitals metrics penalize slow sites. Using modern formats like WebP is one of the easiest ways to improve your Largest Contentful Paint (LCP) score.
             However, compatibility still matters—if your users are on very old devices, they might not see WebP images at all.
           </p>
         </section>
@@ -192,7 +192,7 @@ export default function WebpVsPngPage() {
                 Browser Support
               </h3>
               <p className="text-muted-foreground mb-4">
-                <strong>WebP</strong> works in Chrome, Firefox, Edge, and Safari (iOS 14+). 
+                <strong>WebP</strong> works in Chrome, Firefox, Edge, and Safari (iOS 14+).
                 If you have significant traffic from very old devices (like iPhone 6 or IE11), you might need a PNG fallback.
               </p>
             </div>
@@ -217,17 +217,17 @@ export default function WebpVsPngPage() {
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
               Modernize your website images by converting PNG to WebP, or ensure compatibility by converting WebP back to PNG.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link 
-                href="/png-to-webp" 
+              <Link
+                href="/png-to-webp"
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors w-full sm:w-auto justify-center"
               >
                 Convert PNG to WebP
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link 
-                href="/webp-to-png" 
+              <Link
+                href="/webp-to-png"
                 className="inline-flex items-center gap-2 bg-background border border-input hover:bg-accent hover:text-accent-foreground px-6 py-3 rounded-lg font-semibold transition-colors w-full sm:w-auto justify-center"
               >
                 Convert WebP to PNG

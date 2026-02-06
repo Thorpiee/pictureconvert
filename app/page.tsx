@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Faq } from "@/components/Faq"
 import { Badge } from "@/components/ui/badge"
 import { getAllTools, toolCategories, type ToolConfig } from "@/lib/tools-config"
 import { Shield, Zap, Lock, Upload, Settings, Download, ArrowRight, Smartphone, Globe, Sparkles, CheckCircle2 } from "lucide-react"
@@ -344,18 +344,7 @@ export default function HomePage() {
                 Everything you need to know about PictureConvert
               </p>
             </div>
-            <Accordion type="single" collapsible className="w-full">
-              {faqs.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="border-b border-border/50">
-                  <AccordionTrigger className="text-left text-base font-medium hover:text-primary transition-colors py-5">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            <Faq items={faqs} title={null} className="mt-0" />
           </div>
         </div>
       </section>
@@ -377,24 +366,6 @@ export default function HomePage() {
           </Button>
         </div>
       </section>
-      {/* Schema.org Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "FAQPage",
-            "mainEntity": faqs.map((faq) => ({
-              "@type": "Question",
-              "name": faq.question,
-              "acceptedAnswer": {
-                "@type": "Answer",
-                "text": faq.answer,
-              },
-            })),
-          }),
-        }}
-      />
     </div>
   )
 }

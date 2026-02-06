@@ -100,11 +100,11 @@ export default function PngVsJpgPage() {
       subtitle="Compare PNG vs JPG formats. Learn the key differences in file size, quality, transparency, and when to use each for web, photos, and graphics."
       breadcrumbs={breadcrumbs}
       heroExtra={heroExtra}
-      faqs={faqs}
+      faqItems={faqs}
       variant="split"
     >
       <div className="prose prose-lg dark:prose-invert max-w-none">
-        
+
         {/* 2. Quick Answer / TL;DR */}
         <section className="not-prose mb-16">
           <div className="bg-muted/30 border border-border rounded-xl p-8">
@@ -146,11 +146,11 @@ export default function PngVsJpgPage() {
         <section className="mb-16">
           <h2 className="text-3xl font-bold mb-6">Why Image Format Matters</h2>
           <p className="text-xl text-muted-foreground leading-relaxed mb-6">
-            Selecting the wrong image format is one of the most common mistakes in web design and digital photography. 
+            Selecting the wrong image format is one of the most common mistakes in web design and digital photography.
             It affects everything from <strong>website loading speed</strong> to <strong>visual quality</strong>.
           </p>
           <p className="text-lg leading-relaxed">
-            A photograph saved as a PNG can be <strong>5 to 10 times larger</strong> than the same image saved as a JPG, with no visible difference in quality. 
+            A photograph saved as a PNG can be <strong>5 to 10 times larger</strong> than the same image saved as a JPG, with no visible difference in quality.
             On the other hand, saving a logo with a transparent background as a JPG will replace the transparency with a solid white box, ruining the design.
             Understanding the "PNG vs JPG" debate ensures you get the best performance and quality for every image.
           </p>
@@ -233,17 +233,17 @@ export default function PngVsJpgPage() {
             <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
               You can easily convert between PNG and JPG using our free browser-based tools. No software installation required.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link 
-                href="/png-to-jpg" 
+              <Link
+                href="/png-to-jpg"
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors w-full sm:w-auto justify-center"
               >
                 Convert PNG to JPG
                 <ArrowRight className="h-4 w-4" />
               </Link>
-              <Link 
-                href="/jpg-to-png" 
+              <Link
+                href="/jpg-to-png"
                 className="inline-flex items-center gap-2 bg-background border border-input hover:bg-accent hover:text-accent-foreground px-6 py-3 rounded-lg font-semibold transition-colors w-full sm:w-auto justify-center"
               >
                 Convert JPG to PNG

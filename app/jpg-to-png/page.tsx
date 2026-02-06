@@ -59,10 +59,6 @@ export default function JpgToPngPage() {
             <li><strong>Metadata:</strong> If you’re sharing images publicly, strip location/camera metadata with Remove EXIF.</li>
             <li><strong>Color shifts:</strong> Some viewers treat color profiles differently; compare exports in the same app.</li>
           </ul>
-          <ul className="mt-4 space-y-3 text-muted-foreground">
-            <li><strong>Q:</strong> Should I convert photos to PNG? <strong>A:</strong> Usually no—photos are typically better as JPG/WebP unless you need lossless edits.</li>
-            <li><strong>Q:</strong> What if I just need the reverse conversion? <strong>A:</strong> Use PNG to JPG to go back.</li>
-          </ul>
         </section>
 
         <section>

@@ -5,8 +5,8 @@ import React, { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
+import { Faq } from "@/components/Faq"
 import {
   Table,
   TableBody,
@@ -78,6 +78,7 @@ interface ToolLayoutProps {
   tool: ToolConfig
   children: React.ReactNode
   extraContent?: React.ReactNode
+  faqItems?: { question: string; answer: string }[]
 }
 
 function TextWithLinks({ text }: { text: string }) {
@@ -106,7 +107,9 @@ function TextWithLinks({ text }: { text: string }) {
   )
 }
 
-export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
+
+
+export function ToolLayout({ tool, children, extraContent, faqItems }: ToolLayoutProps) {
   const pathname = usePathname()
 
   useEffect(() => {
@@ -165,28 +168,13 @@ export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
     ]
   }
 
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": tool.faq.map((item) => ({
-      "@type": "Question",
-      "name": item.question,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": item.answer,
-      },
-    })),
-  }
+  const finalFaqs = faqItems || tool.faq || []
 
   const headerContent = (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <div className="flex justify-center mb-4">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
@@ -326,25 +314,16 @@ export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
                   ))}
                 </ul>
               </section>
-
-              {/* FAQ */}
-              <section>
-                <h2 className="text-2xl font-bold text-foreground mb-6">Frequently Asked Questions</h2>
-                <Accordion type="single" collapsible className="w-full">
-                  {tool.faq.map((item, index) => (
-                    <AccordionItem key={index} value={`faq-${index}`}>
-                      <AccordionTrigger className="text-left font-medium">
-                        {item.question}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-muted-foreground leading-relaxed">
-                        {item.answer}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </section>
             </>
           )}
+
+          {/* FAQ */}
+          {finalFaqs.length > 0 && (
+            <div className="mt-12">
+              <Faq items={finalFaqs} />
+            </div>
+          )}
+
         </div>
 
         {/* Related Tools */}

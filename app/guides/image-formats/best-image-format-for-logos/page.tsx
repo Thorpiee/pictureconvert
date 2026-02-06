@@ -102,8 +102,8 @@ export default function BestImageFormatForLogosPage() {
         </>
       }
       breadcrumbs={breadcrumbs}
+      faqItems={faqs}
       heroExtra={heroExtra}
-      faqs={faqs}
       variant="split"
     >
       {/* 2. Quick Answer Section */}

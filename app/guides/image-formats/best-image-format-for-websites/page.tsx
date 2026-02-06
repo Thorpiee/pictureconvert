@@ -100,9 +100,8 @@ export default function BestImageFormatForWebsitesPage() {
         </>
       }
       breadcrumbs={breadcrumbs}
+      faqItems={faqs}
       heroExtra={heroExtra}
-      variant="split"
-      faqs={faqs}
       schemaTitle="Best Image Format for Websites (2025): WebP vs AVIF vs JPG"
       schemaDescription="What is the best image format for websites? We compare WebP, AVIF, PNG, and JPG for speed, SEO, and quality. Boost your Core Web Vitals today."
     >

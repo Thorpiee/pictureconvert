@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Faq } from "@/components/Faq"
 
 import { getAllTools, toolCategories, getToolsByCategory, type ToolCategory } from "@/lib/tools-config"
 import {
@@ -187,6 +188,23 @@ export function ToolsPageClient() {
             </Button>
           </div>
         )}
+
+        <div className="max-w-3xl mx-auto mt-20">
+          <Faq items={[
+            {
+              question: "Are all these image tools free?",
+              answer: "Yes, every tool on PictureConvert is 100% free to use. There are no hidden fees, subscriptions, or limits on how many images you can process."
+            },
+            {
+              question: "Do I need to install anything?",
+              answer: "No installation is required. All tools run directly in your web browser, compatible with Chrome, Firefox, Safari, and Edge on both desktop and mobile."
+            },
+            {
+              question: "Is it safe to use these tools?",
+              answer: "Absolutely. We use local browser technology (WebAssembly), which means your photos are processed on your device and are never uploaded to our servers."
+            }
+          ]} />
+        </div>
       </div>
     </div >
   )

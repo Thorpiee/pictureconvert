@@ -2,6 +2,7 @@ import { Metadata } from "next"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Faq } from "@/components/Faq"
 import { Shield, Zap, Lock, Heart, ArrowRight } from "lucide-react"
 import { SITE_URL } from "@/lib/site-url"
 
@@ -50,6 +51,21 @@ const values = [
   }
 ]
 
+const faqs = [
+  {
+    question: "How does PictureConvert ensure privacy?",
+    answer: "We use WebAssembly to process images directly in your browser. Unlike other tools, your photos are never uploaded to our servers, ensuring 100% privacy."
+  },
+  {
+    question: "Is PictureConvert free to use?",
+    answer: "Yes, all our tools are completely free. We don't require any subscription, signup, or credit card."
+  },
+  {
+    question: "What technologies power PictureConvert?",
+    answer: "We use modern web technologies including Next.js, WebAssembly, and the Canvas API to deliver fast, secure, and client-side image processing."
+  }
+]
+
 export default function AboutPage() {
   return (
     <div className="py-12 md:py-16">
@@ -75,6 +91,10 @@ export default function AboutPage() {
               that work entirely in your browser. Your images never leave your device, ensuring complete privacy
               while delivering fast, reliable results.
             </p>
+          </div>
+
+          <div className="mt-16">
+            <Faq items={faqs} />
           </div>
 
           <div className="mt-12">

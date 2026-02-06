@@ -65,10 +65,6 @@ export default function PngToJpgPage() {
             <li><strong>Metadata:</strong> Some images carry EXIF data; remove it before sharing if privacy matters.</li>
             <li><strong>Color shifts:</strong> Different color profiles can look slightly different after export; compare in the same viewer.</li>
           </ul>
-          <ul className="mt-4 space-y-3 text-muted-foreground">
-            <li><strong>Q:</strong> Will this restore detail if my PNG started as a JPG? <strong>A:</strong> No—conversion can’t recover lost detail, it only changes the container/encoding.</li>
-            <li><strong>Q:</strong> How do I make the JPG even smaller? <strong>A:</strong> Convert first, then run Compress JPG or resize with Resize Image.</li>
-          </ul>
         </section>
 
         <section>

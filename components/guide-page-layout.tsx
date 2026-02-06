@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Faq } from "@/components/Faq"
+import { FaqItem } from "@/lib/faq"
 
 export interface GuidePageLayoutProps {
   title: React.ReactNode
@@ -8,7 +9,7 @@ export interface GuidePageLayoutProps {
   breadcrumbs: { label: string; href?: string }[]
   heroExtra?: React.ReactNode // For the side card (Instagram) or null
   children: React.ReactNode
-  faqs?: { question: string; answer: string }[]
+  faqItems?: FaqItem[]
   variant?: 'split' | 'centered' // Split for Instagram, Centered for Websites
   publishedDate?: string
   author?: string
@@ -22,7 +23,7 @@ export function GuidePageLayout({
   breadcrumbs,
   heroExtra,
   children,
-  faqs,
+  faqItems,
   variant = 'centered',
   publishedDate = "2025-01-01",
   author = "PictureConvert Team",
@@ -92,25 +93,10 @@ export function GuidePageLayout({
         {children}
 
         {/* FAQ Section */}
-        {faqs && faqs.length > 0 && (
-          <section className="max-w-3xl mx-auto mt-24">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
-              <p className="text-lg text-muted-foreground">Common questions answered.</p>
-            </div>
-            <Accordion type="single" collapsible className="w-full space-y-4">
-              {faqs.map((faq, index) => (
-                <AccordionItem key={index} value={`item-${index}`} className="border border-border rounded-xl px-6 bg-card">
-                  <AccordionTrigger className="text-left font-bold text-lg py-6 hover:no-underline hover:text-primary transition-colors">
-                    {faq.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-lg text-muted-foreground leading-relaxed pb-6">
-                    {faq.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </section>
+        {faqItems && faqItems.length > 0 && (
+          <div className="max-w-3xl mx-auto mt-24">
+            <Faq items={faqItems} />
+          </div>
         )}
 
         {/* JSON-LD Schema */}
@@ -131,25 +117,6 @@ export function GuidePageLayout({
             }),
           }}
         />
-        {faqs && (
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify({
-                "@context": "https://schema.org",
-                "@type": "FAQPage",
-                "mainEntity": faqs.map((faq) => ({
-                  "@type": "Question",
-                  "name": faq.question,
-                  "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": faq.answer,
-                  },
-                })),
-              }),
-            }}
-          />
-        )}
       </div>
     </article>
   )

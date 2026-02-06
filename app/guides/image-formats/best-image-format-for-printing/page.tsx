@@ -100,9 +100,9 @@ export default function BestImageFormatForPrintingPage() {
         </>
       }
       breadcrumbs={breadcrumbs}
+      faqItems={faqs}
       heroExtra={heroExtra}
       variant="split"
-      faqs={faqs}
       schemaTitle="Best Image Format for Printing: TIFF vs PDF vs JPG (2025)"
       schemaDescription="Don't print blurry images. Learn the best image formats for printing (TIFF vs PDF), understand 300 DPI vs 72 DPI, and why CMYK color mode matters."
     >

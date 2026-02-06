@@ -61,10 +61,6 @@ export default function HeicToJpgPage() {
             <li><strong>Color shifts:</strong> HDR/advanced color from HEIC can look different after conversion depending on the viewer.</li>
             <li><strong>Large uploads:</strong> If an upload form has strict limits, resize first, then compress.</li>
           </ul>
-          <ul className="mt-4 space-y-3 text-muted-foreground">
-            <li><strong>Q:</strong> Will the JPG look identical to the HEIC? <strong>A:</strong> Usually very close, but HDR/processing differences can make small changes.</li>
-            <li><strong>Q:</strong> What if I need a smaller file for email? <strong>A:</strong> Use Compress JPG after converting.</li>
-          </ul>
         </section>
 
         <section>
