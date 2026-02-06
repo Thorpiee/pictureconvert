@@ -10,11 +10,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "About | PictureConvert",
     description: "Learn about PictureConvert - a free, privacy-focused image converter that processes everything in your browser.",
-    url: "https://pictureconvert.com/about",
+    url: "/about",
     type: 'website',
     images: [
       {
-        url: 'https://pictureconvert.com/og-image.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'About PictureConvert',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: "https://pictureconvert.com/about",
+    canonical: "/about",
   },
 }
 
@@ -58,20 +58,20 @@ export default function AboutPage() {
             About PictureConvert
           </h1>
           <p className="mt-6 text-lg text-muted-foreground text-center leading-relaxed">
-            PictureConvert is a free online tool for converting, compressing, and editing images. 
+            PictureConvert is a free online tool for converting, compressing, and editing images.
             Our mission is simple: provide powerful image tools that respect your privacy.
           </p>
 
           <div className="mt-12 space-y-6">
             <h2 className="text-2xl font-bold text-foreground">Our Story</h2>
             <p className="text-muted-foreground leading-relaxed">
-              We built PictureConvert because we were frustrated with existing image tools. 
-              Most require you to upload your files to unknown servers, create accounts, or pay for basic features. 
+              We built PictureConvert because we were frustrated with existing image tools.
+              Most require you to upload your files to unknown servers, create accounts, or pay for basic features.
               We believed there had to be a better way.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              Using modern browser technologies like Canvas API and WebAssembly, we created a suite of image tools 
-              that work entirely in your browser. Your images never leave your device, ensuring complete privacy 
+              Using modern browser technologies like Canvas API and WebAssembly, we created a suite of image tools
+              that work entirely in your browser. Your images never leave your device, ensuring complete privacy
               while delivering fast, reliable results.
             </p>
           </div>
@@ -99,8 +99,8 @@ export default function AboutPage() {
           <div className="mt-12 space-y-6">
             <h2 className="text-2xl font-bold text-foreground">How It Works</h2>
             <p className="text-muted-foreground leading-relaxed">
-              When you use PictureConvert, your image is processed entirely within your web browser. 
-              We use the HTML5 Canvas API to read, manipulate, and export images in different formats. 
+              When you use PictureConvert, your image is processed entirely within your web browser.
+              We use the HTML5 Canvas API to read, manipulate, and export images in different formats.
               For specialized formats like HEIC, we use optimized JavaScript libraries that run locally.
             </p>
             <p className="text-muted-foreground leading-relaxed">

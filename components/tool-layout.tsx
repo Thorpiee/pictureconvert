@@ -79,6 +79,32 @@ interface ToolLayoutProps {
   extraContent?: React.ReactNode
 }
 
+function TextWithLinks({ text }: { text: string }) {
+  if (!text) return null
+
+  const parts = text.split(/(\[[^\]]+\]\(\/[^)]+\))/g)
+
+  return (
+    <>
+      {parts.map((part, index) => {
+        const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+        if (match) {
+          return (
+            <Link
+              key={index}
+              href={match[2]}
+              className="text-primary hover:underline font-medium"
+            >
+              {match[1]}
+            </Link>
+          )
+        }
+        return part
+      })}
+    </>
+  )
+}
+
 export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
   const pathname = usePathname()
 
@@ -188,33 +214,6 @@ export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
       </div>
     </>
   )
-
-  function TextWithLinks({ text }: { text: string }) {
-    if (!text) return null
-
-    // Split by markdown link pattern [text](url)
-    const parts = text.split(/(\[[^\]]+\]\(\/[^)]+\))/g)
-
-    return (
-      <>
-        {parts.map((part, index) => {
-          const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
-          if (match) {
-            return (
-              <Link
-                key={index}
-                href={match[2]}
-                className="text-primary hover:underline font-medium"
-              >
-                {match[1]}
-              </Link>
-            )
-          }
-          return part
-        })}
-      </>
-    )
-  }
 
   return (
     <div className="py-8 md:py-12">

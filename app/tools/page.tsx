@@ -21,16 +21,16 @@ export const metadata: Metadata = {
     'privacy focused',
   ],
   alternates: {
-    canonical: "https://pictureconvert.com/tools",
+    canonical: "/tools",
   },
   openGraph: {
     title: "All Image Tools | PictureConvert",
     description: "Browse our complete collection of 25+ free online image tools. Convert, compress, resize, crop, and edit images in your browser. Secure, fast, and no signup required.",
-    url: "https://pictureconvert.com/tools",
+    url: "/tools",
     type: 'website',
     images: [
       {
-        url: 'https://pictureconvert.com/og-image.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'PictureConvert - Free Online Image Tools',
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "All Image Tools | PictureConvert",
     description: "Browse our complete collection of 25+ free online image tools. Convert, compress, resize, crop, and edit images in your browser.",
-    images: ['https://pictureconvert.com/og-image.png'],
+    images: ['/og-image.png'],
   },
 }
 

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   openGraph: {
     images: [
       {
-        url: 'https://pictureconvert.com/og-image.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'PictureConvert',
@@ -14,11 +14,11 @@ export const metadata: Metadata = {
     ],
     title: "Privacy Policy | PictureConvert",
     description: "Our privacy promise: 100% local processing. Your files never leave your device.",
-    url: "https://pictureconvert.com/privacy",
+    url: "/privacy",
     type: 'website',
   },
   alternates: {
-    canonical: "https://pictureconvert.com/privacy",
+    canonical: "/privacy",
   },
 }
 

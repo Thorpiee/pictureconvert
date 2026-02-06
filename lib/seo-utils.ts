@@ -34,11 +34,11 @@ export function generateToolMetadata(tool: ToolConfig): Metadata {
     openGraph: {
       title: `${tool.name} | PictureConvert`,
       description: baseDescription, // OG allows longer descriptions
-      url: `https://pictureconvert.com/${tool.slug}`,
+      url: `/${tool.slug}`,
       type: 'website',
       images: [
         {
-          url: `https://pictureconvert.com/og-image.png`,
+          url: `/og-image.png`,
           width: 1200,
           height: 630,
           alt: tool.name,
@@ -49,10 +49,10 @@ export function generateToolMetadata(tool: ToolConfig): Metadata {
       card: 'summary_large_image',
       title: `${tool.name} | PictureConvert`,
       description: baseDescription,
-      images: ['https://pictureconvert.com/og-image.png'],
+      images: ['/og-image.png'],
     },
     alternates: {
-      canonical: `https://pictureconvert.com/${tool.slug}`,
+      canonical: `/${tool.slug}`,
     },
   }
 }

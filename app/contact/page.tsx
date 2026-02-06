@@ -4,13 +4,16 @@ import { ContactClient } from './contact-client'
 export const metadata: Metadata = {
   title: 'Contact Us',
   description: 'Get in touch with PictureConvert. Have questions, feedback, or need help? We are here to assist you.',
+  alternates: {
+    canonical: "/contact",
+  },
   openGraph: {
     title: 'Contact Us | PictureConvert',
     description: 'Get in touch with PictureConvert. Have questions, feedback, or need help? We are here to assist you.',
-    url: 'https://pictureconvert.com/contact',
+    url: '/contact',
     images: [
       {
-        url: 'https://pictureconvert.com/og-image.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'PictureConvert',
@@ -21,7 +24,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Contact Us | PictureConvert',
     description: 'Get in touch with PictureConvert. Have questions, feedback, or need help? We are here to assist you.',
-    images: ['https://pictureconvert.com/og-image.png'],
+    images: ['/og-image.png'],
   },
 }
 

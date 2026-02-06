@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     images: [
       {
-        url: 'https://pictureconvert.com/og-image.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'PictureConvert',
@@ -15,10 +15,10 @@ export const metadata: Metadata = {
     ],
     title: "Terms of Service | PictureConvert",
     description: "Simple, fair terms for using PictureConvert. Free image conversion tools with no signup required.",
-    url: "https://pictureconvert.com/terms",
+    url: "/terms",
   },
   alternates: {
-    canonical: "https://pictureconvert.com/terms",
+    canonical: "/terms",
   },
 }
 

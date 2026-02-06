@@ -26,13 +26,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://pictureconvert.com',
+    url: '/',
     siteName: 'PictureConvert',
     title: 'PictureConvert - Free Online Image Converter & Compressor',
     description: 'Convert, compress, and edit images right in your browser. Free, fast, and private - files never leave your device. Supports JPG, PNG, WebP, HEIC, AVIF, and more.',
     images: [
       {
-        url: 'https://pictureconvert.com/og-image.png',
+        url: '/og-image.png',
         width: 1200,
         height: 630,
         alt: 'PictureConvert - Free Online Image Converter & Compressor',
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PictureConvert - Free Online Image Converter & Compressor',
     description: 'Convert, compress, and edit images right in your browser. Free, fast, and private.',
-    images: ['https://pictureconvert.com/og-image.png'],
+    images: ['/og-image.png'],
   },
   robots: {
     index: true,
