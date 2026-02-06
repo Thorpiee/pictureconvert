@@ -29,23 +29,47 @@ function fail(message) {
 
 const textFiles = walk(repoRoot, new Set([".ts", ".tsx", ".js", ".jsx", ".mjs", ".json"]))
 
+const wwwHost = ["www", "pictureconvert", "com"].join(".")
+const httpApex = ["http://", ["pictureconvert", "com"].join(".")].join("")
+
 const wwwHits = []
 for (const filePath of textFiles) {
   if (path.basename(filePath) === "check-canonical-host.mjs") continue
   const text = readText(filePath)
-  if (!text.includes("www.pictureconvert.com")) continue
+  if (!text.includes(wwwHost)) continue
   const rel = path.relative(repoRoot, filePath).replaceAll("\\", "/")
   const lines = text.split(/\r?\n/)
   lines.forEach((line, idx) => {
-    if (line.includes("www.pictureconvert.com")) {
+    if (line.includes(wwwHost)) {
       wwwHits.push({ rel, line: idx + 1, text: line.trim() })
     }
   })
 }
 
 if (wwwHits.length > 0) {
-  fail("Disallowed www.pictureconvert.com references found:")
+  fail("Disallowed www host references found:")
   for (const hit of wwwHits) {
+    fail(`- ${hit.rel}:${hit.line} ${hit.text}`)
+  }
+}
+
+const httpHits = []
+for (const filePath of textFiles) {
+  if (path.basename(filePath) === "check-canonical-host.mjs") continue
+  const text = readText(filePath)
+  if (!text.includes(httpApex)) continue
+  const rel = path.relative(repoRoot, filePath).replaceAll("\\", "/")
+  const lines = text.split(/\r?\n/)
+  lines.forEach((line, idx) => {
+    if (line.includes(httpApex)) {
+      httpHits.push({ rel, line: idx + 1, text: line.trim() })
+    }
+  })
+}
+
+if (httpHits.length > 0) {
+  fail("Disallowed http apex references found:")
+  for (const hit of httpHits) {
     fail(`- ${hit.rel}:${hit.line} ${hit.text}`)
   }
 }

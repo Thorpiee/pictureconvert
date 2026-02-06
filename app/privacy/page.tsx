@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { SITE_URL } from "@/lib/site-url"
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
@@ -6,7 +7,7 @@ export const metadata: Metadata = {
   openGraph: {
     images: [
       {
-        url: '/og-image.png',
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'PictureConvert',
@@ -14,11 +15,11 @@ export const metadata: Metadata = {
     ],
     title: "Privacy Policy | PictureConvert",
     description: "Our privacy promise: 100% local processing. Your files never leave your device.",
-    url: "/privacy",
+    url: `${SITE_URL}/privacy`,
     type: 'website',
   },
   alternates: {
-    canonical: "/privacy",
+    canonical: `${SITE_URL}/privacy`,
   },
 }
 

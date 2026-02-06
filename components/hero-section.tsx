@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Shield, ArrowRight, Upload, Download, CheckCircle2, Sparkles } from "lucide-react"
+import { SITE_URL } from "@/lib/site-url"
 
 // Static dropzone component for the hero mock
 function HeroMockPanel() {
@@ -115,13 +116,13 @@ export function HeroSection() {
 
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button asChild size="lg" className="text-base shadow-lg shadow-primary/25 group">
-                <Link href="/tools">
+                <Link href={`${SITE_URL}/tools`}>
                   Choose a Tool
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="text-base bg-transparent">
-                <Link href="#how-it-works">
+                <Link href={`${SITE_URL}/#how-it-works`}>
                   How It Works
                 </Link>
               </Button>

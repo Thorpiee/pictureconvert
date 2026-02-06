@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import { ToolsPageClient } from "./tools-client"
+import { SITE_URL } from "@/lib/site-url"
 
 export const metadata: Metadata = {
   title: "All Image Tools | PictureConvert",
@@ -21,16 +22,16 @@ export const metadata: Metadata = {
     'privacy focused',
   ],
   alternates: {
-    canonical: "/tools",
+    canonical: `${SITE_URL}/tools`,
   },
   openGraph: {
     title: "All Image Tools | PictureConvert",
     description: "Browse our complete collection of 25+ free online image tools. Convert, compress, resize, crop, and edit images in your browser. Secure, fast, and no signup required.",
-    url: "/tools",
+    url: `${SITE_URL}/tools`,
     type: 'website',
     images: [
       {
-        url: '/og-image.png',
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'PictureConvert - Free Online Image Tools',
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "All Image Tools | PictureConvert",
     description: "Browse our complete collection of 25+ free online image tools. Convert, compress, resize, crop, and edit images in your browser.",
-    images: ['/og-image.png'],
+    images: [`${SITE_URL}/og-image.png`],
   },
 }
 

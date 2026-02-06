@@ -6,6 +6,7 @@ import { Card, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { ToolConfig } from "@/lib/tools-config"
 import { cn } from "@/lib/utils"
+import { SITE_URL } from "@/lib/site-url"
 import {
   ArrowRightLeft,
   FileImage,
@@ -65,7 +66,7 @@ export function ToolCard({ tool, badges = [], index = 0 }: ToolCardProps) {
   const Icon = iconMap[tool.icon as keyof typeof iconMap]
 
   const cardContent = (
-    <Link href={`/${tool.slug}`} className="block h-full">
+    <Link href={`${SITE_URL}/${tool.slug}`} className="block h-full">
       <Card className={cn(
         "h-full flex flex-col cursor-pointer group transition-all duration-300",
         "hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5",

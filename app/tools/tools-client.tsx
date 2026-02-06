@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
 import { getAllTools, toolCategories, getToolsByCategory, type ToolCategory } from "@/lib/tools-config"
+import { SITE_URL } from "@/lib/site-url"
 import {
   Search, X, Shield, ArrowRight, ArrowRightLeft, FileImage, Minimize2, Crop, Maximize2,
   ShieldOff,
@@ -145,7 +146,7 @@ export function ToolsPageClient() {
               key={tool.slug}
               className="h-full"
             >
-              <Link href={`/${tool.slug}`} className="block h-full">
+              <Link href={`${SITE_URL}/${tool.slug}`} className="block h-full">
                 <Card className="h-full flex flex-col hover:bg-accent/50 transition-colors border-border/50 bg-background/50 backdrop-blur-sm">
                   <CardHeader>
                     <div className="flex items-center justify-between mb-2">

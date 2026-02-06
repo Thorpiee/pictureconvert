@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Menu, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Logo } from "@/components/logo"
+import { SITE_URL } from "@/lib/site-url"
 import {
   Sheet,
   SheetContent,
@@ -16,12 +17,12 @@ import {
 import { ModeToggle } from "@/components/mode-toggle"
 
 const navLinks = [
-  { href: "/tools", label: "Tools" },
-  { href: "/guides", label: "Guides" },
-  { href: "/#features", label: "Features" },
-  { href: "/privacy", label: "Privacy" },
-  { href: "/#faq-list", label: "FAQ" },
-  { href: "/contact", label: "Contact" },
+  { href: `${SITE_URL}/tools`, label: "Tools" },
+  { href: `${SITE_URL}/guides`, label: "Guides" },
+  { href: `${SITE_URL}/#features`, label: "Features" },
+  { href: `${SITE_URL}/privacy`, label: "Privacy" },
+  { href: `${SITE_URL}/#faq-list`, label: "FAQ" },
+  { href: `${SITE_URL}/contact`, label: "Contact" },
 ]
 
 export function Header() {
@@ -47,7 +48,7 @@ export function Header() {
     >
       <div className="max-w-[1600px] mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 group">
+          <Link href={SITE_URL} className="flex items-center gap-2.5 group">
             <div
               className="relative flex items-center hover:scale-105 active:scale-95 transition-transform"
             >
@@ -70,7 +71,7 @@ export function Header() {
           <div className="flex items-center gap-3">
             <ModeToggle />
             <Button asChild size="sm" className="hidden sm:flex group">
-              <Link href="/tools">
+              <Link href={`${SITE_URL}/tools`}>
                 Open Tools
                 <ArrowRight className="ml-1.5 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
               </Link>
@@ -107,7 +108,7 @@ export function Header() {
                   ))}
                   <div className="mt-4 px-4">
                     <Button asChild size="lg" className="w-full">
-                      <Link href="/tools" onClick={() => setMobileMenuOpen(false)}>
+                      <Link href={`${SITE_URL}/tools`} onClick={() => setMobileMenuOpen(false)}>
                         Open Tools
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Link>

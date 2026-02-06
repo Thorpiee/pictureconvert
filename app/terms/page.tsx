@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { Card, CardContent } from "@/components/ui/card"
+import { SITE_URL } from "@/lib/site-url"
 
 export const metadata: Metadata = {
   title: "Terms of Service",
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     images: [
       {
-        url: '/og-image.png',
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'PictureConvert',
@@ -15,10 +16,10 @@ export const metadata: Metadata = {
     ],
     title: "Terms of Service | PictureConvert",
     description: "Simple, fair terms for using PictureConvert. Free image conversion tools with no signup required.",
-    url: "/terms",
+    url: `${SITE_URL}/terms`,
   },
   alternates: {
-    canonical: "/terms",
+    canonical: `${SITE_URL}/terms`,
   },
 }
 

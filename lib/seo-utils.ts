@@ -1,5 +1,6 @@
 import { Metadata } from 'next'
 import { ToolConfig } from './tools-config'
+import { SITE_URL } from './site-url'
 
 export function generateToolMetadata(tool: ToolConfig): Metadata {
   const baseDescription = `${tool.longDescription} Free, fast, and secure - all processing happens in your browser. No uploads, no signup required.`
@@ -34,11 +35,11 @@ export function generateToolMetadata(tool: ToolConfig): Metadata {
     openGraph: {
       title: `${tool.name} | PictureConvert`,
       description: baseDescription, // OG allows longer descriptions
-      url: `/${tool.slug}`,
+      url: `${SITE_URL}/${tool.slug}`,
       type: 'website',
       images: [
         {
-          url: `/og-image.png`,
+          url: `${SITE_URL}/og-image.png`,
           width: 1200,
           height: 630,
           alt: tool.name,
@@ -49,10 +50,10 @@ export function generateToolMetadata(tool: ToolConfig): Metadata {
       card: 'summary_large_image',
       title: `${tool.name} | PictureConvert`,
       description: baseDescription,
-      images: ['/og-image.png'],
+      images: [`${SITE_URL}/og-image.png`],
     },
     alternates: {
-      canonical: `/${tool.slug}`,
+      canonical: `${SITE_URL}/${tool.slug}`,
     },
   }
 }

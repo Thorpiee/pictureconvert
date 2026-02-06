@@ -3,6 +3,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Shield, Zap, Lock, Heart, ArrowRight } from "lucide-react"
+import { SITE_URL } from "@/lib/site-url"
 
 export const metadata: Metadata = {
   title: "About Us - Free & Private Image Tools",
@@ -10,11 +11,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "About | PictureConvert",
     description: "Learn about PictureConvert - a free, privacy-focused image converter that processes everything in your browser.",
-    url: "/about",
+    url: `${SITE_URL}/about`,
     type: 'website',
     images: [
       {
-        url: '/og-image.png',
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'About PictureConvert',
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: "/about",
+    canonical: `${SITE_URL}/about`,
   },
 }
 
@@ -134,7 +135,7 @@ export default function AboutPage() {
               Try our free image tools today - no sign-up required.
             </p>
             <Button asChild size="lg">
-              <Link href="/tools">
+              <Link href={`${SITE_URL}/tools`}>
                 Browse All Tools
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>

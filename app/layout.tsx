@@ -6,6 +6,7 @@ import { Header } from '@/components/header'
 import { Footer } from '@/components/footer'
 import { JsonLd } from '@/components/json-ld'
 import { GoogleAnalytics } from '@next/third-parties/google'
+import { SITE_URL } from "@/lib/site-url"
 import './globals.css'
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,13 +27,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: '/',
+    url: SITE_URL,
     siteName: 'PictureConvert',
     title: 'PictureConvert - Free Online Image Converter & Compressor',
     description: 'Convert, compress, and edit images right in your browser. Free, fast, and private - files never leave your device. Supports JPG, PNG, WebP, HEIC, AVIF, and more.',
     images: [
       {
-        url: '/og-image.png',
+        url: `${SITE_URL}/og-image.png`,
         width: 1200,
         height: 630,
         alt: 'PictureConvert - Free Online Image Converter & Compressor',
@@ -43,7 +44,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PictureConvert - Free Online Image Converter & Compressor',
     description: 'Convert, compress, and edit images right in your browser. Free, fast, and private.',
-    images: ['/og-image.png'],
+    images: [`${SITE_URL}/og-image.png`],
   },
   robots: {
     index: true,
