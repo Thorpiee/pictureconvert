@@ -106,7 +106,7 @@ export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
             {breadcrumbContent}
           </nav>
         ) : (
-          <motion.nav 
+          <motion.nav
             className="max-w-4xl mx-auto mb-6"
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -123,7 +123,7 @@ export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
             {headerContent}
           </div>
         ) : (
-          <motion.div 
+          <motion.div
             className="max-w-3xl mx-auto text-center mb-10"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -231,7 +231,7 @@ export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
             </div>
           </section>
         ) : (
-          <motion.section 
+          <motion.section
             className="max-w-5xl mx-auto mt-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
