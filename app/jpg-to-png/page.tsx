@@ -1,4 +1,5 @@
 import { Metadata } from "next"
+import { generateToolMetadata } from "@/lib/seo-utils"
 import { ToolLayout } from "@/components/tool-layout"
 import { JpgToPngConverterTool } from "@/components/tools/jpg-to-png-converter-tool"
 import { getToolBySlug } from "@/lib/tools-config"
@@ -10,22 +11,11 @@ if (!tool) {
   notFound()
 }
 
-export const metadata: Metadata = {
-  title: tool.name,
-  description: tool.description,
-  openGraph: {
-    title: `${tool.name} | PictureConvert`,
-    description: tool.description,
-    url: `https://pictureconvert.com/${tool.slug}`,
-  },
-  alternates: {
-    canonical: `https://pictureconvert.com/${tool.slug}`,
-  },
-}
+export const metadata: Metadata = generateToolMetadata(tool!)
 
 export default function JpgToPngPage() {
   return (
-    <ToolLayout tool={tool}>
+    <ToolLayout tool={tool!}>
       <JpgToPngConverterTool />
 
       <section className="mt-12 space-y-10">
