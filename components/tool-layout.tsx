@@ -3,21 +3,12 @@
 
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { motion, useReducedMotion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import { Badge } from "@/components/ui/badge"
-import { Faq } from "@/components/Faq"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { PrivacyBadge } from "@/components/privacy-badge"
 import { type ToolConfig, getToolBySlug } from "@/lib/tools-config"
-import { trackToolView } from "@/lib/analytics"
-import { SITE_URL } from "@/lib/site-url"
 import {
   ArrowRightLeft,
   FileImage,
@@ -25,28 +16,7 @@ import {
   Crop,
   Maximize2,
   ShieldOff,
-  Image,
-  Code,
-  Gauge,
-  Share2,
-  Layout,
-  Layers,
-  Instagram,
-  Youtube,
-  Twitter,
-  Linkedin,
-  Ratio,
-  Maximize,
-  Music2,
-  ArrowRight,
-  Home,
-  ChevronRight,
-  Shield,
-  Zap,
-  CheckCircle2,
-  Compass,
-  Info,
-  Check,
+  ArrowRight, Home, ChevronRight, Shield, Zap, CheckCircle2
 } from "lucide-react"
 
 const iconMap = {
@@ -56,73 +26,27 @@ const iconMap = {
   Crop,
   Maximize2,
   ShieldOff,
-  Image,
-  Code,
-  Gauge,
-  Share2,
-  Layout,
-  Layers,
-  Instagram,
-  Youtube,
-  Twitter,
-  Linkedin,
-  Ratio,
-  Maximize,
-  Music2,
-  TikTok: Music2,
-  Compass,
-  Info,
 }
 
 interface ToolLayoutProps {
   tool: ToolConfig
   children: React.ReactNode
   extraContent?: React.ReactNode
-  faqItems?: { question: string; answer: string }[]
 }
 
-function TextWithLinks({ text }: { text: string }) {
-  if (!text) return null
-
-  const parts = text.split(/(\[[^\]]+\]\(\/[^)]+\))/g)
-
-  return (
-    <>
-      {parts.map((part, index) => {
-        const match = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
-        if (match) {
-          return (
-            <Link
-              key={index}
-              href={match[2]}
-              className="text-primary hover:underline font-medium"
-            >
-              {match[1]}
-            </Link>
-          )
-        }
-        return part
-      })}
-    </>
-  )
-}
-
-
-
-export function ToolLayout({ tool, children, extraContent, faqItems }: ToolLayoutProps) {
-  const pathname = usePathname()
-
-  useEffect(() => {
-    trackToolView(tool.slug, pathname)
-  }, [tool.slug, pathname])
-
+export function ToolLayout({ tool, children, extraContent }: ToolLayoutProps) {
+  const prefersReducedMotion = useReducedMotion()
+  const [mounted, setMounted] = useState(false)
   const relatedTools = tool.relatedTools
     .map(slug => getToolBySlug(slug))
     .filter((t): t is ToolConfig => t !== undefined)
     .slice(0, 6)
 
-  const Icon = iconMap[tool.icon as keyof typeof iconMap]
+  const Icon = iconMap[tool.icon as keyof typeof iconMap] ?? FileImage
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const breadcrumbContent = (
     <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">
@@ -143,39 +67,8 @@ export function ToolLayout({ tool, children, extraContent, faqItems }: ToolLayou
     </ol>
   )
 
-  const breadcrumbSchema = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": SITE_URL
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Tools",
-        "item": `${SITE_URL}/tools`
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": tool.name,
-        "item": `${SITE_URL}/${tool.slug}`
-      }
-    ]
-  }
-
-  const finalFaqs = faqItems || tool.faq || []
-
   const headerContent = (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
       <div className="flex justify-center mb-4">
         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
           <Icon className="h-8 w-8" />
@@ -208,178 +101,189 @@ export function ToolLayout({ tool, children, extraContent, faqItems }: ToolLayou
     <div className="py-8 md:py-12">
       <div className="container mx-auto px-4">
         {/* Breadcrumbs */}
-        <nav className="max-w-4xl mx-auto mb-6" aria-label="Breadcrumb">
-          {breadcrumbContent}
-        </nav>
+        {prefersReducedMotion || !mounted ? (
+          <nav className="max-w-4xl mx-auto mb-6" aria-label="Breadcrumb">
+            {breadcrumbContent}
+          </nav>
+        ) : (
+          <motion.nav 
+            className="max-w-4xl mx-auto mb-6"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            aria-label="Breadcrumb"
+          >
+            {breadcrumbContent}
+          </motion.nav>
+        )}
 
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-10">
-          {headerContent}
-        </div>
+        {prefersReducedMotion || !mounted ? (
+          <div className="max-w-3xl mx-auto text-center mb-10">
+            {headerContent}
+          </div>
+        ) : (
+          <motion.div 
+            className="max-w-3xl mx-auto text-center mb-10"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {headerContent}
+          </motion.div>
+        )}
 
         {/* Main Tool Area */}
         <div className="max-w-4xl mx-auto">
           {children}
-
-          {/* Trust Wedge */}
-          <div className="max-w-2xl mx-auto mt-8 p-6 bg-muted/50 rounded-xl border border-border/50">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
-                <span className="text-sm font-medium">Files never leave your device</span>
+          {extraContent ? (
+            <section className="mt-12 space-y-10">
+              <div className="space-y-4">
+                <p className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium">
+                  Updated for 2026
+                </p>
               </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
-                <span className="text-sm font-medium">No uploads or accounts</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
-                <span className="text-sm font-medium">No image storage</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-green-500" />
-                <span className="text-sm font-medium">Works fully in your browser</span>
-              </div>
-            </div>
-          </div>
+              {extraContent}
+            </section>
+          ) : null}
         </div>
+
 
         {/* SEO Content */}
         <div className="max-w-3xl mx-auto mt-12 space-y-12">
-          {extraContent ? (
-            extraContent
-          ) : (
-            <>
-              {/* Comparison Section */}
-              {tool.comparison && (
-                <section>
-                  <h2 className="text-2xl font-bold text-foreground mb-6">{tool.comparison.title}</h2>
-                  <div className="border rounded-xl overflow-hidden mb-6">
-                    <Table>
-                      <TableHeader>
-                        <TableRow className="bg-muted/50">
-                          {tool.comparison.columns.map((col, i) => (
-                            <TableHead key={i} className={i === 0 ? "w-[150px] font-bold" : "font-bold"}>
-                              {col}
-                            </TableHead>
-                          ))}
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {tool.comparison.rows.map((row, i) => (
-                          <TableRow key={i}>
-                            {row.map((cell, j) => (
-                              <TableCell key={j} className={j === 0 ? "font-medium" : ""}>
-                                {cell}
-                              </TableCell>
-                            ))}
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                  <p className="text-lg font-medium text-foreground border-l-4 border-primary pl-4 italic">
-                    {tool.comparison.intentSentence}
-                  </p>
-                </section>
-              )}
+          {/* What It Does */}
+          <section>
+            <h2 className="text-2xl font-bold text-foreground mb-4">What This Tool Does</h2>
+            <p className="text-muted-foreground leading-relaxed">{tool.whatItDoes}</p>
+          </section>
 
-              {/* What It Does */}
-              <section>
-                <h2 className="text-2xl font-bold text-foreground mb-4">What This Tool Does</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  <TextWithLinks text={tool.whatItDoes} />
-                </p>
-              </section>
+          {/* When To Use */}
+          <section>
+            <h2 className="text-2xl font-bold text-foreground mb-4">When To Use It</h2>
+            <p className="text-muted-foreground leading-relaxed">{tool.whenToUse}</p>
+          </section>
 
-              {/* When To Use */}
-              <section>
-                <h2 className="text-2xl font-bold text-foreground mb-4">When To Use It</h2>
-                <p className="text-muted-foreground leading-relaxed">
-                  <TextWithLinks text={tool.whenToUse} />
-                </p>
-              </section>
-
-              {/* Tips */}
-              <section>
-                <h2 className="text-2xl font-bold text-foreground mb-4">Tips for Best Results</h2>
-                <ul className="space-y-3">
-                  {tool.tips.map((tip, index) => (
-                    <li key={index} className="flex items-start gap-3 text-muted-foreground">
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium">
-                        {index + 1}
-                      </span>
-                      <span className="leading-relaxed">{tip}</span>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            </>
-          )}
+          {/* Tips */}
+          <section>
+            <h2 className="text-2xl font-bold text-foreground mb-4">Tips for Best Results</h2>
+            <ul className="space-y-3">
+              {tool.tips.map((tip, index) => (
+                <li key={index} className="flex items-start gap-3 text-muted-foreground">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-sm font-medium">
+                    {index + 1}
+                  </span>
+                  <span className="leading-relaxed">{tip}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
 
           {/* FAQ */}
-          {finalFaqs.length > 0 && (
-            <div className="mt-12">
-              <Faq items={finalFaqs} />
-            </div>
-          )}
-
+          <section>
+            <h2 className="text-2xl font-bold text-foreground mb-6">Frequently Asked Questions</h2>
+            <Accordion type="single" collapsible className="w-full">
+              {tool.faq.map((item, index) => (
+                <AccordionItem key={index} value={`faq-${index}`}>
+                  <AccordionTrigger className="text-left font-medium">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </section>
         </div>
 
         {/* Related Tools */}
-        <section className="max-w-5xl mx-auto mt-16">
-          <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Related Tools</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {relatedTools.map((relatedTool) => {
-              const RelatedIcon = iconMap[relatedTool.icon as keyof typeof iconMap]
-              return (
-                <div key={relatedTool.slug}>
-                  <Link href={`/${relatedTool.slug}`}>
-                    <Card className="h-full hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer group">
-                      <CardHeader className="pb-3">
-                        <div className="flex items-center gap-3">
-                          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
-                            <RelatedIcon className="h-5 w-5" />
+        {prefersReducedMotion || !mounted ? (
+          <section className="max-w-5xl mx-auto mt-16">
+            <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Related Tools</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {relatedTools.map((relatedTool) => {
+                const RelatedIcon = iconMap[relatedTool.icon as keyof typeof iconMap] ?? FileImage
+                return (
+                  <div key={relatedTool.slug}>
+                    <Link href={`/${relatedTool.slug}`}>
+                      <Card className="h-full hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                        <CardHeader className="pb-3">
+                          <div className="flex items-center gap-3">
+                            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                              <RelatedIcon className="h-5 w-5" />
+                            </div>
+                            <CardTitle className="text-base font-semibold flex items-center gap-2">
+                              {relatedTool.shortName}
+                              <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                            </CardTitle>
                           </div>
-                          <CardTitle className="text-base font-semibold flex items-center gap-2">
-                            {relatedTool.name}
-                            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                          </CardTitle>
-                        </div>
-                      </CardHeader>
-                      <CardContent>
-                        <CardDescription className="text-sm leading-relaxed">
-                          {relatedTool.description}
-                        </CardDescription>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </div>
-              )
-            })}
-          </div>
-        </section>
-      </div>
+                        </CardHeader>
+                        <CardContent>
+                          <CardDescription className="text-sm leading-relaxed">
+                            {relatedTool.description}
+                          </CardDescription>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </div>
+                )
+              })}
+            </div>
+          </section>
+        ) : (
+          <motion.section 
+            className="max-w-5xl mx-auto mt-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Related Tools</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {relatedTools.map((relatedTool, index) => {
+                const RelatedIcon = iconMap[relatedTool.icon as keyof typeof iconMap] ?? FileImage
+                return (
+                  <motion.div
+                    key={relatedTool.slug}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: index * 0.05, duration: 0.3 }}
+                  >
+                    <Link href={`/${relatedTool.slug}`}>
+                      <motion.div
+                        whileHover={{ y: -4 }}
+                        whileTap={{ scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Card className="h-full hover:border-primary/50 hover:shadow-lg transition-all duration-300 cursor-pointer group">
+                          <CardHeader className="pb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+                                <RelatedIcon className="h-5 w-5" />
+                              </div>
+                              <CardTitle className="text-base font-semibold flex items-center gap-2">
+                                {relatedTool.shortName}
+                                <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              </CardTitle>
+                            </div>
+                          </CardHeader>
+                          <CardContent>
+                            <CardDescription className="text-sm leading-relaxed">
+                              {relatedTool.description}
+                            </CardDescription>
+                          </CardContent>
+                        </Card>
+                      </motion.div>
+                    </Link>
+                  </motion.div>
+                )
+              })}
+            </div>
+          </motion.section>
+        )}
 
-      {/* Schema.org Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "SoftwareApplication",
-            "name": tool.name,
-            "description": tool.description,
-            "applicationCategory": "MultimediaApplication",
-            "operatingSystem": "Web",
-            "offers": {
-              "@type": "Offer",
-              "price": "0",
-              "priceCurrency": "USD"
-            }
-          })
-        }}
-      />
+      </div>
     </div>
   )
 }

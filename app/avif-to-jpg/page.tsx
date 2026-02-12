@@ -1,19 +1,8 @@
 import { Metadata } from "next"
-import Link from "next/link"
-import { generateToolMetadata } from "@/lib/seo-utils"
 import { ToolLayout } from "@/components/tool-layout"
 import { ConverterTool } from "@/components/tools/converter-tool"
 import { getToolBySlug } from "@/lib/tools-config"
 import { notFound } from "next/navigation"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Check, X } from "lucide-react"
 
 const tool = getToolBySlug("avif-to-jpg")
 
@@ -21,122 +10,261 @@ if (!tool) {
   notFound()
 }
 
-export const metadata: Metadata = generateToolMetadata(tool!)
+export const metadata: Metadata = {
+  title: tool.name,
+  description: tool.description,
+  openGraph: {
+    title: `${tool.name} | PictureConvert`,
+    description: tool.description,
+    url: `https://pictureconvert.com/${tool.slug}`,
+  },
+  alternates: {
+    canonical: `https://pictureconvert.com/${tool.slug}`,
+  },
+}
 
 export default function AvifToJpgPage() {
-  const content = (
-    <>
-      <section>
-        <h2 className="text-2xl font-bold text-foreground mb-4">What is AVIF to JPG conversion?</h2>
-        <p className="text-muted-foreground mb-4">
-          <strong>AVIF</strong> (AV1 Image File Format) is one of the newest and most efficient image formats available, offering incredible quality at tiny file sizes.
-          However, because it's so new, many older devices, photo editors, and websites don't know how to display it yet.
-        </p>
-        <p className="text-muted-foreground mb-4">
-          Converting <strong>AVIF to JPG</strong> makes your image universally compatible again. It takes the advanced AVIF data and saves it as a standard JPEG,
-          ensuring you can open, share, and edit the file on absolutely any computer or phone.
-        </p>
-      </section>
-
-      <section>
-        <h2 className="text-2xl font-bold text-foreground mb-4">Why convert AVIF files?</h2>
-        <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-          <li><strong>Compatibility:</strong> Fix "Format not supported" errors when trying to open images on Windows, Mac, or older browsers.</li>
-          <li><strong>Editing:</strong> Most standard photo editors (like older Photoshop versions or Paint) cannot open AVIF files directly.</li>
-          <li><strong>Social Sharing:</strong> Many social platforms and messaging apps will fail to upload or preview AVIF images.</li>
-          <li><strong>Printing:</strong> Print shops and home printers generally require JPG or PDF formats to work correctly.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h2 className="text-2xl font-bold text-foreground mb-4">How to convert AVIF to JPG online</h2>
-        <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
-          <li><strong>Upload AVIF:</strong> Drag your .avif file into the box above.</li>
-          <li><strong>Adjust Quality:</strong> (Optional) Use the slider to balance file size vs. image clarity.</li>
-          <li><strong>Convert:</strong> The tool instantly decodes the AVIF and re-encodes it as a JPG.</li>
-          <li><strong>Download:</strong> Save your new, compatible image.</li>
-        </ol>
-      </section>
-
-      <section>
-        <h2 className="text-2xl font-bold text-foreground mb-4">AVIF vs. JPG: The Comparison</h2>
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Feature</TableHead>
-                <TableHead>AVIF</TableHead>
-                <TableHead>JPG</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium">Compression Efficiency</TableCell>
-                <TableCell className="text-green-600 font-bold">Excellent (Tiny files)</TableCell>
-                <TableCell>Good (Standard files)</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Compatibility</TableCell>
-                <TableCell className="text-yellow-600 font-bold">Limited (Newer devices)</TableCell>
-                <TableCell className="text-green-600 font-bold">Universal (Everywhere)</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">HDR Support</TableCell>
-                <TableCell className="text-green-600 font-bold flex items-center gap-2"><Check className="h-4 w-4" /> Yes</TableCell>
-                <TableCell className="text-red-500 font-bold flex items-center gap-2"><X className="h-4 w-4" /> Limited</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-      </section>
-
-      <section>
-        <h2 className="text-2xl font-bold text-foreground mb-4">Is it safe to convert AVIF online?</h2>
-        <p className="text-muted-foreground leading-relaxed">
-          <strong>Yes.</strong> We use advanced browser-based technology. Your AVIF files are converted to JPG directly on your computer, inside your web browser. <strong>We never upload your photos to our servers.</strong> This guarantees that your images remain private and secure, as they never leave your device.
-        </p>
-      </section>
-
-      <section className="border-t pt-8 mt-12">
-        <h2 className="text-2xl font-bold text-foreground mb-6">Related Tools & Guides</h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Format Converters</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/webp-to-jpg" className="text-primary hover:underline flex items-center gap-2">
-                  <span className="text-muted-foreground">→</span> Convert WebP to JPG
-                </Link>
-              </li>
-              <li>
-                <Link href="/heic-to-jpg" className="text-primary hover:underline flex items-center gap-2">
-                  <span className="text-muted-foreground">→</span> Convert HEIC to JPG
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Helpful Guides</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/guides/image-formats/best-image-format-for-websites" className="text-primary hover:underline flex items-center gap-2">
-                  <span className="text-muted-foreground">→</span> Best Format for Websites
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </section>
-    </>
-  )
-
   return (
-    <ToolLayout tool={tool!} extraContent={content}>
+    <ToolLayout tool={tool}>
       <ConverterTool
-        toolName={tool!.name}
-        acceptedTypes={tool!.acceptedTypes}
-        outputType={tool!.outputType}
+        acceptedTypes={tool.acceptedTypes}
+        outputType={tool.outputType}
         showQuality
+      />
+
+      <section className="mt-12 space-y-10">
+        <div className="space-y-4">
+          <p className="inline-flex items-center rounded-full border px-3 py-1 text-sm font-medium">
+            Updated for 2026
+          </p>
+
+          <h2 className="text-2xl font-bold tracking-tight">AVIF to JPG: Convert Next-Gen Images for Compatibility</h2>
+
+          <p className="text-muted-foreground leading-7">
+            AVIF (AV1 Image File Format) is the newest and most efficient image format available today, offering superior compression compared to WebP, PNG, and JPG. Built on the open-source AV1 video codec, AVIF can be 20-50% smaller than JPG at the same visual quality. However, AVIF's cutting-edge status means browser and software support is still limited to modern platforms.
+          </p>
+
+          <p className="text-muted-foreground leading-7">
+            AVIF to JPG conversion is necessary when you need universal compatibility. While AVIF is excellent for web delivery to modern browsers, many devices, email clients, cloud storage services, and software tools can't open AVIF files. JPG is the universally compatible fallback that works everywhere.
+          </p>
+
+          <p className="text-muted-foreground leading-7">
+            Converting AVIF to JPG involves a format compromise—you sacrifice AVIF's superior efficiency for JPG's universal support. The practical choice depends on your audience and use case: if your users have modern browsers, serve AVIF natively. If you need broad compatibility, convert to JPG.
+          </p>
+        </div>
+
+        <section className="space-y-4" aria-labelledby="avif-vs-jpg-table">
+          <h2 id="avif-vs-jpg-table" className="text-2xl font-bold tracking-tight">
+            AVIF vs JPG — What's the Difference?
+          </h2>
+
+          <div className="overflow-x-auto rounded-lg border">
+            <table className="min-w-full text-sm">
+              <thead className="bg-muted/50">
+                <tr>
+                  <th className="px-4 py-3 text-left font-semibold">Factor</th>
+                  <th className="px-4 py-3 text-left font-semibold">AVIF</th>
+                  <th className="px-4 py-3 text-left font-semibold">JPG</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-t">
+                  <td className="px-4 py-3 font-medium">Compression technology</td>
+                  <td className="px-4 py-3">Modern (AV1 video codec)</td>
+                  <td className="px-4 py-3">Legacy (1989 JPEG standard)</td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3 font-medium">File size at same quality</td>
+                  <td className="px-4 py-3">Smallest (reference baseline)</td>
+                  <td className="px-4 py-3">20-50% larger than AVIF</td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3 font-medium">Browser support</td>
+                  <td className="px-4 py-3">~60-70% modern browsers</td>
+                  <td className="px-4 py-3">100% universal</td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3 font-medium">Software / app support</td>
+                  <td className="px-4 py-3">Limited, growing slowly</td>
+                  <td className="px-4 py-3">Universal across all platforms</td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3 font-medium">Encoding / decoding speed</td>
+                  <td className="px-4 py-3">Slower (computationally intensive)</td>
+                  <td className="px-4 py-3">Fast (highly optimized)</td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3 font-medium">Patent status</td>
+                  <td className="px-4 py-3">Open-source, royalty-free</td>
+                  <td className="px-4 py-3">No patent restrictions</td>
+                </tr>
+                <tr className="border-t">
+                  <td className="px-4 py-3 font-medium">Animated support</td>
+                  <td className="px-4 py-3">Yes (like WebP)</td>
+                  <td className="px-4 py-3">No (static only)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section className="space-y-4" aria-labelledby="when-to-convert">
+          <h2 id="when-to-convert" className="text-2xl font-bold tracking-tight">
+            When Should You Convert AVIF to JPG?
+          </h2>
+
+          <h3 className="text-xl font-semibold">1) Universal sharing and distribution</h3>
+          <p className="text-muted-foreground leading-7">
+            If you need to share an AVIF file with users on different platforms, older browsers, or software that doesn't support AVIF, conversion to JPG is mandatory. JPG works everywhere.
+          </p>
+
+          <h3 className="text-xl font-semibold">2) Email and messaging applications</h3>
+          <p className="text-muted-foreground leading-7">
+            Email clients and messaging platforms often struggle with new formats. Recipients may not be able to open AVIF attachments. JPG ensures your images arrive safely.
+          </p>
+
+          <h3 className="text-xl font-semibold">3) Cloud storage and archiving</h3>
+          <p className="text-muted-foreground leading-7">
+            Many cloud storage services (Google Drive, OneDrive, Dropbox) have limited AVIF preview and metadata support. Storing as JPG ensures consistent performance across platforms.
+          </p>
+
+          <h3 className="text-xl font-semibold">4) Fallback for responsive images</h3>
+          <p className="text-muted-foreground leading-7">
+            When serving AVIF to modern browsers using the picture element, provide JPG fallbacks. This allows modern users to benefit from AVIF efficiency while ensuring older browsers still work.
+          </p>
+
+          <div className="rounded-lg border bg-muted/30 p-4 space-y-2">
+            <p className="font-semibold">Real-world file size examples</p>
+            <ul className="list-disc pl-6 text-muted-foreground space-y-1">
+              <li>600KB AVIF photo → ~1-1.2MB JPG (quality 85)</li>
+              <li>800KB AVIF landscape → ~1.3-1.5MB JPG (quality 85)</li>
+              <li>500KB AVIF portrait → ~900KB JPG (quality 85)</li>
+            </ul>
+            <p className="text-muted-foreground leading-7">
+              AVIF's superior compression means converting to JPG usually results in 30-50% larger files. This is the expected tradeoff for universal compatibility.
+            </p>
+          </div>
+        </section>
+
+        <section className="space-y-4" aria-labelledby="when-not-to-convert">
+          <h2 id="when-not-to-convert" className="text-2xl font-bold tracking-tight">
+            When NOT to Convert AVIF to JPG
+          </h2>
+
+          <ul className="list-disc pl-6 space-y-2 text-muted-foreground">
+            <li><span className="font-medium text-foreground">Web-only delivery:</span> If your audience uses modern browsers exclusively, keep AVIF for superior compression and performance.</li>
+            <li><span className="font-medium text-foreground">File size is critical:</span> For bandwidth-constrained scenarios or massive image libraries, AVIF's efficiency is too valuable to lose.</li>
+            <li><span className="font-medium text-foreground">You're targeting tech-savvy users:</span> Developers, designers, and early adopters will have AVIF support; conversion is unnecessary.</li>
+            <li><span className="font-medium text-foreground">Using responsive images correctly:</span> Serve AVIF with fallbacks using the picture element instead of converting—get both efficiency and compatibility.</li>
+          </ul>
+        </section>
+
+        <section className="space-y-4" aria-labelledby="quality-question">
+          <h2 id="quality-question" className="text-2xl font-bold tracking-thick">
+            Does Converting AVIF to JPG Reduce Quality?
+          </h2>
+          <p className="text-muted-foreground leading-7">
+            Yes, some quality is lost since both are lossy formats. However, converting AVIF (which is typically high-quality) to JPG at 85% quality usually produces visually excellent results. Since AVIF originals are efficient captures, the conversion quality impact is minimal for most uses.
+          </p>
+          <p className="text-muted-foreground leading-7">
+            The practical truth: an AVIF image converted to JPG at 80-85% quality usually looks identical to a direct-to-JPG capture. Quality loss is imperceptible for web, email, and social media sharing.
+          </p>
+        </section>
+
+        <section className="space-y-4" aria-labelledby="faq-heading">
+          <h2 id="faq-heading" className="text-2xl font-bold tracking-tight">FAQ</h2>
+          <div className="space-y-3">
+            <details className="rounded-lg border p-4">
+              <summary className="cursor-pointer font-medium">What is AVIF format?</summary>
+              <p className="mt-3 text-muted-foreground leading-7">
+                AVIF is AV1 Image File Format, built on the AV1 video codec. It's the newest image format, offering superior compression (20-50% smaller than JPG).
+              </p>
+            </details>
+            <details className="rounded-lg border p-4">
+              <summary className="cursor-pointer font-medium">Why can't I open AVIF files?</summary>
+              <p className="mt-3 text-muted-foreground leading-7">
+                AVIF support is still growing. Not all browsers, software, or cloud services support it yet. JPG remains the universal fallback.
+              </p>
+            </details>
+            <details className="rounded-lg border p-4">
+              <summary className="cursor-pointer font-medium">Will my JPG be the same quality as the original AVIF?</summary>
+              <p className="mt-3 text-muted-foreground leading-7">
+                At 80-85% quality, JPG will look virtually identical. Some technical quality is lost, but visually imperceptible for most uses.
+              </p>
+            </details>
+            <details className="rounded-lg border p-4">
+              <summary className="cursor-pointer font-medium">Should I always convert AVIF to JPG?</summary>
+              <p className="mt-3 text-muted-foreground leading-7">
+                Only convert when you need broad compatibility. For web delivery, use responsive images with AVIF primary and JPG fallback.
+              </p>
+            </details>
+            <details className="rounded-lg border p-4">
+              <summary className="cursor-pointer font-medium">What's the best way to serve both AVIF and JPG?</summary>
+              <p className="mt-3 text-muted-foreground leading-7">
+                Use the HTML5 picture element with AVIF as primary source and JPG as fallback. This gives modern browsers efficiency and older ones compatibility.
+              </p>
+            </details>
+          </div>
+        </section>
+
+        <section className="rounded-lg border bg-muted/30 p-6 space-y-3">
+          <h2 className="text-2xl font-bold tracking-tight">Ready to convert AVIF to JPG?</h2>
+          <p className="text-muted-foreground leading-7">
+            Upload your AVIF file above to convert to JPG in seconds. For web delivery, remember to serve AVIF to modern browsers with JPG fallbacks. For further optimization, try <a href="/compress-jpg" className="underline underline-offset-4">compressing the JPG</a>.
+          </p>
+        </section>
+      </section>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": [
+              {
+                "@type": "Question",
+                "name": "What is AVIF format?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "AVIF is AV1 Image File Format built on the AV1 video codec. It's the newest image format offering superior compression."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Why can't I open AVIF files?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "AVIF support is still growing. Not all browsers, software, or services support it, making JPG universal compatibility important."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Will my JPG be the same quality as the AVIF?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "At 80-85% quality, JPG looks virtually identical. Some technical quality is lost but visually imperceptible for most uses."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "Should I always convert AVIF to JPG?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Only convert when you need compatibility. For web, use responsive images with AVIF primary and JPG fallback instead."
+                }
+              },
+              {
+                "@type": "Question",
+                "name": "How do I serve both AVIF and JPG?",
+                "acceptedAnswer": {
+                  "@type": "Answer",
+                  "text": "Use HTML5 <picture> element with AVIF primary source and JPG fallback for maximum efficiency and compatibility."
+                }
+              }
+            ]
+          }),
+        }}
       />
     </ToolLayout>
   )
